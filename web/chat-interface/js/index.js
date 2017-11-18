@@ -1,4 +1,4 @@
- $(document).ready(function(){
+    $(document).ready(function(){
                   $('.user-profile').click(function() {
                       if(!$(this).hasClass('active')){
                           
@@ -50,4 +50,3 @@
                 }   
             }
         }
-        
