@@ -15,8 +15,8 @@ body {
 .chat-box {
   background: linear-gradient(0deg, #1E2C3D 00%, #3E364E 100%);
   margin: 100px auto;
-  max-width: 500px;
-  height: 650px;
+  max-width: 540px;
+  height: 700px;
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
   /*border : 1px solid #000;*/
   overflow: hidden;
