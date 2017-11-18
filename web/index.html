@@ -66,11 +66,26 @@
             firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
                 var errorCode = error.code;
                 var errorMessage = error.message;
+
                 console.log('Error code: ' + errorCode);
                 console.log('Error message: ' + errorMessage);
 
-                // switch (errorCode) {
-                // }
+                switch (errorCode) {
+                    case 'auth/wrong-password':
+
+                        break;
+                    case 'auth/user-disabled':
+
+                        break;
+
+                    case 'auth/user-not-found':
+
+                        break;
+
+                    case 'invalid-email':
+
+                        break;
+                }
             });
         });
         
@@ -82,16 +97,28 @@
             var existing_email = document.querySelector('#email').value;
             var existing_password = document.querySelector('#password').value
 
-            // var currentUser = auth.currentUser;
-
             firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password).catch(function(error) {
                 var errorCode = error.code;
                 var errorMessage = error.message;
                 console.log('Error code: ' + errorCode);
                 console.log('Error message: ' + errorMessage);
 
-                // switch (errorCode) {
-                // }
+                switch (errorCode) {
+                    case 'auth/email-already-in-use':
+
+                        break;
+                    case 'auth/invalid-email':
+
+                        break;
+
+                    case 'auth/operation-not-allowed':
+
+                        break;
+
+                    case 'weak-password':
+
+                        break;
+                }
             });
         });
 
