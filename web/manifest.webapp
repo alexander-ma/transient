@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "name": "Friendly Chat",
+  "name": "Transient",
   "launch_path": "/index.html",
-  "description": "Chat with friends using Firebase 2.0",
+  "description": "Open transient communication channels with strangers!",
   "developer": {
     "name": "Google inc.",
     "url": "https://firebase.google.com"
@@ -15,8 +15,8 @@
   },
   "locales": {
     "en": {
-      "name": "Friendly Chat",
-      "description": "Chat with friends using Firebase 2.0"
+      "name": "Transient",
+      "description": "Open transient communication channels with strangers"
     }
   }
 }
