@@ -1,0 +1,71 @@
+DATABASE
+
+    ROOT {
+
+         "users" : {
+             #### TODO: profile pictures ####
+             "*user 1 hash*" : {
+                 "handle" : "",
+                 "firstName" : "",
+                 "lastName" : "",
+                 "email" : "",
+                 "friends" : { "*friend 1 user hash*", "*friend 2 user hash*", "*friend 3 user hash*", .... },
+                 "channels" : { "*channel 1 hash*", "*channel 2 hash*, "*channe 3 hash*", .... }
+             },
+             "*user 2 hash*" : { .... },
+             "*user 3 hash*" : { .... },
+             "*user 4 hash*" : { .... },
+
+             ...
+             ..
+             .
+         },
+
+         "channels" : {
+             "live" : {
+                 "*channel 1 hash*" : {
+                     "owner" : "*owner hash*",
+                     "users" : { "*user hash 1*", "*user hash 2*", "*user hash 3*" },
+                     "isAlive" : "true/false",
+                     "activeUntil" : "date active until",
+
+                     #### TODO: Channel Icons? ####
+                     "icon" : "Channel Icon",
+
+                     #### TODO: picture messages? ####
+                     "messages" : {
+                         "*message hash 1*" : {
+                             "date" : "Message date",
+                             "message" : "Message text"
+                             "user" : "*user hash*"
+                             "picture" : "Attached Picture"
+                         },
+                         "*message hash 2*" : { .... },
+                         "*message hash 3*" : { .... },
+                         "*message hash 4*" : { .... },
+
+                         ...
+                         ..
+                         .
+                     }
+                 },
+                 "*channel 2 hash*" : { .... },
+                 "*channel 3 hash*" : { .... },
+                 "*channel 1 hash*" : { .... },
+
+                 ...
+                 ..
+                 .
+             },
+             
+             "dead" : {
+                 "*dead channel hash 1*" { .... },   
+                 "*dead channel hash 2*" { .... },   
+                 "*dead channel hash 3*" { .... },   
+                 
+                 ...
+                 ..
+                 .
+             }
+         }
+    }
