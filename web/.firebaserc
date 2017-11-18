@@ -1,5 +1,6 @@
 {
   "projects": {
-    "memes": "transient-318de"
+    "memes": "transient-318de",
+    "staging": "transient-318de"
   }
 }

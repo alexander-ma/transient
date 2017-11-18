@@ -14,7 +14,7 @@ firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error
 firebase.auth().onAuthStateChanged = function(user) {
   if (user) { 
     // User is signed in, redirect user to the chat page.
-    window.location = 'chat.html';
+    window.location = 'chat/chat.html';
   } else { 
     // User is signed out!
     // Hide user's profile and sign-out button.
