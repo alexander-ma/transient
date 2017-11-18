@@ -1,0 +1,43 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+   height: 100%;
+}
+
+html, body {
+	height: 100%;
+	margin: 0px;
+}
+
+.body-wrapper {
+	height: 100%;
+	background: #f0e68c;
+}
+
+.body-wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.column {
+	float: left;
+    padding: 10px;
+    height: 100%;
+}
+
+.chatbody {
+	width:60%;
+}
+
+.leftside-bar {
+	width: 22%;
+	background-color: #344;
+}
+
+.rightside-bar {
+	width: 18%;
+	background-color: #344;
+}
