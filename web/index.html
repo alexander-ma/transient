@@ -12,7 +12,7 @@
         <form class="register-form">
           <input type="text" id="name" placeholder="Name"/>
           <input type="text" id="email" placeholder="Email Address"/>
-          <span type="registration-form-error"></span>
+          <span id="registration-form-error"></span>
           <input type="password" id="password" placeholder="Password"/>
           <button id="register">register</button>
           <p class="message">Already registered? <a href="#">Sign In</a></p>
@@ -66,8 +66,6 @@
         var email = document.querySelector('#existing_email').value;
         var password = document.queryselector('#existing_password').value
 
-        var currentUser = firebase.auth().currentUser;
-
         firebase.auth().signInWithEmailAndPassword(email, password)
             .catch(function(error) {
                 // Login failed.
@@ -81,9 +79,11 @@
                     case 'auth/user-disabled':
                         document.getElementById('login-form-error').innerHTML = 'This email has been disabled, please use another.';
                         break;
+                    
                     case 'auth/user-not-found':
                         document.getElementById('login-form-error').innerHTML = 'No user was identified with these credentials.';
                         break;
+
                     default: 
                         document.getElementById('login-form-error').innerHTML = 'The email/password is incorrect or invalid.';
                         break;
@@ -102,29 +102,26 @@
         firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
             .catch(function(error) {
                 // Registration failed.
-                var errorCode = error.code;
+                var errorCode = error.code;;
                 var errorMessage = error.message;
                 console.log('Error code: ' + errorCode);
                 console.log('Error message: ' + errorMessage);
 
                 switch (errorCode) {
                     case 'auth/email-already-in-use':
-                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
-
+                        document.getElementById('registration-form-error').innerHTML = 'This email is already in use.';
                         break;
-                    case 'auth/invalid-email':
-                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
 
+                    case 'auth/invalid-email':
+                        document.getElementById('registration-form-error').innerHTML = 'Enter a valid email address.';
                         break;
 
                     case 'auth/operation-not-allowed':
-                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
-
+                        document.getElementById('registration-form-error').innerHTML = 'Email/password authentication is not enabled in firebase.';
                         break;
 
                     case 'weak-password':
-                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
-
+                        document.getElementById('registration-form-error').innerHTML = 'Provided password is too weak. Get it on steroids.';
                         break;
                 }
 
