@@ -10,16 +10,16 @@
     <h1 class="title">Transient</h1>
       <div class="form">
         <form class="register-form">
+          <span id="registration-form-error"></span>
           <input type="text" id="name" placeholder="Name"/>
           <input type="text" id="email" placeholder="Email Address"/>
-          <span id="registration-form-error"></span>
           <input type="password" id="password" placeholder="Password"/>
           <button id="register">register</button>
           <p class="message">Already registered? <a href="#">Sign In</a></p>
         </form>
         <form class="login-form">
-          <input type="text" id="existing_email" placeholder="Email Address"/>
           <span id="login-form-error"></span>
+          <input type="text" id="existing_email" placeholder="Email Address"/>
           <input type="password" id="existing_password" placeholder="Password"/>
           <button id="login">login</button>
           <p class="message">Not registered? <a href="#">Create an account!</a></p>
@@ -30,7 +30,6 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="login/scripts/login.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 <script>
   // Initialize Firebase
@@ -64,7 +63,7 @@
 
         // Fetch credentials.
         var email = document.querySelector('#existing_email').value;
-        var password = document.queryselector('#existing_password').value
+        var password = document.querySelector('#existing_password').value
 
         firebase.auth().signInWithEmailAndPassword(email, password)
             .catch(function(error) {
