@@ -147,6 +147,43 @@ p {
   opacity: 0;
 }
 
+.bubble img { 
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+ }
+
+ .bubble-header {
+
+ }
+
+ .bubble-message {
+    margin-left: 10%;
+ }
+
+.bubble-row {
+  float: left;
+}
+
+.bubble-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.bubble-column {
+  float: left;
+}
+
+.bubble-column-left {
+  width: 10%;
+}
+
+.bubble-column-right { 
+  margin-left: 2%;
+  width: 88%;
+ }
+
 .bubble:after {
   border-radius: 20px / 5px;
   content: '';
@@ -158,6 +195,8 @@ p {
   transform: rotateZ(-90deg);
   left: -15px;
 }
+
+
 
 .bubble-alt {
   float: right;
