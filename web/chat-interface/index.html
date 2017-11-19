@@ -34,12 +34,25 @@
       </div>
 
       <div id = "leftside-bar-footer">
-        <button type="button" class="button"> New Chat </button>
+        <button type="button" class="button" id="new-chat"> New Chat </button>
       </div>
     </div>
 
     <!--*************** chat-box begins *********************-->
     <div class="column chat-box">
+      <!-- Modal  -->
+      <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <center><h1> Create a new Channel! </h1></center>
+        </div>
+
+      </div>
+
+
+
       <div id='chat' class="chat">
         <div class="chat-container active" id='cont1'>
 
@@ -155,84 +168,125 @@
         <div class="chat-container" id='cont2'>
 
           <div class="bubble">
-            <p>Continuation 2</p>
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">Bob: May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+              </div>
+            </div>
           </div>
-          <span class="datestamp">May 20, 2016, 4:16 PM</span>
+
+          <div class="bubble bubble-alt">
+            <div class="bubble-message-self">
+                <span class="datestamp-alt">May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            </div>
+          </div>
+
+          <div class="bubble">
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">Bob: May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bubble">
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">Bob: May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bubble bubble-alt">
+            <div class="bubble-message-self">
+                <span class="datestamp-alt">May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            </div>
+          </div>
+
+          <div class="bubble">
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">Bob: May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+              </div>
+            </div>
+          </div>
 
 
           <div class="bubble bubble-alt">
-            <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            <div class="bubble-message-self">
+                <span class="datestamp-alt">May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            </div>
           </div>
-          <span class="datestamp  dt-alt">May 20, 2016, 4:17 PM</span>
-
-
-          <div class="bubble">
-            <p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut facilisis justo in nisl elementum, at fermentum augue tempor. </p>
-          </div>
-
-          <div class="bubble">
-            <p>Aliquam feugiat tortor ac massa commodo convallis sit amet ultricies urna. Sed pharetra augue ac sapien varius, at vulputate velit pretium.</p>
-          </div>
-          <span class="datestamp">May 20, 2016, 4:20 PM</span>
-
-          <div class="bubble bubble-alt">
-            <p>Quisque sit amet nulla nibh. Mauris eu lacus sed orci rhoncus cursus nec et enim. Phasellus finibus luctus mi ac sodales. Integer efficitur gravida mauris in eleifend. Maecenas ac interdum mi.</p>
-          </div>
-          <span class="datestamp  dt-alt">May 20, 2016, 4:22 PM</span>
         </div>
+
         <div class="chat-container" id='cont3'>
           <div class="bubble">
-            <p>Continuation 3</p>
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">Bob: May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+              </div>
+            </div>
           </div>
-          <span class="datestamp">May 20, 2016, 4:16 PM</span>
 
 
           <div class="bubble bubble-alt">
-            <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            <div class="bubble-message-self">
+                <span class="datestamp-alt">May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            </div>
           </div>
-          <span class="datestamp  dt-alt">May 20, 2016, 4:17 PM</span>
-
-
-          <div class="bubble">
-            <p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut facilisis justo in nisl elementum, at fermentum augue tempor. </p>
-          </div>
-
-          <div class="bubble">
-            <p>Aliquam feugiat tortor ac massa commodo convallis sit amet ultricies urna. Sed pharetra augue ac sapien varius, at vulputate velit pretium.</p>
-          </div>
-          <span class="datestamp">May 20, 2016, 4:20 PM</span>
-
-          <div class="bubble bubble-alt">
-            <p>Quisque sit amet nulla nibh. Mauris eu lacus sed orci rhoncus cursus nec et enim. Phasellus finibus luctus mi ac sodales. Integer efficitur gravida mauris in eleifend. Maecenas ac interdum mi.</p>
-          </div>
-          <span class="datestamp  dt-alt">May 20, 2016, 4:22 PM</span>
         </div>
+
         <div class="chat-container" id='cont4'>
           <div class="bubble">
-            <p>Continuation 4</p>
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">Bob: May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+              </div>
+            </div>
           </div>
-          <span class="datestamp">May 20, 2016, 4:16 PM</span>
 
 
           <div class="bubble bubble-alt">
-            <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
-          </div>
-          <span class="datestamp  dt-alt">May 20, 2016, 4:17 PM</span>
-
-
-          <div class="bubble">
-            <p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Ut facilisis justo in nisl elementum, at fermentum augue tempor. </p>
+            <div class="bubble-message-self">
+                <span class="datestamp-alt">May 20, 2016, 4:16 PM</span>
+                  <p>Aenean ac magna rutrum, finibus est at, venenatis ipsum. Etiam egestas venenatis semper. Sed a neque sed sem lacinia finibus ac nec nisi.</p>
+            </div>
           </div>
 
-          <div class="bubble">
-            <p>Aliquam feugiat tortor ac massa commodo convallis sit amet ultricies urna. Sed pharetra augue ac sapien varius, at vulputate velit pretium.</p>
-          </div>
-          <span class="datestamp">May 20, 2016, 4:20 PM</span>
-
-          <div class="bubble bubble-alt">
-            <p>Quisque sit amet nulla nibh. Mauris eu lacus sed orci rhoncus cursus nec et enim. Phasellus finibus luctus mi ac sodales. Integer efficitur gravida mauris in eleifend. Maecenas ac interdum mi.</p>
-          </div>
-          <span class="datestamp  dt-alt">May 20, 2016, 4:22 PM</span>
         </div>
       </div>
 
@@ -244,30 +298,21 @@
 
     <!--*************** rightside-bar begins *********************-->
     <div class="column rightside-bar">
-      <div class="chat-users">
-        <!--****************chat users**********************-->
-        <div class="chat-user">
-          <div class="user-profile active" data-up='cont1'></div>
-          <div class="user-name">Erza</div>
-        </div>
+      <div class="chat-header">
+        <div class="user-profile active" data-up='cont1'></div>
+        <div>Erza</div>
 
-        <div class="chat-user">
-          <div class="user-profile" data-up='cont2'></div>
-          <div class="user-name">Natsu</div>
-        </div>
+        <div class="user-profile" data-up='cont2'></div>
+        <div>Natsu</div>
 
-        <div class="chat-user">
-          <div class="user-profile" data-up='cont3'></div>
-          <div class="user-name">Lucy</div>
-        </div>
+        <div class="user-profile" data-up='cont3'></div>
+        <div>Lucy</div>
 
-        <div class="chat-user">
-          <div class="user-profile" data-up='cont4'></div>
-          <div class="user-name">Goku?</div>
-        </div>
-      <!--**************************************************-->
+        <div class="user-profile" data-up='cont4'></div>
+        <div>Goku?</div>
       </div>
     </div>
+
 
   </div>
 
