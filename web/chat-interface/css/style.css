@@ -201,10 +201,9 @@ p {
 }
 
 .chat-header {
-  background: #fff;
-  padding: 0.5em;
-  padding-bottom: .7em;
+  background: #fff; /* #344 */
   text-align: center;
+  height: 100%;
 }
 
 .chat-header span {
