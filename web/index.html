@@ -45,9 +45,11 @@
     <!--Handle authentication events-->
     <script>
         // Triggers when the auth state change for instance when the user signs-in or signs-out.
-        firebase.auth().onAuthStateChanged = function(user) {
-            window.location = (user) ? 'chat/chat.html' : 'index.html';
-        };
+        firebase.auth().onAuthStateChanged(firebaseUser => {
+            if (firebaseUser) {
+                window.location = 'chat/chat.html';
+            }
+        });
     </script>
 
     <!--Handle page events-->
@@ -64,11 +66,8 @@
             var currentUser = firebase.auth().currentUser;
 
             firebase.auth().signInWithEmailAndPassword(email, password)
-                .then(function(firebaseUser) {
-                    // Registration succeeded.
-                    window.location = 'chat/chat.html';
-                })
                 .catch(function(error) {
+                    // Login failed.
                     var errorCode = error.code;
                     var errorMessage = error.message;
 
@@ -84,11 +83,13 @@
                             break;
 
                         case 'auth/user-not-found':
-
+                            window.onload = function() {
+                                document.getElementById("#existing_email").innerHTML = 'No user was identified with these credentials.';
+                            }
                             break;
 
                         case 'invalid-email':
-
+                            document.getElementById("#existing_email").innerHTML = 'No user was identified with these credentials.';
                             break;
                     }
                 });
@@ -103,10 +104,6 @@
             var existing_password = document.querySelector('#password').value
 
             firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
-                .then(function(firebaseUser) {
-                    // Registration succeeded.
-                    window.location = 'chat/chat.html';
-                })
                 .catch(function(error) {
                     // Registration failed.
                     var errorCode = error.code;
