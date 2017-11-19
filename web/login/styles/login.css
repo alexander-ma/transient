@@ -96,6 +96,25 @@
 .container .info span .fa {
   color: #EF3B3A;
 }
+
+/* The alert message box */
+.login-alert {
+    padding: 20px;
+    background-color: #f44336; /* Red */
+    color: white;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.register-alert {
+    padding: 20px;
+    background-color: #f44336; /* Red */
+    color: white;
+    margin-bottom: 15px;
+    display: none;
+}
+
+
 body {
   background: #76b852; /* fallback for old browsers */
   background: -webkit-linear-gradient(right, #76b852, #8DC26F);
