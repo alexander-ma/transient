@@ -9,6 +9,12 @@
     background: transparent;  /* optional: just make scrollbar invisible */
 }
 
+html, body {
+  height: 100%;
+  margin: 0px;
+  overflow-y: hidden;
+}
+
 body {
   background: #DFDFEF;
   font-family: 'Helvetica Neue';
@@ -18,6 +24,56 @@ body {
   line-height: 2em;
   height: 100%;
   margin: 0px;
+}
+
+.body-wrapper {
+  height: 100%;
+  background: #FFF;
+}
+
+.body-wrapper:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#user-section img {
+  width: 50%;
+  height: auto;
+  border-radius: 50%;
+  margin: 0 auto;
+  margin-top: 5%;
+  display: block;
+}
+
+#user-section .button {
+  margin: 0 auto;
+  margin-top: 5%;
+  display: block;
+}
+
+#live-channels {
+  margin: 0 auto;
+  margin-top: 5%;
+  text-align: center;
+  height: 32%;
+}
+
+#scheduled-channels {
+  margin: 0 auto;
+  margin-top: 5%;
+  text-align: center;
+  height: 32%;
+}
+
+#leftside-bar-footer {
+  height: 10%;
+}
+
+#leftside-bar-footer .button {
+  margin: 0 auto;
+  margin-top: 5%;
+  display: block;
 }
 
 .column {
@@ -40,11 +96,15 @@ body {
   transition: all 0.3s cubic-bezier(0.25, 0.5, 0.5, 0.9);
 }
 
+#chat {
+  height: 80%;
+}
+
 .chat-container {
-  position: absolute;
+/*  position: absolute;*/
   padding: 20px;
   width: 100%;
-  height: 75%;
+  height: 100%;
   overflow-y: scroll;
   transform: translateX(100%);
   opacity: 0;
@@ -64,6 +124,7 @@ body {
 }
 
 p {
+  color: #FFF;
   margin: 0;
 }
 
@@ -124,7 +185,7 @@ p {
 
 .chat-control {
   padding: 1.2em;
-  margin-top: 495px;
+  height: 20%;
 }
 
 .chat-input {
