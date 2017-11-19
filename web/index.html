@@ -10,7 +10,9 @@
     <h1 class="title">Transient</h1>
       <div class="form">
         <form class="register-form">
+        <div class="register-alert" id="register-alert">
           <span id="registration-form-error"></span>
+        </div>
           <input type="text" id="name" placeholder="Name"/>
           <input type="text" id="email" placeholder="Email Address"/>
           <input type="password" id="password" placeholder="Password"/>
@@ -18,7 +20,9 @@
           <p class="message">Already registered? <a href="#">Sign In</a></p>
         </form>
         <form class="login-form">
+          <div class="login-alert" id="login-alert">
           <span id="login-form-error"></span>
+        </div>
           <input type="text" id="existing_email" placeholder="Email Address"/>
           <input type="password" id="existing_password" placeholder="Password"/>
           <button id="login">login</button>
@@ -63,13 +67,27 @@
 
         // Fetch credentials.
         var email = document.querySelector('#existing_email').value;
-        var password = document.querySelector('#existing_password').value
+        var password = document.querySelector('#existing_password').value;
+        var alert = document.getElementById('login-alert');
+        
+        if(email.length === 0 || password.length === 0){
+            document.getElementById('login-form-error').innerHTML = 'Please enter a valid email/password.';
+            alert.style.display = "block"; 
+        }
 
+        else{
         firebase.auth().signInWithEmailAndPassword(email, password)
             .catch(function(error) {
                 // Login failed.
                 var errorCode = error.code;
                 var errorMessage = error.message;
+                
+                if (errorCode.length != 0) {
+                    alert.style.display = "block";
+                }
+                else {
+                    alert.style.display = "none";
+                }
 
                 console.log('Error code: ' + errorCode);
                 console.log('Error message: ' + errorMessage);
@@ -88,6 +106,7 @@
                         break;
                 }
             });
+        }
     });
     
     // Register a new user.
@@ -97,12 +116,25 @@
         
         var existing_email = document.querySelector('#email').value;
         var existing_password = document.querySelector('#password').value
-
+        var alert = document.getElementById('register-alert');
+        if(existing_email.length === 0 || existing_password.length === 0){
+            document.getElementById('registration-form-error').innerHTML = 'Please enter a valid email/password.';
+            alert.style.display = "block";
+            
+        }
+        
+        else{
         firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
             .catch(function(error) {
                 // Registration failed.
                 var errorCode = error.code;;
                 var errorMessage = error.message;
+                if (errorCode.length != 0) {
+                    alert.style.display = "block";
+                }
+                else {
+                    alert.style.display = "none";
+                }
                 console.log('Error code: ' + errorCode);
                 console.log('Error message: ' + errorMessage);
 
@@ -125,5 +157,6 @@
                 }
 
            });
+        }
     });
 </script>
