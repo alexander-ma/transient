@@ -9,7 +9,7 @@ html {
 html, body {
 	height: 100%;
 	margin: 0px;
-}	/*dummy*/
+}
 
 .body-wrapper {
 	height: 100%;
@@ -42,10 +42,6 @@ html, body {
 	margin-top: 5%;
 	text-align: center;
 	height: 32%;
-}
-
-p {
-	color: #fff;
 }
 
 #scheduled-channels {
