@@ -11,124 +11,123 @@
       <div class="form">
         <form class="register-form">
           <input type="text" id="name" placeholder="Name"/>
-          <input type="password" id="password" placeholder="Password"/>
           <input type="text" id="email" placeholder="Email Address"/>
+          <span type="registration-form-error"></span>
+          <input type="password" id="password" placeholder="Password"/>
           <button id="register">register</button>
           <p class="message">Already registered? <a href="#">Sign In</a></p>
         </form>
         <form class="login-form">
           <input type="text" id="existing_email" placeholder="Email Address"/>
+          <span id="login-form-error"></span>
           <input type="password" id="existing_password" placeholder="Password"/>
           <button id="login">login</button>
           <p class="message">Not registered? <a href="#">Create an account!</a></p>
         </form>
       </div>
     </div>
-
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="login/scripts/login.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-    <script>
-      // Initialize Firebase
-      var config = {
-        apiKey: "AIzaSyCubWxjE69MSMfZ9UiVRSLIkcc4QdyAsq0",
-        authDomain: "transient-318de.firebaseapp.com",
-        databaseURL: "https://transient-318de.firebaseio.com",
-        projectId: "transient-318de",
-        storageBucket: "transient-318de.appspot.com",
-        messagingSenderId: "124852436250"
-      };
-      firebase.initializeApp(config);
-    </script>
-
-    <!--Handle authentication events-->
-    <script>
-        // Triggers when the auth state change for instance when the user signs-in or signs-out.
-        firebase.auth().onAuthStateChanged(firebaseUser => {
-            if (firebaseUser) {
-                window.location = 'chat/chat.html';
-            }
-        });
-    </script>
-
-    <!--Handle page events-->
-    <script>
-        // Login an existing user.
-        document.querySelector('#login').addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            // Fetch credentials.
-            var email = document.querySelector('#existing_email').value;
-            var password = document.querySelector('#existing_password').value
-
-            var currentUser = firebase.auth().currentUser;
-
-            firebase.auth().signInWithEmailAndPassword(email, password)
-                .catch(function(error) {
-                    // Login failed.
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-
-                    console.log('Error code: ' + errorCode);
-                    console.log('Error message: ' + errorMessage);
-
-                    switch (errorCode) {
-                        case 'auth/wrong-password':
-
-                            break;
-                        case 'auth/user-disabled':
-
-                            break;
-
-                        case 'auth/user-not-found':
-                            window.onload = function() {
-                                document.getElementById("#existing_email").innerHTML = 'No user was identified with these credentials.';
-                            }
-                            break;
-
-                        case 'invalid-email':
-                            document.getElementById("#existing_email").innerHTML = 'No user was identified with these credentials.';
-                            break;
-                    }
-                });
-        });
-        
-        // Register a new user.
-        document.querySelector('#register').addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            var existing_email = document.querySelector('#email').value;
-            var existing_password = document.querySelector('#password').value
-
-            firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
-                .catch(function(error) {
-                    // Registration failed.
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    console.log('Error code: ' + errorCode);
-                    console.log('Error message: ' + errorMessage);
-
-                    switch (errorCode) {
-                        case 'auth/email-already-in-use':
-
-                            break;
-                        case 'auth/invalid-email':
-
-                            break;
-
-                        case 'auth/operation-not-allowed':
-
-                            break;
-
-                        case 'weak-password':
-
-                            break;
-                    }
-
-               });
-        });
-    </script>
 </body>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="login/scripts/login.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCubWxjE69MSMfZ9UiVRSLIkcc4QdyAsq0",
+    authDomain: "transient-318de.firebaseapp.com",
+    databaseURL: "https://transient-318de.firebaseio.com",
+    projectId: "transient-318de",
+    storageBucket: "transient-318de.appspot.com",
+    messagingSenderId: "124852436250"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<!--Handle authentication events-->
+<script>
+    // Triggers when the auth state change for instance when the user signs-in or signs-out.
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+        if (firebaseUser) {
+            window.location = 'chat/chat.html';
+        }
+    });
+</script>
+
+<!--Handle page events-->
+<script>
+    // Login an existing user.
+    document.querySelector('#login').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Fetch credentials.
+        var email = document.querySelector('#existing_email').value;
+        var password = document.queryselector('#existing_password').value
+
+        var currentUser = firebase.auth().currentUser;
+
+        firebase.auth().signInWithEmailAndPassword(email, password)
+            .catch(function(error) {
+                // Login failed.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+
+                console.log('Error code: ' + errorCode);
+                console.log('Error message: ' + errorMessage);
+
+                switch (errorCode) {
+                    case 'auth/user-disabled':
+                        document.getElementById('login-form-error').innerHTML = 'This email has been disabled, please use another.';
+                        break;
+                    case 'auth/user-not-found':
+                        document.getElementById('login-form-error').innerHTML = 'No user was identified with these credentials.';
+                        break;
+                    default: 
+                        document.getElementById('login-form-error').innerHTML = 'The email/password is incorrect or invalid.';
+                        break;
+                }
+            });
+    });
+    
+    // Register a new user.
+    document.querySelector('#register').addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        var existing_email = document.querySelector('#email').value;
+        var existing_password = document.querySelector('#password').value
+
+        firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
+            .catch(function(error) {
+                // Registration failed.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                console.log('Error code: ' + errorCode);
+                console.log('Error message: ' + errorMessage);
+
+                switch (errorCode) {
+                    case 'auth/email-already-in-use':
+                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
+
+                        break;
+                    case 'auth/invalid-email':
+                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
+
+                        break;
+
+                    case 'auth/operation-not-allowed':
+                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
+
+                        break;
+
+                    case 'weak-password':
+                        document.getElementById('registration-form-error').innerHTML = 'This email has been disabled, please use another.';
+
+                        break;
+                }
+
+           });
+    });
+</script>
