@@ -46,7 +46,9 @@
     <script>
         // Triggers when the auth state change for instance when the user signs-in or signs-out.
         firebase.auth().onAuthStateChanged(firebaseUser => {
-            window.location = (firebaseUser) ? 'chat/chat.html' : 'index.html';
+            if (firebaseUser) {
+                window.location = 'chat/chat.html';
+            }
         });
     </script>
 
