@@ -135,7 +135,7 @@ p {
   position: relative;
   clear: both;
   background: #95c2fd;
-  padding: 0.5em 1em;
+  padding: 0.em 1em;
   background: linear-gradient(40deg, rgba(255, 255, 255, 0.2) 00%, rgba(255, 255, 255, 0.3) 100%);
   border-radius: 3px;
   box-shadow: 0 5px 30px rgba(255, 255, 255, 0.1);
@@ -171,12 +171,12 @@ p {
 }
 
 .datestamp {
-  display: block;
+/*  display: block;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 0;
   color: #8b91a0;
   float: left;
-  opacity: 0;
+  opacity: 0;*/
 }
 
 .dt-alt {
