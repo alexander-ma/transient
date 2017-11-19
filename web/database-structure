@@ -1,79 +1,81 @@
-DATABASE
+DATABASE STRUCTURE
 
-    ROOT {
+ROOT {
 
-         "users" : {
-             #### TODO: profile pictures ####
-             "*user 1 hash*" : {
-                 "handle" : "",
-                 "firstName" : "",
-                 "lastName" : "",
-                 "email" : "",
-                 "friends" : { "*friend 1 user hash*", "*friend 2 user hash*", "*friend 3 user hash*", .... },
-                 "live-channels" : { "*live channel 1 hash*", "*live channel 2 hash*, "*live channel 3 hash*", .... }
-                 "dead-channels" : { "*dead channel 1 hash*", "*dead channel 2 hash*, "*dead channel 3 hash*", .... }
-             },
-             "*user 2 hash*" : { .... },
-             "*user 3 hash*" : { .... },
-             "*user 4 hash*" : { .... },
-
-             ...
-             ..
-             .
+     "users" : {
+         #### TODO: profile pictures ####
+         "*user 1 hash*" : {
+             "handle" : "",
+             "firstName" : "",
+             "lastName" : "",
+             "email" : "",
+             "friends" : { "*friend 1 user hash*", "*friend 2 user hash*", "*friend 3 user hash*", .... },
+             "liveChannels" : { "*live channel 1 hash*", "*live channel 2 hash*, "*live channel 3 hash*", .... }
+             "deadChannels" : { "*dead channel 1 hash*", "*dead channel 2 hash*, "*dead channel 3 hash*", .... }
          },
+         "*user 2 hash*" : { .... },
+         "*user 3 hash*" : { .... },
+         "*user 4 hash*" : { .... },
 
-         "live-channels" : {
-             "*channel 1 hash*" : {
-                 "owner" : "*owner hash*",
-                 "users" : { "*user hash 1*", "*user hash 2*", "*user hash 3*" },
-                 "isAlive" : "true/false",
-                 "activeUntil" : "date active until",
+         ...
+         ..
+         .
+     },
 
-                 #### TODO: Channel Icons? ####
-                 "icon" : "Channel Icon",
-             },
-             "*channel 2 hash*" : { .... },
-             "*channel 3 hash*" : { .... },
-             "*channel 1 hash*" : { .... },
+     "liveChannels" : {
+         "*channel 1 hash*" : {
+             "owner" : "*owner hash*",
+             "users" : { "*user hash 1*", "*user hash 2*", "*user hash 3*" },
+             "isAlive" : "true/false",
+             "activeUntil" : "date active until",
 
-             ...
-             ..
-             .
+             #### TODO: Channel Icons? ####
+             "icon" : "Channel Icon",
          },
-         
-         "dead-channels" : {
-            "*dead channel hash 1*" { .... },   
-            "*dead channel hash 2*" { .... },   
-            "*dead channel hash 3*" { .... },   
-            
+         "*channel 2 hash*" : { .... },
+         "*channel 3 hash*" : { .... },
+         "*channel 1 hash*" : { .... },
+
+         ...
+         ..
+         .
+     },
+     
+     "deadChannels" : {
+        "*dead channel hash 1*" { .... },   
+        "*dead channel hash 2*" { .... },   
+        "*dead channel hash 3*" { .... },   
+        
+        ...
+        ..
+        .
+     },
+
+     #### TODO: picture messages? ####
+     "messages" : {
+         "*channel 1 hash*" : {
+             "*message hash 1*" : {
+                "date" : "Message date",
+                "message" : "Message text"
+                "user" : "*user hash*"
+                "userHandle" : "*users handle*"
+                "picture" : "Attached Picture"
+            },
+            "*message hash 2*" : { .... },
+            "*message hash 3*" : { .... },
+            "*message hash 4*" : { .... },
+
             ...
             ..
             .
          },
+         "*channel 2 hash*" : { .... },
+         "*channel 3 hash*" : { .... },
+         "*channel 4 hash*" : { .... },
 
-         #### TODO: picture messages? ####
-         "messages" : {
-             "*channel 1 hash*" : {
-                 "*message hash 1*" : {
-                    "date" : "Message date",
-                    "message" : "Message text"
-                    "user" : "*user hash*"
-                    "picture" : "Attached Picture"
-                },
-                "*message hash 2*" : { .... },
-                "*message hash 3*" : { .... },
-                "*message hash 4*" : { .... },
+         ...
+         ..
+         .
+     }
 
-                ...
-                ..
-                .
-             },
-             "*channel 2 hash*" : { .... },
-             "*channel 3 hash*" : { .... },
-             "*channel 4 hash*" : { .... },
-
-             ...
-             ..
-             .
-         }
-    }
+}
