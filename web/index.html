@@ -70,42 +70,36 @@
         var password = document.querySelector('#existing_password').value;
         var alert = document.getElementById('login-alert');
         
-        if(email.length === 0 || password.length === 0){
+        if (email.length === 0 || password.length === 0) {
             document.getElementById('login-form-error').innerHTML = 'Please enter a valid email/password.';
             alert.style.display = "block"; 
         }
-
-        else{
-        firebase.auth().signInWithEmailAndPassword(email, password)
-            .catch(function(error) {
-                // Login failed.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                
-                if (errorCode.length != 0) {
-                    alert.style.display = "block";
-                }
-                else {
-                    alert.style.display = "none";
-                }
-
-                console.log('Error code: ' + errorCode);
-                console.log('Error message: ' + errorMessage);
-
-                switch (errorCode) {
-                    case 'auth/user-disabled':
-                        document.getElementById('login-form-error').innerHTML = 'This email has been disabled, please use another.';
-                        break;
+        else {
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .catch(function(error) {
+                    // Login failed.
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
                     
-                    case 'auth/user-not-found':
-                        document.getElementById('login-form-error').innerHTML = 'No user was identified with these credentials.';
-                        break;
+                    alert.style.display = (errorCode.length != 0) ? 'block' : 'none';
 
-                    default: 
-                        document.getElementById('login-form-error').innerHTML = 'The email/password is incorrect or invalid.';
-                        break;
-                }
-            });
+                    console.log('Error code: ' + errorCode);
+                    console.log('Error message: ' + errorMessage);
+
+                    switch (errorCode) {
+                        case 'auth/user-disabled':
+                            document.getElementById('login-form-error').innerHTML = 'This email has been disabled, please use another.';
+                            break;
+                        
+                        case 'auth/user-not-found':
+                            document.getElementById('login-form-error').innerHTML = 'No user was identified with these credentials.';
+                            break;
+
+                        default: 
+                            document.getElementById('login-form-error').innerHTML = 'The email/password is incorrect or invalid.';
+                            break;
+                    }
+                });
         }
     });
     
@@ -117,46 +111,42 @@
         var existing_email = document.querySelector('#email').value;
         var existing_password = document.querySelector('#password').value
         var alert = document.getElementById('register-alert');
-        if(existing_email.length === 0 || existing_password.length === 0){
+
+        if (existing_email.length === 0 || existing_password.length === 0) {
             document.getElementById('registration-form-error').innerHTML = 'Please enter a valid email/password.';
             alert.style.display = "block";
-            
         }
-        
-        else{
-        firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
-            .catch(function(error) {
-                // Registration failed.
-                var errorCode = error.code;;
-                var errorMessage = error.message;
-                if (errorCode.length != 0) {
-                    alert.style.display = "block";
-                }
-                else {
-                    alert.style.display = "none";
-                }
-                console.log('Error code: ' + errorCode);
-                console.log('Error message: ' + errorMessage);
+        else {
+            firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
+                .catch(function(error) {
+                    // Registration failed.
+                    var errorCode = error.code;;
+                    var errorMessage = error.message;
 
-                switch (errorCode) {
-                    case 'auth/email-already-in-use':
-                        document.getElementById('registration-form-error').innerHTML = 'This email is already in use.';
-                        break;
+                    alert.style.display = (errorCode.length != 0) ? 'block' : 'none';
 
-                    case 'auth/invalid-email':
-                        document.getElementById('registration-form-error').innerHTML = 'Enter a valid email address.';
-                        break;
+                    console.log('Error code: ' + errorCode);
+                    console.log('Error message: ' + errorMessage);
 
-                    case 'auth/operation-not-allowed':
-                        document.getElementById('registration-form-error').innerHTML = 'Email/password authentication is not enabled in firebase.';
-                        break;
+                    switch (errorCode) {
+                        case 'auth/email-already-in-use':
+                            document.getElementById('registration-form-error').innerHTML = 'This email is already in use.';
+                            break;
 
-                    case 'weak-password':
-                        document.getElementById('registration-form-error').innerHTML = 'Provided password is too weak. Get it on steroids.';
-                        break;
-                }
+                        case 'auth/invalid-email':
+                            document.getElementById('registration-form-error').innerHTML = 'Enter a valid email address.';
+                            break;
 
-           });
+                        case 'auth/operation-not-allowed':
+                            document.getElementById('registration-form-error').innerHTML = 'Email/password authentication is not enabled in firebase.';
+                            break;
+
+                        case 'weak-password':
+                            document.getElementById('registration-form-error').innerHTML = 'Provided password is too weak. Get it on steroids.';
+                            break;
+                    }
+
+               });
         }
     });
 </script>
