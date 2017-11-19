@@ -13,13 +13,54 @@ html, body {
 
 .body-wrapper {
 	height: 100%;
-	background: #f0e68c;
+	background: #FFF;
 }
 
 .body-wrapper:after {
     content: "";
     display: table;
     clear: both;
+}
+
+#user-section img {
+	width: 50%;
+	height: auto;
+	border-radius: 50%;
+	margin: 0 auto;
+	margin-top: 5%;
+	display: block;
+}
+
+#user-section .button {
+	margin: 0 auto;
+	margin-top: 5%;
+	display: block;
+}
+
+#live-channels {
+	margin: 0 auto;
+	margin-top: 5%;
+	text-align: center;
+	height: 32%;
+}
+
+#scheduled-channels {
+	margin: 0 auto;
+	margin-top: 5%;
+	text-align: center;
+	height: 32%;
+}
+
+#rightside-bar-footer {
+	height: 10%;
+}
+
+#rightside-bar-footer .button {
+	margin: 0 auto;
+	margin-top: 5%;
+	display: block;
+
+
 }
 
 .column {
@@ -29,15 +70,15 @@ html, body {
 }
 
 .chatbody {
-	width:60%;
+	width: 65%;
 }
 
 .leftside-bar {
-	width: 22%;
-	background-color: #344;
+	width: 20%;
+	background-color: #76b852;
 }
 
 .rightside-bar {
-	width: 18%;
-	background-color: #344;
+	width: 15%;
+	background-color: #76b852;
 }
