@@ -173,6 +173,7 @@ Transient.prototype.signOut = function() {
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 Transient.prototype.onAuthStateChanged = function(user) {
   if (user) { // User is signed in!
+    // TODO: Push UID to real-time database.
     // Get profile pic and user's name from the Firebase user object.
     var profilePicUrl = user.photoURL;
     var userName = user.displayName;
