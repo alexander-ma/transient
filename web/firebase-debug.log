@@ -1,28 +1,28 @@
-[debug] [2017-11-18T23:53:02.703Z] ----------------------------------------------------------------------
-[debug] [2017-11-18T23:53:02.705Z] Command:       /usr/bin/node /home/julian/.npm-global/bin/firebase serve
-[debug] [2017-11-18T23:53:02.705Z] CLI Version:   3.15.2
-[debug] [2017-11-18T23:53:02.705Z] Platform:      linux
-[debug] [2017-11-18T23:53:02.705Z] Node Version:  v8.8.1
-[debug] [2017-11-18T23:53:02.705Z] Time:          Sat Nov 18 2017 17:53:02 GMT-0600 (CST)
-[debug] [2017-11-18T23:53:02.705Z] ----------------------------------------------------------------------
+[debug] [2017-11-19T01:59:27.952Z] ----------------------------------------------------------------------
+[debug] [2017-11-19T01:59:27.954Z] Command:       /usr/bin/node /home/julian/.npm-global/bin/firebase serve
+[debug] [2017-11-19T01:59:27.954Z] CLI Version:   3.15.2
+[debug] [2017-11-19T01:59:27.954Z] Platform:      linux
+[debug] [2017-11-19T01:59:27.954Z] Node Version:  v8.8.1
+[debug] [2017-11-19T01:59:27.954Z] Time:          Sat Nov 18 2017 19:59:27 GMT-0600 (CST)
+[debug] [2017-11-19T01:59:27.954Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2017-11-18T23:53:02.714Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2017-11-18T23:53:02.714Z] > authorizing via signed-in user
-[debug] [2017-11-18T23:53:02.716Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/transient-318de  
- Sat Nov 18 2017 17:53:02 GMT-0600 (CST)
-[debug] [2017-11-18T23:53:03.037Z] <<< HTTP RESPONSE 200
-[debug] [2017-11-18T23:53:03.037Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/transient-318de/tokens  
- Sat Nov 18 2017 17:53:03 GMT-0600 (CST)
-[debug] [2017-11-18T23:53:03.417Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-19T01:59:27.963Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-11-19T01:59:27.964Z] > authorizing via signed-in user
+[debug] [2017-11-19T01:59:27.965Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/transient-318de  
+ Sat Nov 18 2017 19:59:27 GMT-0600 (CST)
+[debug] [2017-11-19T01:59:28.309Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-19T01:59:28.310Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/transient-318de/tokens  
+ Sat Nov 18 2017 19:59:28 GMT-0600 (CST)
+[debug] [2017-11-19T01:59:28.684Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from '/home/julian/transient/web'...
 [info] 
-[debug] [2017-11-18T23:53:03.419Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/transient-318de  
- Sat Nov 18 2017 17:53:03 GMT-0600 (CST)
-[debug] [2017-11-18T23:53:03.631Z] <<< HTTP RESPONSE 200
-[debug] [2017-11-18T23:53:03.631Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/124852436250/clients/_:getWebAppConfig  
- Sat Nov 18 2017 17:53:03 GMT-0600 (CST)
-[debug] [2017-11-18T23:53:03.954Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-19T01:59:28.686Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/transient-318de  
+ Sat Nov 18 2017 19:59:28 GMT-0600 (CST)
+[debug] [2017-11-19T01:59:28.875Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-19T01:59:28.876Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/124852436250/clients/_:getWebAppConfig  
+ Sat Nov 18 2017 19:59:28 GMT-0600 (CST)
+[debug] [2017-11-19T01:59:29.074Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: ./
 [info] ✔  hosting: Local server: http://localhost:5000
 
