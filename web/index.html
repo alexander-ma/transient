@@ -108,13 +108,18 @@
         e.preventDefault();
         e.stopPropagation();
         
+        var name = document.querySelector('#name').value;
         var existing_email = document.querySelector('#email').value;
         var existing_password = document.querySelector('#password').value
         var alert = document.getElementById('register-alert');
 
-        if (existing_email.length === 0 || existing_password.length === 0) {
+        if (name.length === 0) {
+            document.getElementById('registration-form-error').innerHTML = 'Please enter a name.';
+            alert.style.display = 'block'; 
+        }
+        else if (existing_email.length === 0 || existing_password.length === 0) {
             document.getElementById('registration-form-error').innerHTML = 'Please enter a valid email/password.';
-            alert.style.display = "block";
+            alert.style.display = 'block';
         }
         else {
             firebase.auth().createUserWithEmailAndPassword(existing_email, existing_password)
