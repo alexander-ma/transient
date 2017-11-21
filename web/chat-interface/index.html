@@ -5,6 +5,7 @@
   <title>Chat window Switch</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+  <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
   <link rel="stylesheet" href="css/style.css"> 
 </head>
 
@@ -21,7 +22,6 @@
       <div id = "live-channels">
         <p>Live Channels</p>
         <hr>
-
         <ul id = "live-channels-list">
         </ul>
       </div>
@@ -45,13 +45,42 @@
 
         <!-- Modal content -->
         <div class="modal-content">
-          <span class="close">&times;</span>
-          <center><h1> Create a new Channel! </h1></center>
+          <!-- pick between join and create -->
+          <div id = "modal-choose-action">
+
+            <div id = "modal-choose-banner">
+              <p> Some random text </p>
+            </div>
+
+            <div class = "modal-row" id = "modal-choose-action-left">
+              <p> Create </p>
+
+            </div>
+
+            <div class = "modal-row" id = "modal-choose-action-right">
+              <p> Join </[>
+            </div>
+          </div>
+
+          <!-- create a channel -->
+          <div id = "modal-create-channel">
+            <center><h1> Create a new Channel! </h1></center>
+            <form>
+              Chat Name:
+              <input type="text" name="chatname">
+
+            </form>
+            <button type="button" class="button" id="createChannel"> Create Channel </button>
+          </div>
+
+
+
+
+
+
+
         </div>
-
       </div>
-
-
 
       <div id='chat' class="chat">
         <div class="chat-container active" id='cont1'>
@@ -320,6 +349,10 @@
           <div class="user-name">Goku?</div>
         </div>
       <!--**************************************************-->
+      </div>
+
+      <div class="rightside-bar-footer">
+        <button type="button" class="button" id="logoutbtn"> Logout </button>
       </div>
     </div>
 

@@ -1,3 +1,6 @@
+
+
+
 $(document).ready(function(){
       $('.user-profile').click(function() {
           if(!$(this).hasClass('active')){
@@ -15,8 +18,43 @@ $(document).ready(function(){
           }
       });
       showUI('#cont1');
-  });
+      updateUI();
+});
   
+var config = {
+  apiKey: "AIzaSyCubWxjE69MSMfZ9UiVRSLIkcc4QdyAsq0",
+  authDomain: "transient-318de.firebaseapp.com",
+  databaseURL: "https://transient-318de.firebaseio.com",
+  projectId: "transient-318de",
+  storageBucket: "transient-318de.appspot.com",
+  messagingSenderId: "124852436250"
+};
+firebase.initializeApp(config); 
+
+// Triggers when the auth state change for instance when the user signs-in or signs-out.
+firebase.auth().onAuthStateChanged(firebaseUser => {
+    if (firebaseUser) {
+        // DB write should happen after registration, or currentUser field is null.
+        var db = firebase.database();
+        var usersRef = db.ref().child('users');
+
+        usersRef.set({
+            email: document.querySelector('#email').value,
+            username: document.querySelector('#name').value
+        });
+
+        window.location = 'index.html';
+    }
+    else{
+        console.log('User Not Logged in');
+        window.location = '../index.html';
+    }
+});
+
+function updateUI() {
+  // grab data from firebase and dynamically update the webpage
+}
+
 function showUI(ele){
     console.log($(ele));
     var kids = $(ele).children(), temp;
@@ -66,6 +104,12 @@ $(document).click(function(event){
     }
   }
 });
+
+$("#logoutbtn").click(function() {
+  console.log("signing out user");
+  firebase.auth().signOut();
+});
+
 
 
 

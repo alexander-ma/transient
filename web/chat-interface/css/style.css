@@ -15,6 +15,95 @@ html, body {
   overflow-y: hidden;
 }
 
+/*Modal Content*/
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.85); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: 0 auto;
+    border: 1px solid #888;
+    width: 38%;
+    height: 60%;
+}
+
+.modal-content .button {
+  margin: 0 auto;
+  display: block;
+}
+
+#modal-create-channel{
+  display: none;
+  height: 70%;
+}
+
+#modal-choose-action {
+  padding-left: 5%;
+  padding-right: 5%;
+  height: 100%;
+  text-align: center;
+}
+
+#modal-choose-action p {
+  color: black;
+  font-size: 1.7em;
+}
+
+#modal-choose-action-left {
+  margin-top: 5%;
+  float: left;
+  width: 45%;
+  border: .5px solid grey;
+  border-radius: 1%;
+}
+
+#modal-choose-action-left p {
+  color:blue;
+  font-size: 1.4em;
+}
+
+#modal-choose-action-right {
+  margin-top: 5%;
+  float: left;
+  margin-left: 10%;
+  width: 45%;
+  border: .5px solid grey;
+  border-radius: 1%;
+}
+
+#modal-choose-action-right p {
+  color:green;
+  font-size: 1.4em;
+}
+
+.modal-choose-banner {
+  height: 30%;
+}
+
+.modal-row {
+  float: left;
+  height: 70%;
+}
+
+.modal-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
 body {
   background: #DFDFEF;
   font-family: 'Helvetica Neue';
@@ -126,7 +215,7 @@ body {
   position: absolute;
   padding: 20px;
   width: 100%;
-  height: 88%;
+  height: 85%;
   overflow-y: scroll;
   transform: translateX(100%);
   opacity: 0;
@@ -236,7 +325,7 @@ p {
 
 .chat-control {
   padding: 0.4em;
-  height: 12%;
+  height: 10%;
 }
 
 .chat-input {
@@ -252,8 +341,9 @@ p {
 }
 
 .chat-users {
-  background: #fff;
-  height: 100%;
+  background-color: #344;
+  color: #fff;
+  height: 90%;
   width: 100%;
 }
 
@@ -278,11 +368,17 @@ p {
   background-color: #344;
 }
 
+#logoutbtn {
+  margin: 0 auto;
+  margin-top: 0;
+  display: block;
+}
+
 .user-profile {
   float: left;
   width: 50px;
   height: 50px;
-  display: inline-block;
+  display: in-block;
   border-radius: 100%;
   background: #DFDFEF;
   margin: 0 10px;
@@ -312,48 +408,6 @@ p {
   -webkit-filter: grayscale(0%);
   filter: grayscale(0%);
 }
-
-/*Modal Content*/
-
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.85); /* Black w/ opacity */
-}
-
-/* Modal Content */
-.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 60%;
-    height: 60%;
-}
-
-/* The Close Button */
-.close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-}
-
 
 
 
