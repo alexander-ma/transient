@@ -3,6 +3,19 @@
     <title>Transient Messaging System</title>
     <link href="login/styles/login.css" type="text/css" rel="stylesheet">
     <script type="text/javascript" src="login/scripts/login.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCubWxjE69MSMfZ9UiVRSLIkcc4QdyAsq0",
+        authDomain: "transient-318de.firebaseapp.com",
+        databaseURL: "https://transient-318de.firebaseio.com",
+        projectId: "transient-318de",
+        storageBucket: "transient-318de.appspot.com",
+        messagingSenderId: "124852436250"
+      };
+      firebase.initializeApp(config);
+    </script>
 </head>
 
 <body>
@@ -34,19 +47,6 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script type="text/javascript" src="login/scripts/login.js"></script>
-<script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
-<script>
-  // Initialize Firebase
-  var config = {
-    apiKey: "AIzaSyCubWxjE69MSMfZ9UiVRSLIkcc4QdyAsq0",
-    authDomain: "transient-318de.firebaseapp.com",
-    databaseURL: "https://transient-318de.firebaseio.com",
-    projectId: "transient-318de",
-    storageBucket: "transient-318de.appspot.com",
-    messagingSenderId: "124852436250"
-  };
-  firebase.initializeApp(config);
-</script>
 
 <!--Handle authentication events-->
 <script>
@@ -113,6 +113,8 @@
         var existing_password = document.querySelector('#password').value
         var alert = document.getElementById('register-alert');
 
+        var database = firebase.database();
+
         if (name.length === 0) {
             document.getElementById('registration-form-error').innerHTML = 'Please enter a name.';
             alert.style.display = 'block'; 
@@ -152,6 +154,12 @@
                     }
 
                });
+
+            // DB write should happen after registration, or currentUser field is null.
+            database.ref('users/' + firebase.auth().currentUser.uid).set({
+                username: name,
+                email: existing_email
+            });
         }
     });
 </script>

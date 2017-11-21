@@ -157,12 +157,13 @@ Transient.prototype.saveImageMessage = function(event) {
   }
 };
 
+// TODO: Remove. Sign-ins are handled through login form.
 // Signs-in to Transient
-Transient.prototype.signIn = function() {
-  // Sign in Firebase using popup auth and Google as the identity provider.
-  var provider = new firebase.auth.GoogleAuthProvider();
-  this.auth.signInWithPopup(provider);
-};
+//Transient.prototype.signIn = function() {
+  //// Sign in Firebase using popup auth and Google as the identity provider.
+  //var provider = new firebase.auth.GoogleAuthProvider();
+  //this.auth.signInWithPopup(provider);
+//};
 
 // Signs-out of Transient
 Transient.prototype.signOut = function() {
@@ -173,7 +174,7 @@ Transient.prototype.signOut = function() {
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 Transient.prototype.onAuthStateChanged = function(user) {
   if (user) { // User is signed in!
-    // TODO: Push UID to real-time database.
+
     // Get profile pic and user's name from the Firebase user object.
     var profilePicUrl = user.photoURL;
     var userName = user.displayName;
