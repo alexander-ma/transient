@@ -53,7 +53,16 @@
     // Triggers when the auth state change for instance when the user signs-in or signs-out.
     firebase.auth().onAuthStateChanged(firebaseUser => {
         if (firebaseUser) {
-            window.location = 'chat/chat.html';
+            // DB write should happen after registration, or currentUser field is null.
+            var db = firebase.database();
+            var usersRef = db.ref().child('users');
+
+            usersRef.set({
+                email: document.querySelector('#email').value,
+                username: document.querySelector('#name').value
+            });
+
+            window.location = 'chat-interface/index.html';
         }
     });
 </script>
@@ -154,12 +163,6 @@
                     }
 
                });
-
-            // DB write should happen after registration, or currentUser field is null.
-            database.ref('users/' + firebase.auth().currentUser.uid).set({
-                username: name,
-                email: existing_email
-            });
         }
     });
 </script>
