@@ -101,6 +101,9 @@ $(document).click(function(event){
   if($(event.target).is('#myModal') && !$(event.target).is('#new-chat')) {
     if($('#myModal').css('display') != 'none') {
       $('#myModal').hide();
+      $("#modal-choose-action").show();
+      $("#modal-join-channel").hide();
+      $("#modal-create-channel").hide();
     }
   }
 });
@@ -110,6 +113,22 @@ $("#logoutbtn").click(function() {
   firebase.auth().signOut();
 });
 
+$("#goToJoin").click(function() {
+  console.log("going to join modal");
+  $("#modal-choose-action").hide();
+  $("#modal-join-channel").show();
+});
 
+$("#goToCreate").click(function() {
+  console.log("going to create modal");
+  $("#modal-choose-action").hide();
+  $("#modal-create-channel").show();
+});
 
+$(".backToAction").click(function() {
+  console.log("Going to back to original Modal");
+  $("#modal-create-channel").hide();
+  $("#modal-join-channel").hide();
+  $("#modal-choose-action").show();
+});
 

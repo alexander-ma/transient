@@ -45,6 +45,7 @@
 
         <!-- Modal content -->
         <div class="modal-content">
+
           <!-- pick between join and create -->
           <div id = "modal-choose-action">
 
@@ -55,24 +56,44 @@
             <div class = "modal-row" id = "modal-choose-action-left">
               <p> Create </p>
 
+              <button type="button" class="button" id="goToCreate"> Create </button>
             </div>
 
             <div class = "modal-row" id = "modal-choose-action-right">
-              <p> Join </[>
+              <p> Join </p>
+              <button type="button" class="button" id="goToJoin"> Join </button>
             </div>
           </div>
 
           <!-- create a channel -->
           <div id = "modal-create-channel">
-            <center><h1> Create a new Channel! </h1></center>
-            <form>
-              Chat Name:
-              <input type="text" name="chatname">
+            <center><h1> CREATE YOUR CHANNEL </h1></center>
+            <!-- TODO: create a div here to partition the page -->
 
-            </form>
+              <p> By creating a channel you will have access to free text chat amongst people you invite </p>
+
+              <form>
+                Chat Name:
+                <input type="text" name="chatname">
+              </form>
+
+            <button type="button" class="button backToAction"> back </button>
             <button type="button" class="button" id="createChannel"> Create Channel </button>
           </div>
 
+
+          <div id = "modal-join-channel">
+            <center><h1> JOIN A CHANNEL</h1></center>
+            <!-- TODO: create a div here to partition the page -->
+            <p> Enter a invite link below to join an existing transcient channel <p>
+            <form>
+              Channel:
+              <input type="text" name="chathash">
+            </form>
+
+            <button type="button" class="button backToAction"> back </button>
+            <button type="button" class="button" id="joinChannel"> Create Channel </button>
+          </div>
 
 
 

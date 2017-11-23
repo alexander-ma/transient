@@ -46,8 +46,23 @@ html, body {
 }
 
 #modal-create-channel{
+  margin: 0 auto;
   display: none;
   height: 70%;
+}
+
+#modal-create-channel p {
+  text-align: center;
+}
+
+#modal-join-channel {
+  margin: 0 auto;
+  display: none;
+  height: 70%;
+}
+
+#modal-join-channel p{
+  text-align: center;
 }
 
 #modal-choose-action {
