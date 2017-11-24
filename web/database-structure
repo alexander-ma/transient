@@ -21,7 +21,6 @@ ROOT {
          ..
          .
      },
-<<<<<<< HEAD
 
      #### Channels that are alive, but are possibly inactive due to being outside of their
      #### valid time range
@@ -37,15 +36,6 @@ ROOT {
              "aliveUntil" : "date active until",
              "activeWeekdays" : { "M", "T", "W", "Th", "F", "Sa", "Su" },
              "activeTimes" : { "*HH:MM*-*HH:MM*", "Military time" },
-=======
-
-     "liveChannels" : {
-         "*channel 1 hash*" : {
-             "owner" : "*owner hash*",
-             "users" : { "*user hash 1*", "*user hash 2*", "*user hash 3*" },
-             "isAlive" : "true/false",
-             "activeUntil" : "date active until",
->>>>>>> d9ea9c8276533f11d6981e824537537309e7ee97
 
              #### TODO: Channel Icons? ####
              "icon" : "Channel Icon",
@@ -59,10 +49,7 @@ ROOT {
          .
      },
      
-<<<<<<< HEAD
      #### Channels that are perminantly dead
-=======
->>>>>>> d9ea9c8276533f11d6981e824537537309e7ee97
      "deadChannels" : {
         "*dead channel hash 1*" { .... },   
         "*dead channel hash 2*" { .... },   
