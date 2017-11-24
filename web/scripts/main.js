@@ -15,6 +15,8 @@
  */
 'use strict';
 
+// TODO: do more login checks
+
 // Initializes Transient.
 function Transient() {
   this.checkSetup();
@@ -59,28 +61,81 @@ Transient.prototype.initFirebase = function() {
   this.auth = firebase.auth();
   this.database = firebase.database();
   this.storage = firebase.storage();
+
+  // Init global static refs
+  this.liveChannelsRef = this.database.ref("liveChannels");
+    
   // Initiates Firebase auth and listen to auth state changes.
   this.auth.onAuthStateChanged(this.onAuthStateChanged.bind(this));
 };
 
-// Loads chat messages history and listens for upcoming ones.
-Transient.prototype.loadMessages = function() {
-  // Reference to the /messages/ database path.
-  this.messagesRef = this.database.ref('messages');
+Transient.prototype.loadUserChannels = function() {
+    // TODO this should be user hash. If its not then change it
+    var currentUser = this.auth.currentUser;
+
+    this.channelsRef = this.database.ref('');
+}
+
+// Loads chat messages for the input channel to the chat interface pannel
+Transient.prototype.loadActiveChannel = function() {
+  // Reference to the messages for the active channel
+  this.activeChannelMessagesRef = database.child("messages").child(this.activeChannel);
+
+  // TODO: what is this for??
   // Make sure we remove all previous listeners.
   this.messagesRef.off();
 
-  // Loads the last 12 messages and listen for new ones.
+  // Loads the last 20 messages and listen for new ones.
   var setMessage = function(data) {
     var val = data.val();
-    this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl);
+    this.displayMessage(val.userHandle, val.message, val.date);
   }.bind(this);
-  this.messagesRef.limitToLast(12).on('child_added', setMessage);
-  this.messagesRef.limitToLast(12).on('child_changed', setMessage);
+  this.messagesRef.limitToLast(20).on('child_added', setMessage);
+  this.messagesRef.limitToLast(20).on('child_changed', setMessage);
 };
+
+Transient.prototype.createNewChannel = function(channelName, channelOwner, endDate,
+                                                activeWeekdaysList, activeTimesList) {
+    // TODO: current user is owner
+    // check that the channel will be alive
+    // Check that the channel is active at least at some point
+    // validate activeTimes list
+    // Validate weekdays list
+    
+    this.liveChannelsRef.push({
+        name: channelName,
+        owner: channelOwner,
+        users: { this.activeUser },
+        isAlive: true,
+        isActive: channelIsActive,
+        aliveUntil: endDate,
+        activeWeekdays: activeWeekdaysList,
+        activeTimes: activeTimes
+    }).then(function() {
+        // TODO: add new channel to channels list. Possibly the active or inactive list
+        // on the UI
+    });
+}
+
+Transient.prototype.addUserToChannel = function(channelID, userID) {
+    // TODO: ensure current user is owner
+    // add user
+    // Ensure channel exists and is alive
+    // Ensure user exists
+    // Ensure not a duplicate user
+
+    // Get the list of users for this channel
+    var channelUserList = this.liveChannelsRef.child(channelID).child("users");
+
+
+    channelUserList.push(userID).then(function() {
+        // TODO: add to list of users on UI
+    });
+}
 
 // Saves a new message on the Firebase DB.
 Transient.prototype.saveMessage = function(e) {
+  // TODO: what does this do?
   e.preventDefault();
   // Check that the user entered a message and is signed in.
   if (this.messageInput.value && this.checkSignedInWithMessage()) {
@@ -170,27 +225,53 @@ Transient.prototype.signOut = function() {
   this.auth.signOut();
 };
 
+Transient.prototype.loadUserChannels = function() {
+  var userLiveChannels = this.activeUserRef.child("liveChannels");
+  var userDeadChannels = this.activeUserRef.child("deadChannels");
+
+    // TODO: do something with these
+}
+
+Transient.prototype.loadUserProfile(user) {
+  // Get profile pic and user's name from the Firebase user object.
+  var profilePicUrl = user.photoURL;
+  var userName = user.displayName;
+
+  this.activeUserRef = this.database().ref("users").child(this.activeUserID);
+
+  // Set the user's profile pic and name.
+  this.userPic.style.backgroundImage = 'url(' + (profilePicUrl || '/images/profile_placeholder.png') + ')';
+  this.userName.textContent = userName;
+
+  // Show user's profile and sign-out button.
+  this.userName.removeAttribute('hidden');
+  this.userPic.removeAttribute('hidden');
+  this.signOutButton.removeAttribute('hidden');
+
+  // Load all of the users live channels
+  this.loadUserChannels();
+
+  // Set active channel based on first listed live channel this user
+  // is a member of 
+  this.activeChannel = this.activeUserRef.child("liveChannels").limitToFirst();
+  this.activeChannelRef = this.database().ref("liveChannels").child(this.activeChannel);
+}
+
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 Transient.prototype.onAuthStateChanged = function(user) {
   if (user) { // User is signed in!
-    // Get profile pic and user's name from the Firebase user object.
-    var profilePicUrl = user.photoURL;
-    var userName = user.displayName;
+    // TODO:
+    this.activeUserID = user.userID;
 
-    // Set the user's profile pic and name.
-    this.userPic.style.backgroundImage = 'url(' + (profilePicUrl || '/images/profile_placeholder.png') + ')';
-    this.userName.textContent = userName;
-
-    // Show user's profile and sign-out button.
-    this.userName.removeAttribute('hidden');
-    this.userPic.removeAttribute('hidden');
-    this.signOutButton.removeAttribute('hidden');
+    // Load all user attributes to the UI
+    this.loadActiveUserProfile(user);
 
     // Hide sign-in button.
     this.signInButton.setAttribute('hidden', 'true');
 
-    // We load currently existing chant messages.
-    this.loadMessages();
+    // We load currently existing chat messages for the user first active channel
+    // For this user
+    this.loadActiveChannel();
 
     // We save the Firebase Messaging Device token and enable notifications.
     this.saveMessagingDeviceToken();
@@ -202,6 +283,10 @@ Transient.prototype.onAuthStateChanged = function(user) {
 
     // Show sign-in button.
     this.signInButton.removeAttribute('hidden');
+
+    // TODO: Clear user channels
+    // TODO: Clear shown messages
+    // Go to login page?
   }
 };
 
@@ -267,7 +352,9 @@ Transient.MESSAGE_TEMPLATE =
 Transient.LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif';
 
 // Displays a Message in the UI.
-Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri) {
+Transient.prototype.displayMessage = function(userHandle, message, date) {
+  // TODO: Do this
+  // TODO: add support for picture messages
   var div = document.getElementById(key);
   // If an element for that message does not exists yet we create it.
   if (!div) {
