@@ -41,7 +41,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
         updateUI(firebaseUser);
     }
     else {
-        console.log('Login failed. Redirecting back to login page.');
+        console.log('Signing out user...');
         window.location = '../../index.html';
     }
 });
@@ -92,6 +92,7 @@ function hideUI(ele) {
 /* Displays the channel action interface. */
 $("#new-chat").click(function() {
   $("#myModal").show();
+  $("#modal-choose-action").show();
 });
 
 /* Hides the channel action interface. */
@@ -148,17 +149,23 @@ $(".backToAction").click(function() {
 $("#create-channel-button").click(function() {
     console.log("Creating channel...");    
 
+    var channelName = document.querySelector('#channel-name').value;
+
+    var db = firebase.database();
+    var currentUserLiveChannelsRef = db.ref('users/' + firebase.auth().currentUser.uid + '/live-channels/');
+                                     
+    var newLiveChannelRef = currentUserLiveChannelsRef.push({
+        name: channelName
+    });  
+
+    // TODO: Provide this hash to the channel creator
+    var channelInvitationHash = newLiveChannelRef.key;
+
     $("#myModal").hide();
     $("#modal-create-channel").hide();
 
-    var db = firebase.database();
-    var currentUserUID = firebase.auth().currentUser.uid; 
-
-    firebase.database().ref('users/' + currentUserUID).set({
-                
-    });
-
-    // TODO: Swap the chat box the user sees to the created channel and 
-    // display modal for inviting friends.
+    // TODO: Swap the chat box to the created channel and display modal 
+    // with 'channelInvitationHash' string for the channel creator
+    // to copy + share.
 });
 
