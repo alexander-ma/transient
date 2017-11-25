@@ -1,36 +1,36 @@
-[debug] [2017-11-21T20:15:52.469Z] ----------------------------------------------------------------------
-[debug] [2017-11-21T20:15:52.472Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
-[debug] [2017-11-21T20:15:52.473Z] CLI Version:   3.15.2
-[debug] [2017-11-21T20:15:52.473Z] Platform:      darwin
-[debug] [2017-11-21T20:15:52.473Z] Node Version:  v6.9.1
-[debug] [2017-11-21T20:15:52.474Z] Time:          Tue Nov 21 2017 14:15:52 GMT-0600 (CST)
-[debug] [2017-11-21T20:15:52.474Z] ----------------------------------------------------------------------
+[debug] [2017-11-25T04:10:02.588Z] ----------------------------------------------------------------------
+[debug] [2017-11-25T04:10:02.590Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve
+[debug] [2017-11-25T04:10:02.590Z] CLI Version:   3.15.3
+[debug] [2017-11-25T04:10:02.590Z] Platform:      darwin
+[debug] [2017-11-25T04:10:02.590Z] Node Version:  v8.9.1
+[debug] [2017-11-25T04:10:02.591Z] Time:          Fri Nov 24 2017 22:10:02 GMT-0600 (CST)
+[debug] [2017-11-25T04:10:02.591Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2017-11-21T20:15:52.494Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2017-11-21T20:15:52.495Z] > authorizing via signed-in user
-[debug] [2017-11-21T20:15:52.497Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2017-11-21T20:15:52.498Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/erhM8puvIWWJxaspC_RL1zICDr_-aEkpav_Pjnj5yVs',
+[debug] [2017-11-25T04:10:02.602Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2017-11-25T04:10:02.602Z] > authorizing via signed-in user
+[debug] [2017-11-25T04:10:02.604Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2017-11-25T04:10:02.604Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token { refresh_token: '1/GSZuBk8UbYD2psHwNGeR_6qvcHjFg2-6nldtN7TCH_p04fIvJkrHZ88EsXKZeGK8',
   client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
   client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
   grant_type: 'refresh_token',
   scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Tue Nov 21 2017 14:15:52 GMT-0600 (CST)
-[debug] [2017-11-21T20:15:52.648Z] <<< HTTP RESPONSE 200
-[debug] [2017-11-21T20:15:52.651Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/transient-318de  
- Tue Nov 21 2017 14:15:52 GMT-0600 (CST)
-[debug] [2017-11-21T20:15:53.163Z] <<< HTTP RESPONSE 200
-[debug] [2017-11-21T20:15:53.164Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/transient-318de/tokens  
- Tue Nov 21 2017 14:15:53 GMT-0600 (CST)
-[debug] [2017-11-21T20:15:53.725Z] <<< HTTP RESPONSE 200
+ Fri Nov 24 2017 22:10:02 GMT-0600 (CST)
+[debug] [2017-11-25T04:10:02.786Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-25T04:10:02.805Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/transient-318de  
+ Fri Nov 24 2017 22:10:02 GMT-0600 (CST)
+[debug] [2017-11-25T04:10:03.300Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-25T04:10:03.301Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/transient-318de/tokens  
+ Fri Nov 24 2017 22:10:03 GMT-0600 (CST)
+[debug] [2017-11-25T04:10:03.739Z] <<< HTTP RESPONSE 200
 [info] 
-[info] === Serving from '/Users/KaTaiHo/Desktop/GitHub/461LProject/transient/web'...
+[info] === Serving from '/Users/julian/transient/web'...
 [info] 
-[debug] [2017-11-21T20:15:53.729Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/transient-318de  
- Tue Nov 21 2017 14:15:53 GMT-0600 (CST)
-[debug] [2017-11-21T20:15:53.937Z] <<< HTTP RESPONSE 200
-[debug] [2017-11-21T20:15:53.937Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/124852436250/clients/_:getWebAppConfig  
- Tue Nov 21 2017 14:15:53 GMT-0600 (CST)
-[debug] [2017-11-21T20:15:54.194Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-25T04:10:03.742Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/transient-318de  
+ Fri Nov 24 2017 22:10:03 GMT-0600 (CST)
+[debug] [2017-11-25T04:10:04.109Z] <<< HTTP RESPONSE 200
+[debug] [2017-11-25T04:10:04.109Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/124852436250/clients/_:getWebAppConfig  
+ Fri Nov 24 2017 22:10:04 GMT-0600 (CST)
+[debug] [2017-11-25T04:10:04.474Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: ./
 [info] ✔  hosting: Local server: http://localhost:5000
 

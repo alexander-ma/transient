@@ -17,9 +17,9 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
     if (firebaseUser) {
         // DB write should happen after registration, or currentUser field is null.
         var db = firebase.database();
-        var usersRef = db.ref().child('users');
+        var newUserRef = db.ref('users/' + firebaseUser.uid);
 
-        usersRef.set({
+        newUserRef.set({
             email: document.querySelector('#email').value,
             username: document.querySelector('#name').value
         });

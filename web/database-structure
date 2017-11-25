@@ -9,9 +9,24 @@ ROOT {
              "firstName" : "",
              "lastName" : "",
              "email" : "",
-             "friends" : { "*friend 1 user hash*", "*friend 2 user hash*", "*friend 3 user hash*", .... },
-             "liveChannels" : { "*live channel 1 hash*", "*live channel 2 hash*, "*live channel 3 hash*", .... }
-             "deadChannels" : { "*dead channel 1 hash*", "*dead channel 2 hash*, "*dead channel 3 hash*", .... }
+             "friends" : { 
+                "*friend 1 user hash*", 
+                "*friend 2 user hash*", 
+                "*friend 3 user hash*", 
+                .... 
+             },
+             "liveChannels" : { 
+                "*live channel 1 hash*", 
+                "*live channel 2 hash*, 
+                "*live channel 3 hash*", 
+                .... 
+             }
+             "deadChannels" : { 
+                "*dead channel 1 hash*", 
+                "*dead channel 2 hash*, 
+                "*dead channel 3 hash*", 
+                .... 
+             }
          },
          "*user 2 hash*" : { .... },
          "*user 3 hash*" : { .... },
@@ -25,7 +40,11 @@ ROOT {
      "liveChannels" : {
          "*channel 1 hash*" : {
              "owner" : "*owner hash*",
-             "users" : { "*user hash 1*", "*user hash 2*", "*user hash 3*" },
+             "users" : { 
+                "*user hash 1*", 
+                "*user hash 2*", 
+                "*user hash 3*" 
+             },
              "isAlive" : "true/false",
              "activeUntil" : "date active until",
 
