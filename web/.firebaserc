@@ -1,6 +1,7 @@
 {
   "projects": {
     "memes": "transient-318de",
-    "staging": "transient-318de"
+    "staging": "transient-318de",
+    "default": "transient-318de"
   }
 }

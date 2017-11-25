@@ -146,27 +146,27 @@ $(".backToAction").click(function() {
 });
 
 /* Creation of channel logic. */
-//$("#create-channel-button").click(function() { 
-    //console.log("Creating channel...");    
+$("#create-channel-button").click(function() { 
+    console.log("Creating channel...");    
 
-    //var channelName = document.querySelector('#channel-name').value;
+    var channelName = document.querySelector('#channel-name').value;
 
-    //var db = firebase.database();
-    //var currentUserLiveChannelsRef = db.ref('users/' + firebase.auth().currentUser.uid + '/live-channels/');
+    var db = firebase.database();
+    var currentUserLiveChannelsRef = db.ref('users/' + firebase.auth().currentUser.uid + '/live-channels/');
                                      
-    //var newLiveChannelRef = currentUserLiveChannelsRef.push({
-        //name: uniqueChannelName 
-    //});  
+    var newLiveChannelRef = currentUserLiveChannelsRef.push({
+        name: uniqueChannelName 
+    });  
 
-    //// TODO: Provide this hash to the channel creator
-    //var channelInvitationHash = newLiveChannelRef.key;
+    // TODO: Provide this hash to the channel creator
+    var channelInvitationHash = newLiveChannelRef.key;
 
-    //$("#myModal").hide();
-    //$("#modal-create-channel").hide();
+    $("#myModal").hide();
+    $("#modal-create-channel").hide();
 
      //TODO: 
      //1. Swap the chat box to the created channel
      //2. Display modal with 'channelInvitationHash' string for the channel creator to copy + share
      //3. Display the created channel underneath "Live Channels" section 
-//});
+});
 
