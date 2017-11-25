@@ -1,7 +1,6 @@
 DATABASE STRUCTURE
 
 ROOT {
-
      "users" : {
          #### TODO: profile pictures ####
          "*user 1 hash*" : {
@@ -10,14 +9,14 @@ ROOT {
              "lastName" : "",
              "email" : "",
              "friends" : { 
-                "*friend 1 user hash*", 
+                "*friend 1 user hash*" : 
                 "*friend 2 user hash*", 
                 "*friend 3 user hash*", 
                 .... 
              },
              "liveChannels" : { 
                 "*live channel 1 hash*", 
-                "*live channel 2 hash*, 
+                "*live channel 2 hash*", 
                 "*live channel 3 hash*", 
                 .... 
              }
