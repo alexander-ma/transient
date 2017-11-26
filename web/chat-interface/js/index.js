@@ -149,24 +149,36 @@ $(".backToAction").click(function() {
 $("#create-channel-button").click(function() { 
     console.log("Creating channel...");    
 
-    var channelName = document.querySelector('#channel-name').value;
+    // TODO: Remove input box for channel name. Channel name shouldn't be
+    // responsibility of the user, as specified in the project scope.
 
     var db = firebase.database();
-    var currentUserLiveChannelsRef = db.ref('users/' + firebase.auth().currentUser.uid + '/live-channels/');
-                                     
+    var currentUserID = firebase.auth().currentUser.uid;
+
+    // Add new channel to current user's list of live channels.
+    var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/');
     var newLiveChannelRef = currentUserLiveChannelsRef.push({
-        name: uniqueChannelName 
+        name: "placeholder" 
     });  
 
-    // TODO: Provide this hash to the channel creator
-    var channelInvitationHash = newLiveChannelRef.key;
+    // TODO: Add new channel to "liveChannels" partition 
 
+    // TODO: 
+    // 1. Swap the chat box to the created channel
     $("#myModal").hide();
     $("#modal-create-channel").hide();
 
-     //TODO: 
-     //1. Swap the chat box to the created channel
-     //2. Display modal with 'channelInvitationHash' string for the channel creator to copy + share
-     //3. Display the created channel underneath "Live Channels" section 
+
+    // 2. Display modal with name generated string for the channel creator to copy + share
+    var channelHash = newLiveChannelRef.key;
+    var channelRef = db.ref('users/' + currentUserID + '/live-channels/' + channelHash);
+    channelRef.on('value', function(snapshot) {
+        var channelName = snapshot.val();
+    });
+
+    console.log("Created channel '" + channelName + "'");
+    
+    
+    // 3. Display the created channel underneath "Live Channels" section 
 });
 
