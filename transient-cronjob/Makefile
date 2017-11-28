@@ -2,8 +2,9 @@
 JAVA := java
 JAVAC := javac
 
-PROGRAM_NAME := transient-cronjob
-MAIN_CLASS := TransientCronjob
+PROGRAM_NAME := Tutorial6
+MAIN_CLASS := DisplayColors
+MAIN_PACKAGE := observer3
 
 SRC_DIR := ./src
 BIN_DIR := ./bin
@@ -12,21 +13,22 @@ LIB_DIR := ./lib
 
 EXTERNAL_LIBRARIES :=
 
-JAVA_FLAGS := -Xlint
+JAVA_FLAGS := -Xdiags:verbose
 ##### PROJECT SETTINGS #####
-
-
 
 
 LIBRARIES := $(wildcard $(LIB_DIR)/*.jar)
 ifneq ($(EXTERNAL_LIBRARIES),)
 	LIBRARIES += $(EXTERNAL_LIBRARIES)
 endif
-LIBRARIES := "$(LIBRARIES)"
+null :=
+semicolon := :
+space := $(null) #
+LIBRARIES := $(LIBRARIES)
+LIBRARIES := $(subst $(space),$(semicolon),$(strip $(LIBRARIES)))
 
-JAVA_SRCS := $(wildcard $(SRC_DIR)/*.java)
+JAVA_SRCS := $(shell find $(SRC_DIR) -type f -name '*.java')
 JAVA_FLAGS += -d $(BIN_DIR) -cp $(LIBRARIES)
-
 
 
 
@@ -35,19 +37,17 @@ all:
 
 
 
-
 .PHONY: clean
 clean:
-	rm -rf $(EXEC) $(JAVA_SRCS) $(BIN_DIR)/*
+	rm -rf $(EXEC) $(BIN_DIR)/*
 
 .PHONY: spotless
 spotless: clean
 	spotless -r
 
 .PHONY: test
-test: all
-	@$(JAVA) $(MAIN_CLASS)
+test: all run
 
 .PHONY: run
 run: all
-	$(JAVA) -cp $(BIN_DIR) $(MAIN_CLASS)
+	@$(JAVA) -cp $(BIN_DIR) $(MAIN_PACKAGE).$(MAIN_CLASS)
