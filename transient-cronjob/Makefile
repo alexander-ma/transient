@@ -2,9 +2,9 @@
 JAVA := java
 JAVAC := javac
 
-PROGRAM_NAME := Tutorial6
-MAIN_CLASS := DisplayColors
-MAIN_PACKAGE := observer3
+PROGRAM_NAME := TransientCronjob
+MAIN_CLASS := TransientCronjob
+MAIN_PACKAGE :=
 
 SRC_DIR := ./src
 BIN_DIR := ./bin
@@ -13,10 +13,11 @@ LIB_DIR := ./lib
 
 EXTERNAL_LIBRARIES :=
 
-JAVA_FLAGS := -Xdiags:verbose
+JAVA_FLAGS :=
 ##### PROJECT SETTINGS #####
 
 
+# Determine libraries
 LIBRARIES := $(wildcard $(LIB_DIR)/*.jar)
 ifneq ($(EXTERNAL_LIBRARIES),)
 	LIBRARIES += $(EXTERNAL_LIBRARIES)
@@ -26,6 +27,13 @@ semicolon := :
 space := $(null) #
 LIBRARIES := $(LIBRARIES)
 LIBRARIES := $(subst $(space),$(semicolon),$(strip $(LIBRARIES)))
+
+# Calculate full class/package name of main class
+FULL_CLASS_NAME := $(MAIN_CLASS)
+ifneq ($(MAIN_PACKAGE),)
+	FULL_CLASS_NAME := $(MAIN_PACKAGE).$(MAIN_CLASS)
+endif
+
 
 JAVA_SRCS := $(shell find $(SRC_DIR) -type f -name '*.java')
 JAVA_FLAGS += -d $(BIN_DIR) -cp $(LIBRARIES)
@@ -50,4 +58,4 @@ test: all run
 
 .PHONY: run
 run: all
-	@$(JAVA) -cp $(BIN_DIR) $(MAIN_PACKAGE).$(MAIN_CLASS)
+	@$(JAVA) -cp $(LIBRARIES):$(BIN_DIR) $(FULL_CLASS_NAME)

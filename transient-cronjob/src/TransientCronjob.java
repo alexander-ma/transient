@@ -3,9 +3,7 @@ import java.util.TimerTask;
 import java.io.FileInputStream;
 
 import com.google.auth.oauth2.GoogleCredentials;
-
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.FirebaseApp;
+import com.google.firebase.*;
 
 
 public class TransientCronjob extends TimerTask {
@@ -19,7 +17,6 @@ public class TransientCronjob extends TimerTask {
 
 
   
-  @SuppressWarnings( "deprecation" )
   public TransientCronjob() {
     FileInputStream serviceAccount = null;
     FirebaseOptions options = null;
@@ -33,10 +30,10 @@ public class TransientCronjob extends TimerTask {
     }
 
     try {
-        options = new FirebaseOptions.Builder()
-            .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-            .setDatabaseUrl(DATABASE_URL)
-            .build();
+      options = new FirebaseOptions.Builder()
+          .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+          .setDatabaseUrl(DATABASE_URL)
+          .build();
     } catch (Exception e) {
       System.out.println("Error authenticating key with firebase:");
       System.out.println(e.getMessage());
