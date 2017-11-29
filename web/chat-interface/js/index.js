@@ -49,6 +49,24 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 /* Grab data from firebase and dynamically update the webpage based on the user. */
 function updateUI(firebaseUser) {
     // TODO:
+    var db = firebase.database();
+    var currentUserID = firebase.auth().currentUser.uid;
+    
+    var liveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+    
+    liveChannelsRef.once('value', function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            var chatHash = childSnapshot.key;
+            var chatRef = db.ref('channels/' + chatHash);
+            
+            chatRef.once('value', function(snapshot) {
+                var name = snapshot.val()["realChannelName"];
+                    $("#live-channels-list").append(
+                        "<li> " + name + " </li>"
+                    )
+            })
+        });
+    });
 }
 
 /* Displays the UI for 'ele'. */ 
@@ -158,7 +176,7 @@ $("#create-channel-button").click(function() {
     // Add new channel to current user's list of live channels.
     var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/');
     var newLiveChannelRef = currentUserLiveChannelsRef.push({
-        name: "placeholder" 
+        name: "placeholder"
     });  
 
     // TODO: Add new channel to "liveChannels" partition 
@@ -172,13 +190,51 @@ $("#create-channel-button").click(function() {
     // 2. Display modal with name generated string for the channel creator to copy + share
     var channelHash = newLiveChannelRef.key;
     var channelRef = db.ref('users/' + currentUserID + '/live-channels/' + channelHash);
-    channelRef.on('value', function(snapshot) {
-        var channelName = snapshot.val();
-    });
 
-    console.log("Created channel '" + channelName + "'");
+    channelName = "";
     
+    channelRef.on('value', function(snapshot) {
+        channelName = snapshot.val();
+    });
     
-    // 3. Display the created channel underneath "Live Channels" section 
+    var channelListRef = db.ref('channels/' + channelHash);
+    var realChannelName = document.querySelector('#channel-name').value;
+    
+    channelListRef.set({
+        hashcode: channelHash,
+        realChannelName: realChannelName
+    });
+    
+    channelListRef.child("participants").push(currentUserID);
+
+    // 3. Display the created channel underneath "Live Channels" section
+    $("#live-channels-list").append(
+        "<li> " + realChannelName + " </li>"
+    ) 
 });
 
+function addUserToChannel(channelName, uid, dbRef) {
+    dbRef.child(channelName).child("participants").push({
+        uid
+    });
+}
+
+function removeUserFromChannel(channelName, uid, dbRef) {
+    
+}
+
+$("#join-channel").click(function() {
+    var db = firebase.database()
+    var currentUserID = firebase.auth().currentUser.uid;
+    
+    var hashCode = document.querySelector('#chat-hash').value;
+    var channelsRef = db.ref('channels');
+    
+    channelsRef.once('value', function(snapshot) {
+      if (snapshot.hasChild(hashCode)) {
+        // Successfully joined channel
+        addUserToChannel(hashCode, currentUserID, channelsRef);
+      }
+    });
+    
+});

@@ -162,14 +162,21 @@ body {
 }
 
 #live-channels {
-  margin: 0 auto;
-  margin-top: 5%;
-  text-align: center;
-  height: 30%;
+    margin: 0 auto;
+    margin-top: 5%;
+    text-align: center;
+    height: 30%;
+    color: #FFF;
 }
 
 #live-channels hr {
   margin-top: -.5em;
+}
+
+#live-channels-list {
+    height: 85%;
+    overflow: scroll;
+    overflow-x: hidden;
 }
 
 #scheduled-channels {
