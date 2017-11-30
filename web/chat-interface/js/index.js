@@ -36,8 +36,6 @@ $(document).ready(function() {
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
 firebase.auth().onAuthStateChanged(firebaseUser => {
     if (firebaseUser) {
-        // TODO: Show channels, (friends ?), live + scheduled channels for the 
-        // registered firebase user.
         updateUI(firebaseUser);
     }
     else {
@@ -48,11 +46,9 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
 
 /* Grab data from firebase and dynamically update the webpage based on the user. */
 function updateUI(firebaseUser) {
-    // TODO:
     var db = firebase.database();
     var currentUserID = firebase.auth().currentUser.uid;
     var liveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
-    
     
     liveChannelsRef.once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
@@ -67,6 +63,8 @@ function updateUI(firebaseUser) {
             })
         });
     });
+
+    loadChannelMessages();
 }
 
 /* Displays the UI for 'ele'. */ 
@@ -167,9 +165,6 @@ $(".backToAction").click(function() {
 $("#create-channel-button").click(function() { 
     console.log("Creating channel...");    
 
-    // TODO: Remove input box for channel name. Channel name shouldn't be
-    // responsibility of the user, as specified in the project scope.
-
     var db = firebase.database();
     var currentUserID = firebase.auth().currentUser.uid;
     var channelName = document.querySelector('#channel-name').value;
@@ -229,6 +224,68 @@ $("#join-channel").click(function() {
     });
 });
 
+function displayMessage(key, name, text, pictureURL, imageURI) {
+    // TODO: Update UI to show the message.
+}
+
+/*
+ * Loads the current user's channel messages in the chat box.
+ */
+function loadChannelMessages() {
+    var firstChannelHash;
+    var currentUserID = firebase.auth().currentUser.uid;
+    var firstChannelRef = firebase.database().ref('users/' + currentUserID + '/live-channels'); 
+
+    // Do nothing if the current user has no channels yet.
+    firebase.database().ref('users/' + currentUserID).once('value', function(snapshot) {
+        if (!snapshot.hasChild('live-channels')) {
+            console.log("Current user is not in any channels.");
+            return;
+        }
+    });
+
+    // Get the first child from the live-channels list for the current user.
+    firstChannelRef.limitToFirst(1).once('value', function(snapshot) {
+        snapshot.forEach(function(channelSnapshot) {
+            firstChannelHash = channelSnapshot.key;
+        });
+    }); 
+
+    // Add listener to the messages ref.
+    var messagesRef = firebase.database.ref('channels/' + firstChannelHash + '/messages');
+
+    // Remove all previous listeners.
+    messagesRef.off();
+
+    var setMessages = function(data) {
+        var val = data.val;
+        this.displayMessage(data.key , val.name, val.text, val.photoUrl, val.imageUrl);
+    }.bind(this);
+
+    // Load only the past 12 messages.
+    this.messagesRef.limitToLast(12).on('child_added', setMessages);
+    this.messagesRef.limitToLast(12).on('child_changed', setMessages);
+}
+
+/* 
+ * Functionality when entering a new message to the chat box. 
+ */ 
+function handleKeyPress(event) {
+    var key = event.keyCode || e.which;
+    if (key == 13) {
+        // Message was entered.
+        var message = document.getElementById('chat-input').value; 
+        // TODO: Update UI to show entered message.
+        // TODO: Update real-time database for ALL users in the channel.
+    }
+}
+    
+// Listens for new posts to the channel's chat and updates
+// the real-time database with the new information.
+function updateDatabaseChannelPosts() {
+    
+}
+
 function addUserToChannel(channelName, chatName, uid, db) {
     // add to channel participants list
     db.ref('channels').child(channelName).child("participants").push(uid);
@@ -263,5 +320,3 @@ function userIsAlreadyInChat(channelName, uid, db) {
     
 
 }
-    
-
