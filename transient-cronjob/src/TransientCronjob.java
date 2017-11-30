@@ -3,7 +3,11 @@ import java.util.TimerTask;
 import java.io.FileInputStream;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.*;
+
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DatabaseReference;
 
 
 public class TransientCronjob extends TimerTask {
@@ -13,7 +17,10 @@ public class TransientCronjob extends TimerTask {
   private static final String DATABASE_URL =
     "https://transient-318de.firebaseio.com";
   private static final boolean RUN_AS_DAEMON = true;
-  private static final long DEFAULT_JOB_INTERVAL = 1000;
+  // In milliseconds
+  private static final long DEFAULT_JOB_INTERVAL = 1500;
+
+  private final FirebaseDatabase database;
 
 
   
@@ -41,17 +48,23 @@ public class TransientCronjob extends TimerTask {
     }
 
     FirebaseApp.initializeApp(options);
+    database = FirebaseDatabase.getInstance();
   }
 
 
+  private int t = 0;
+
   @Override
   public void run() {
-      // TODO:
+    System.out.println(t++);
+
+    DatabaseReference ref = database.getReference("users");
   }
 
 
   public static void main(String args[]) {
-      TimerTask cronjob = new TransientCronjob();
+    Object suspensionLock = new Object();
+    TimerTask cronjob = new TransientCronjob();
     long interval = DEFAULT_JOB_INTERVAL;
 
     if (args.length >= 1) {
@@ -63,5 +76,10 @@ public class TransientCronjob extends TimerTask {
     Timer timer = new Timer(RUN_AS_DAEMON);
     timer.scheduleAtFixedRate(cronjob, 0, interval);
 
+    suspend();
+  }
+
+  private static void suspend() {
+    while(true) {;}
   }
 } 
