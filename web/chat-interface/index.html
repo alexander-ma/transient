@@ -69,30 +69,39 @@
           <div id = "modal-create-channel">
             <center><h1> CREATE YOUR CHANNEL </h1></center>
             <!-- TODO: create a div here to partition the page -->
+            <div id = "modal-create-channel-body">
+                <center><p> By creating a channel you will have access to free text chat amongst people you invite </p></center>
 
-              <p> By creating a channel you will have access to free text chat amongst people you invite </p>
-
-              <form>
-                Channel Name:
-                <input type="text" name="channel-name" id="channel-name">
-              </form>
-
-            <button type="button" class="button backToAction"> back </button>
-            <button type="button" class="button" id="create-channel-button"> Create Channel </button>
+                <form>
+                  <center><input type="text" name="channel-name" id="channel-name" placeholder="Channel Name"></center>
+                </form>
+            </div>
+              
+            <div id = "modal-create-channel-footer">
+                <div id = "modal-create-channel-footer-inner">
+                    <button type="button" class="button backToAction"> back </button>
+                    <button type="button" class="button rightButton" id="create-channel-button"> Create Channel </button>
+                </div>
+            </div>
           </div>
 
 
           <div id = "modal-join-channel">
             <center><h1> JOIN A CHANNEL</h1></center>
             <!-- TODO: create a div here to partition the page -->
-            <p> Enter a invite link below to join an existing transcient channel <p>
-            <form>
-              Channel:
-              <input type="text" name="chat-hash" id="chat-hash">
-            </form>
-
-            <button type="button" class="button backToAction"> back </button>
-            <button type="button" class="button" id="join-channel"> Join Channel </button>
+            <div id = "modal-join-channel-body">
+                <center><p> Enter a invite link below to join an existing transcient channel <p></center>
+                <form>
+                  <center><input type="text" name="chat-hash" id="chat-hash" placeholder="Invite Link"></center>
+                </form>
+            </div>
+              
+            <div id = "modal-join-channel-footer">
+                <div id = "modal-join-channel-footer-inner">
+                    <button type="button" class="button backToAction"> back </button>
+                    <button type="button" class="button rightButton" id="join-channel"> Join Channel </button>
+                </div>
+            </div>
           </div>
         </div>
 

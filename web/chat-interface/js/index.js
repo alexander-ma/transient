@@ -51,16 +51,16 @@ function updateUI(firebaseUser) {
     // TODO:
     var db = firebase.database();
     var currentUserID = firebase.auth().currentUser.uid;
-    
     var liveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+    
     
     liveChannelsRef.once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
-            var chatHash = childSnapshot.key;
+            var chatHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + chatHash);
             
             chatRef.once('value', function(snapshot) {
-                var name = snapshot.val()["realChannelName"];
+                var name = snapshot.val()["channelName"];
                     $("#live-channels-list").append(
                         "<li> " + name + " </li>"
                     )
@@ -172,12 +172,15 @@ $("#create-channel-button").click(function() {
 
     var db = firebase.database();
     var currentUserID = firebase.auth().currentUser.uid;
+    var channelName = document.querySelector('#channel-name').value;
+    
+    if (!channelName) {
+        return;
+    }
 
     // Add new channel to current user's list of live channels.
-    var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/');
-    var newLiveChannelRef = currentUserLiveChannelsRef.push({
-        name: "placeholder"
-    });  
+    var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+    var newLiveChannelRef = currentUserLiveChannelsRef.push("");
 
     // TODO: Add new channel to "liveChannels" partition 
 
@@ -189,39 +192,22 @@ $("#create-channel-button").click(function() {
 
     // 2. Display modal with name generated string for the channel creator to copy + share
     var channelHash = newLiveChannelRef.key;
-    var channelRef = db.ref('users/' + currentUserID + '/live-channels/' + channelHash);
-
-    channelName = "";
-    
-    channelRef.on('value', function(snapshot) {
-        channelName = snapshot.val();
-    });
-    
+    currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
     var channelListRef = db.ref('channels/' + channelHash);
-    var realChannelName = document.querySelector('#channel-name').value;
+    
     
     channelListRef.set({
-        hashcode: channelHash,
-        realChannelName: realChannelName
+        channelName: channelName,
+        hash: channelHash
     });
     
     channelListRef.child("participants").push(currentUserID);
 
     // 3. Display the created channel underneath "Live Channels" section
     $("#live-channels-list").append(
-        "<li> " + realChannelName + " </li>"
+        "<li> " + channelName + " </li>"
     ) 
 });
-
-function addUserToChannel(channelName, uid, dbRef) {
-    dbRef.child(channelName).child("participants").push({
-        uid
-    });
-}
-
-function removeUserFromChannel(channelName, uid, dbRef) {
-    
-}
 
 $("#join-channel").click(function() {
     var db = firebase.database()
@@ -230,11 +216,52 @@ $("#join-channel").click(function() {
     var hashCode = document.querySelector('#chat-hash').value;
     var channelsRef = db.ref('channels');
     
+    console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
+    
     channelsRef.once('value', function(snapshot) {
+        
       if (snapshot.hasChild(hashCode)) {
         // Successfully joined channel
-        addUserToChannel(hashCode, currentUserID, channelsRef);
+        var chatName = snapshot.val()[hashCode]["channelName"];
+
+        addUserToChannel(hashCode, chatName, currentUserID, db);
       }
     });
-    
 });
+
+function addUserToChannel(channelName, chatName, uid, db) {
+    // add to channel participants list
+    db.ref('channels').child(channelName).child("participants").push(uid);
+    
+    // add the channel to the person's list
+    db.ref('users/' + uid).child('live-channels').child(channelName).set(channelName);
+}
+
+function removeUserFromChannel(channelName, uid, db) {
+    // remove participant from the channel list
+    db.ref('channels').child(channelName).child("participants").child(uid).remove();
+    
+    // remove the channel from the user
+    // TODO
+}
+
+function userIsAlreadyInChat(channelName, uid, db) {
+    var userChannelsRef = db.ref('users/' + uid + '/live-channels');
+    var flag = false;
+    
+    
+    flag = (userChannelsRef.once("value", function(snapshot) {
+        if (snapshot.hasChild(channelName)) {
+            alert('already exists');
+            flag = true;
+            return true;
+        }
+        return false;
+    }))();
+    
+    console.log(flag);
+    
+
+}
+    
+

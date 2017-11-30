@@ -42,7 +42,7 @@ html, body {
 
 .modal-content .button {
   margin: 0 auto;
-  display: block;
+  display: inline-block;
 }
 
 #modal-create-channel{
@@ -51,8 +51,50 @@ html, body {
   height: 70%;
 }
 
-#modal-create-channel p {
+#channel-name {
+    border-radius: 5px;
+}
+
+#chat-hash {
+    border-radius: 5px;
+}
+
+#modal-create-channel p{
   text-align: center;
+  color: #808080;
+}
+
+#modal-join-channel p {
+    text-align: center;
+    color: #808080;
+}
+
+#modal-join-channel-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;    
+}
+
+#modal-join-channel-footer-inner {
+    width: 35%;
+    height: auto;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
+}
+
+#modal-create-channel-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#modal-create-channel-footer-inner {
+    width: 35%;
+    height: auto;
+    margin: 0 auto;
+    padding: 10px;
+    position: relative;
 }
 
 #modal-join-channel {
@@ -218,6 +260,14 @@ body {
 .leftside-bar {
   width: 22%;
   background-color: #344;
+}
+
+.backToAction {
+    float: left;
+}
+
+.rightButton { 
+    float: right;
 }
 
 .chat-box {
@@ -430,6 +480,3 @@ p {
   -webkit-filter: grayscale(0%);
   filter: grayscale(0%);
 }
-
-
-
