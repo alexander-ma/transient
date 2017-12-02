@@ -91,6 +91,12 @@ function uploadUserPhoto() {
         var userProfilePic = document.getElementById('user-pic');
         userProfilePic.src = downloadURL;
         
+        var userProfilePicRef = firebase.database().ref('users/' + user.uid + '/photoURL');
+        
+        userProfilePicRef.set(
+            downloadURL
+        )
+        
         user.updateProfile({
           photoURL: downloadURL
         }).then(function() {
@@ -98,8 +104,6 @@ function uploadUserPhoto() {
         }).catch(function(error) {
           // An error happened.
         });
-        
-        
         
         console.log(user.photoURL);
     });
@@ -182,63 +186,66 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
     console.log('imageUri ' + imageUri);
     
     var currentUserName = this.auth.currentUser.displayName;
+    var uid = this.auth.currentUser.uid;
+    var userRef = this.database.ref('users/' + uid);
     
-  var div = document.getElementById(key);
-  // If an element for that message does not exists yet we create it.
-  if (!div) {
-    var container = document.createElement('div');
-    
-    if (name == currentUserName) {
-        container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
+    var div = document.getElementById(key);
+    // If an element for that message does not exists yet we create it.
+    if (!div) {
+        var container = document.createElement('div');
         
-        div = container.firstChild;
-        div.setAttribute('id', key);
-        div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
-        this.messageList.appendChild(div);
-        
-        var messageElement = div.querySelector('.message');
-        var timeStampElement = div.querySelector('.datestamp-alt');
-        
-        if (text) { // If the message is text.
-            messageElement.textContent = text;
-            // Replace all line breaks by <br>.
-            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-        } 
-        
-        if (date) {
-            timeStampElement.textContent = date;
-        }
-        
-        
-    }
-    else {
-        container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
-        div = container.firstChild;
-        div.setAttribute('id', key);
-        div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
-        this.messageList.appendChild(div);
-        
-        var messageElement = div.querySelector('.message');
-        var timeStampElement = div.querySelector('.datestamp');
-        var imageElement = div.querySelector('.other-user-pic');
-        
-        if (text) { // If the message is text.
-            messageElement.textContent = text;
-            // Replace all line breaks by <br>.
-            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-        }
-        
-        if (date) {
-            timeStampElement.textContent = date;
-        }
-        
-        if (picUrl) {
-            imageElement.src = picUrl;
-        }
-        
+        userRef.once('value', function(snapshot) {
+            var photoURL = snapshot.val()['photoURL'];
+            
+            if (name == currentUserName) {
+                container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
+
+                div = container.firstChild;
+                div.setAttribute('id', key);
+                div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+                this.messageList.appendChild(div);
+
+                var messageElement = div.querySelector('.message');
+                var timeStampElement = div.querySelector('.datestamp-alt');
+
+                if (text) { // If the message is text.
+                    messageElement.textContent = text;
+                    // Replace all line breaks by <br>.
+                    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+                } 
+
+                if (date) {
+                    timeStampElement.textContent = date;
+                }
+            }
+            else {
+                container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
+                div = container.firstChild;
+                div.setAttribute('id', key);
+                div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+                this.messageList.appendChild(div);
+
+                var messageElement = div.querySelector('.message');
+                var timeStampElement = div.querySelector('.datestamp');
+                var imageElement = div.querySelector('.other-user-pic');
+
+                if (text) { // If the message is text.
+                    messageElement.textContent = text;
+                    // Replace all line breaks by <br>.
+                    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+                }
+
+                if (date) {
+                    timeStampElement.textContent = date;
+                }
+
+                if (picUrl) {
+                    imageElement.src = photoURL;
+                }
+            }
+        })
     }
 
-  }
     
 //  if (picUrl) {
 //    div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')';
