@@ -253,7 +253,6 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
 
             if (picUrl) {
                 var profPicRef = firebase.database().ref(messageSenderRef + '/photoURL');
-
                 // Once the new photoURL is fetched, update the imageElement.src with it.
                 profPicRef.once("value", function(snapshot) {
                     console.log("snapshot.val() in photoURL fetch: " + snapshot.val());
