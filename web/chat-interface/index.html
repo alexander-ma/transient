@@ -5,6 +5,8 @@
   <title>Chat window Switch</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
   <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+    
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
   <link rel="stylesheet" href="css/style.css"> 
 </head>
@@ -15,7 +17,13 @@
     <!--*************** leftside-bar begins *********************-->
     <div class="column leftside-bar">
       <div id = "user-section">
-        <img src="img/img_avatar.png" alt="Avatar">
+          <div class="image-upload">
+            <label for="file-input">
+                <img src="img/img_avatar.png" alt="Avatar" id = "user-pic" type="file">
+            </label>
+            <input id="file-input" type="file"/>
+          </div>
+          
         <button type="button" class="button"> Invite </button>
       </div>
 
@@ -97,6 +105,25 @@
                 </div>
             </div>
           </div>
+        
+            <!------current working progresss------>
+                  <!-- create a channel -->
+          <div id = "modal-invite-link">
+            <center><h1> Invite Link </h1></center>
+            <!-- TODO: create a div here to partition the page -->
+            <div id = "modal-invite-link">
+                <form>
+                  <center><input type="text" name="channel-name" id="channel-name" placeholder="Channel Name"></center>
+                </form>
+            </div>
+              
+            <div id = "modal-invite-link-footer">
+                <div id = "modal-invite-link-footer-inner">
+                    <button type="button" class="button backToAction"> back </button>
+                    <button type="button" class="button rightButton" id="create-channel-button"> Create Channel </button>
+                </div>
+            </div>
+          </div>
 
 
           <div id = "modal-join-channel">
@@ -122,7 +149,6 @@
 
       <!--Begin chat box -->
       <div id='chat' class="chat">
-
         <div class="chat-container active" id='default_channel'>
           <div class="bubble">
             <div class="bubble-row">
@@ -142,7 +168,6 @@
 
 
         <div class="chat-container" id='cont1'>
-
           <div class="bubble">
             <div class="bubble-row">
               <div class="bubble-column bubble-column-left">
@@ -421,7 +446,7 @@
 
   </div>
 
-  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
+
   <script  src="js/index.js"></script>
 </body>
 </html>
