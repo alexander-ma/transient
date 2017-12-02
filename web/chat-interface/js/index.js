@@ -635,18 +635,6 @@ $("#join-channel").click(function() {
     
 //    console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
 
-    channelsRef.once('value', function(snapshot) {
-        
-      if (snapshot.hasChild(hashCode)) {
-        // Successfully joined channel
-        var channelName = snapshot.val()[hashCode]["channelName"];
-        addUserToChannel(hashCode, channelName, currentUserID, db);
-            $("#live-channels-list").append(
-                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"
-    ) 
-      }
-  }
-    
     $("#myModal").hide();
     $("#modal-create-channel").hide();
     $("#modal-delete-channel").hide();
@@ -672,6 +660,8 @@ $("#join-channel").click(function() {
                         }
                         else {
                             addUserToChannel(hashCode, channelName, currentUserID, db);
+                            $("#live-channels-list").append(
+                            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
                         }
                     }, currentUserID, hashCode);
                 }
@@ -780,4 +770,3 @@ var getActiveChannel = function(callback) {
         // dispaly the default empty channel.
     });
 }
->>>>>>> 788a6a4d794dd1c7219a6ace22b72b3692d26cf5
