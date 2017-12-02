@@ -172,7 +172,7 @@ Transient.prototype.loadMessages = function(channelHash) {
     var setMessage = function(message) {
         var msgFields = message.val();
         console.log(msgFields);
-        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.photoUrl, msgFields.imageUrl, msgFields.timeStamp);
+        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp);
     }.bind(this);
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
@@ -192,7 +192,7 @@ document.getElementById('chat-input').onkeypress = function(e){
 
 
 // Displays a Message in the UI.
-Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, picUrl, imageUri, date) {
+Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date) {
     var currentUserAnonName = this.auth.currentUser.displayName;
     var currentUserID = this.auth.currentUser.uid;
     var currentUserRef = this.database.ref('users/' + currentUserID);
@@ -251,17 +251,15 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
                 timeStampElement.textContent = messageSenderAnonName + ' ' + date;
             }
 
-            if (picUrl) {
-                var profPicRef = firebase.database().ref(messageSenderRef + '/photoURL');
-                // Once the new photoURL is fetched, update the imageElement.src with it.
-                profPicRef.once("value", function(snapshot) {
-                    console.log("snapshot.val() in photoURL fetch: " + JSON.stringify(snapshot.val()));
-                    imageElement.src = snapshot.val();
-                });
-            }
-            else {
-                imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
-            }
+            var profPicRef = firebase.database().ref(messageSenderRef + '/photoURL');
+            // Once the new photoURL is fetched, update the imageElement.src with it.
+            profPicRef.once("value", function(snapshot) {
+                console.log("snapshot.val() in photoURL fetch: " + JSON.stringify(snapshot.val()));
+                imageElement.src = snapshot.val();
+            });
+            //else {
+                //imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
+            //}
         }
     }
 
