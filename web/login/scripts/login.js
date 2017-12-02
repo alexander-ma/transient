@@ -116,7 +116,7 @@ document.querySelector('#register').addEventListener('click', function(e) {
                         document.getElementById('registration-form-error').innerHTML = 'Email/password authentication is not enabled in firebase.';
                         break;
 
-                    case 'weak-password':
+                    case 'auth/weak-password':
                         document.getElementById('registration-form-error').innerHTML = 'Provided password is too weak. Get it on steroids.';
                         break;
                 }
