@@ -165,6 +165,7 @@ Transient.prototype.loadMessages = function(channelHash) {
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
     this.messagesRef.limitToLast(12).on('child_changed', setMessage);
+    $('#chat div.active').stop().animate({ scrollTop: $('#chat div.active')[0].scrollHeight}, 800);
 };
 
 document.getElementById('chat-input').onkeypress = function(e){
@@ -174,6 +175,7 @@ document.getElementById('chat-input').onkeypress = function(e){
       // Enter pressed
       window.transient.saveMessage();
     }
+    $('#chat div.active').stop().animate({ scrollTop: $('#chat div.active')[0].scrollHeight}, 800);
 }
 
 
@@ -194,83 +196,60 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
     if (!div) {
         var container = document.createElement('div');
         
-        userRef.once('value', function(snapshot) {
-            var photoURL = snapshot.val()['photoURL'];
             
-            if (name == currentUserName) {
-                container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
+        if (name == currentUserName) {
+            container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
 
-                div = container.firstChild;
-                div.setAttribute('id', key);
-                div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
-                this.messageList.appendChild(div);
+            div = container.firstChild;
+            div.setAttribute('id', key);
+            div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+            this.messageList.appendChild(div);
 
-                var messageElement = div.querySelector('.message');
-                var timeStampElement = div.querySelector('.datestamp-alt');
+            var messageElement = div.querySelector('.message');
+            var timeStampElement = div.querySelector('.datestamp-alt');
 
-                if (text) { // If the message is text.
-                    messageElement.textContent = text;
-                    // Replace all line breaks by <br>.
-                    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-                } 
+            if (text) { // If the message is text.
+                messageElement.textContent = text;
+                // Replace all line breaks by <br>.
+                messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+            } 
 
-                if (date) {
-                    timeStampElement.textContent = date;
-                }
+            if (date) {
+                timeStampElement.textContent = date;
             }
-            else {
-                container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
-                div = container.firstChild;
-                div.setAttribute('id', key);
-                div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
-                this.messageList.appendChild(div);
+        }
+        else {
+            container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
+            div = container.firstChild;
+            div.setAttribute('id', key);
+            div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+            this.messageList.appendChild(div);
 
-                var messageElement = div.querySelector('.message');
-                var timeStampElement = div.querySelector('.datestamp');
-                var imageElement = div.querySelector('.other-user-pic');
+            var messageElement = div.querySelector('.message');
+            var timeStampElement = div.querySelector('.datestamp');
+            var imageElement = div.querySelector('.other-user-pic');
 
-                if (text) { // If the message is text.
-                    messageElement.textContent = text;
-                    // Replace all line breaks by <br>.
-                    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-                }
-
-                if (date) {
-                    timeStampElement.textContent = date;
-                }
-
-                if (picUrl) {
-                    imageElement.src = photoURL;
-                }
+            if (text) { // If the message is text.
+                messageElement.textContent = text;
+                // Replace all line breaks by <br>.
+                messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
             }
-        })
+
+            if (date) {
+                timeStampElement.textContent = date;
+            }
+
+            if (picUrl) {
+                imageElement.src = picUrl;
+            }
+        }
     }
 
-    
-//  if (picUrl) {
-//    div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')';
-//  }
-//    
-//  div.querySelector('.name').textContent = name;
-//  var messageElement = div.querySelector('.message');
-//    
   if (text) { // If the message is text.
     messageElement.textContent = text;
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  } //else if (imageUri) { // If the message is an image.
-//    var image = document.createElement('img');
-//    image.addEventListener('load', function() {
-//      this.messageList.scrollTop = this.messageList.scrollHeight;
-//    }.bind(this));
-//    this.setImageUrl(imageUri, image);
-//    messageElement.innerHTML = '';
-//    messageElement.appendChild(image);
-//  }
-//  // Show the card fading-in and scroll to view the new message.
-//  setTimeout(function() {div.classList.add('visible')}, 1);
-//  this.messageList.scrollTop = this.messageList.scrollHeight;
-//  this.messageInput.focus();
+  } 
 };
 
 // Checks that the Firebase SDK has been correctly setup and configured.
