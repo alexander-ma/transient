@@ -360,10 +360,24 @@ $(document).ready(function() {
 //              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
 //              $("#current-channel-name").text($(".channel-button.active").text());
           }
-      });
-      showUI('#cont1');
+            showUI('#cont1');
 
-      updateUI();
+//            updateUI();
+      });
+    
+    
+    $(document).on("click", "#invite-button", function(){
+        $('#myModal').show();
+        $('#modal-invite-link').show(); 
+        $("#modal-create-channel").hide();
+        $("#modal-delete-channel").hide();
+        $("#modal-join-channel").hide();
+        $("#modal-choose-action").hide();
+        
+        var channelHash = window.transient.channelHash;
+        $('#channel-invite-link').val(channelHash);
+        console.log(channelHash);
+    });
 });
 
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
@@ -591,11 +605,11 @@ $("#create-channel-button").click(function() {
 
     // TODO: 
     // 1. Swap the chat box to the created channel
-    $("#myModal").hide();
+//    $("#myModal").hide();
     $("#modal-create-channel").hide();
     $("#modal-delete-channel").hide();
     $("#modal-join-channel").hide();
-    $("#modal-invite-link").hide();
+    $("#modal-invite-link").show();
 
 
     // 2. Display modal with name generated string for the channel creator to copy + share
@@ -615,6 +629,20 @@ $("#create-channel-button").click(function() {
     $("#live-channels-list").append(
         "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
     ) 
+    
+    if (!window.transient) {
+        window.transient = new Transient(channelHash);
+        window.transient.loadMessages(channelHash)
+    }
+    
+    $('#channel-invite-link').val(channelHash);
+    
+    $('#channel-invite-link').on('click', function(){
+        var copyText = document.getElementById('#channel-invite-link');
+        copyText.select();
+        document.execCommand("Copy");
+        alert("Copied the text: " + copyText.value);
+    });
 });
 
 
