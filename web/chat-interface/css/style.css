@@ -59,6 +59,11 @@ html, body {
     border-radius: 5px;
 }
 
+#modal-invite-link p {
+  text-align: center;
+  color: #808080;
+}
+
 #modal-create-channel p{
   text-align: center;
   color: #808080;

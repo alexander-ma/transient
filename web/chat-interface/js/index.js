@@ -618,7 +618,7 @@ $("#join-channel").click(function() {
       if (snapshot.hasChild(hashCode)) {
         // Successfully joined channel
         var channelName = snapshot.val()[hashCode]["channelName"];
-        addUserToChannel(hashCode, chatName, currentUserID, db);
+        addUserToChannel(hashCode, channelName, currentUserID, db);
             $("#live-channels-list").append(
                 "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"
     ) 
