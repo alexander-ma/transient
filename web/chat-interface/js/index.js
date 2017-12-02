@@ -611,8 +611,10 @@ $("#join-channel").click(function() {
       if (snapshot.hasChild(hashCode)) {
         // Successfully joined channel
         var chatName = snapshot.val()[hashCode]["channelName"];
-
         addUserToChannel(hashCode, chatName, currentUserID, db);
+            $("#live-channels-list").append(
+        "<div class='channel-button' data-up='" + chatName.replace(/ /g,"-") + "'>" + chatName + " </div>"
+    ) 
       }
     });
 });
