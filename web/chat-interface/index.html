@@ -22,8 +22,9 @@
       <div id = "live-channels">
         <p>Live Channels</p>
         <hr>
-        <ul id = "live-channels-list">
-        </ul>
+        <div id = "live-channels-list">
+          <div class="channel-button active" data-up="default_channel"> default active channel </div>
+        </div>
       </div>
 
       <div id = "scheduled-channels">
@@ -34,7 +35,9 @@
       </div>
 
       <div id = "leftside-bar-footer">
-        <button type="button" class="button" id="new-chat"> New Chat </button>
+        <button type="button" class="button" id="new-chat"> New Channel </button>
+        <button type="button" class="button" id="delete-chat"> Delete Channel </button>
+
       </div>
     </div>
 
@@ -64,6 +67,16 @@
               <button type="button" class="button" id="goToJoin"> Join </button>
             </div>
           </div>
+
+          <div id="modal-delete-channel">
+            <center><h1> DELETE A CHANNEL</h1></center>
+            <center><p>Are you sure you want to delete this channel?</p></center>
+                <div id = "modal-delete-channel-footer-inner">
+                    <button type="button" class="button backToAction" id="cancel"> Cancel </button>
+                    <button type="button" class="button rightButton" id="delete-channel"> Delete Channel </button>
+                </div>
+          </div>
+
 
           <!-- create a channel -->
           <div id = "modal-create-channel">
@@ -104,13 +117,31 @@
             </div>
           </div>
         </div>
-
       </div>
       <!--End modal content-->
 
       <!--Begin chat box -->
       <div id='chat' class="chat">
-        <div class="chat-container active" id='cont1'>
+
+        <div class="chat-container active" id='default_channel'>
+          <div class="bubble">
+            <div class="bubble-row">
+              <div class="bubble-column bubble-column-left">
+                <img src="img/img_avatar.png" alt="Avatar">
+              </div>
+
+              <div class="bubble-column bubble-column-right">
+                <span class="datestamp">EE 461L TEAM 9: May 20, 2016, 4:16 PM</span>
+                  <p>Hey there, welcome to Transient! Thanks for checking out our project! This is currently a demo to see how things are currently working.
+                     If you find something that doesn't look right, or maybe there's a bug somewhere in here, let us know and we'll try to squash-- I mean,
+                     catch that bug as soon as possible. Thanks! uwu</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="chat-container" id='cont1'>
 
           <div class="bubble">
             <div class="bubble-row">
@@ -222,6 +253,7 @@
         </div>
 
         <div class="chat-container" id='cont2'>
+
 
           <div class="bubble">
             <div class="bubble-row">
@@ -347,32 +379,36 @@
       </div>
 
       <div class="chat-control">
-        <input class="chat-input" type="text" placeholder="enter your message" />
+        <input class="chat-input" type="text" placeholder="Type a message..." />
       </div>
     </div>
     <!--*************** chat-box ends *********************-->
 
     <!--*************** rightside-bar begins *********************-->
     <div class="column rightside-bar">
+
+      <div class="channel-name">
+        <p id='current-channel-name'></p>
+        </div>
       <div class="chat-users">
         <!--****************chat users**********************-->
         <div class="chat-user">
-          <div class="user-profile active" data-up='cont1'></div>
+          <div class="user-profile"></div>
           <div class="user-name">Erza</div>
         </div>
 
         <div class="chat-user">
-          <div class="user-profile" data-up='cont2'></div>
+          <div class="user-profile"></div>
           <div class="user-name">Natsu</div>
         </div>
 
         <div class="chat-user">
-          <div class="user-profile" data-up='cont3'></div>
+          <div class="user-profile"></div>
           <div class="user-name">Lucy</div>
         </div>
 
         <div class="chat-user">
-          <div class="user-profile" data-up='cont4'></div>
+          <div class="user-profile"></div>
           <div class="user-name">Goku?</div>
         </div>
       <!--**************************************************-->

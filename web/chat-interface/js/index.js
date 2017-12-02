@@ -11,27 +11,32 @@ var config = {
 firebase.initializeApp(config); 
 
 /* Ran once the DOM is ready for JavaScript execution. */
+// Modified for channel buttons rather than user profiles
 $(document).ready(function() {
-      $('.user-profile').click(function() {
+
+      //$('.channel-button').click(function() {
+        $(document).on("click", ".channel-button", function(){
+        console.log("channel button clicked");
           if (!$(this).hasClass('active')) {
               
-              $('.user-profile.active').removeClass('active');
+              $('.channel-button.active').removeClass('active');
               $(this).addClass('active');
               
               var temp = $('#'+$(this).attr('data-up'));
-              
+              console.log($(temp));
               hideUI('.chat-container')
               showUI('#'+$(this).attr('data-up'));
               temp.addClass('active').removeClass('hidechat');
               temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
               temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+              $("#current-channel-name").text($(".channel-button.active").text());
           }
       });
-
-      showUI('#cont1');
+      showUI('#default_channel');
 
       updateUI();
 });
+
   
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
 firebase.auth().onAuthStateChanged(firebaseUser => {
@@ -58,11 +63,11 @@ function updateUI(firebaseUser) {
         snapshot.forEach(function(childSnapshot) {
             var chatHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + chatHash);
-            
+
             chatRef.once('value', function(snapshot) {
                 var name = snapshot.val()["channelName"];
                     $("#live-channels-list").append(
-                        "<li> " + name + " </li>"
+                        "<div class='channel-button' data-up='" + name.replace(/ /g,"-") + "'>" + name + " </div>"
                     )
             })
         });
@@ -111,7 +116,15 @@ function hideUI(ele) {
 $("#new-chat").click(function() {
   $("#myModal").show();
   $("#modal-choose-action").show();
+  //$("#modal-delete-channel").hide();
 });
+
+$("#delete-chat").click(function() {
+    console.log("in delete chat modal");
+  $("#myModal").show();
+  $("#modal-choose-action").hide();
+  $("#modal-delete-channel").show();
+})
 
 /* Hides the channel action interface. */
 $(".close").click(function() {
@@ -130,7 +143,22 @@ $(document).click(function(event) {
             $("#modal-create-channel").hide();
         }
     }
+
+    if ($(event.target).is('#myModal') && !$(event.target).is('#delete-chat')) {
+        if ($('#myModal').css('display') != 'none') 
+        {
+            // Show channel action interface.
+            $('#myModal').hide();
+            $("#modal-choose-action").show();
+            $("#modal-join-channel").hide();
+            $("#modal-create-channel").hide();
+        }
+    }
 });
+
+$("#cancel").click(function() {
+    $('#myModal').hide();
+})
 
 /* Handles logout for the user. */
 $("#logoutbtn").click(function() {
@@ -187,7 +215,6 @@ $("#create-channel-button").click(function() {
     // TODO: 
     // 1. Swap the chat box to the created channel
     $("#myModal").hide();
-    $("#modal-create-channel").hide();
 
 
     // 2. Display modal with name generated string for the channel creator to copy + share
@@ -205,9 +232,31 @@ $("#create-channel-button").click(function() {
 
     // 3. Display the created channel underneath "Live Channels" section
     $("#live-channels-list").append(
-        "<li> " + channelName + " </li>"
+        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'>" + channelName + " </div>"
     ) 
 });
+
+
+$("#delete-channel").click(function() {
+    /*
+    TODO:
+    Add a delete button somewhere in the HTML in order to delete a channel
+    This could be an onHover button next to the live channels that are currently available,
+    or just a general delete button that deletes the active channel that you're on
+    
+    Also add a popup window that confirms the deletion of a channel
+
+    */
+    console.log('in delete chat');
+    var db = firebase.database();
+    var currentUserID = firebase.auth().currentUser.uid;
+    var channelName = $("#current-channel-name").text();
+
+    $("#myModal").hide();
+
+
+})
+
 
 $("#join-channel").click(function() {
     var db = firebase.database()
@@ -242,7 +291,7 @@ function removeUserFromChannel(channelName, uid, db) {
     db.ref('channels').child(channelName).child("participants").child(uid).remove();
     
     // remove the channel from the user
-    // TODO
+    db.ref('users/' + uid).child('live-channels').child(channelName).remove();
 }
 
 function userIsAlreadyInChat(channelName, uid, db) {
