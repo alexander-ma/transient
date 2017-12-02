@@ -329,7 +329,7 @@ $(document).ready(function() {
               temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
               temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
               $("#current-channel-name").text($(".channel-button.active").text());
-              showCurrentChatUsers() // TODO: fix this!!
+              showCurrentChatUsers();
           }
       });
       showUI('#default_channel');
