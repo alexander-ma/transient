@@ -242,6 +242,9 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
             if (picUrl) {
                 imageElement.src = picUrl;
             }
+            else {
+                imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
+            }
         }
     }
 
@@ -373,7 +376,7 @@ function updateUI(firebaseUser) {
             userImage.src = snapshot.val()['photoURL'];
         }
         else {
-            userImage.src = '/images/profile_placeholder.png';
+            userImage.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
         }
     });
     

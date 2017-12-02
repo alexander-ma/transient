@@ -89,7 +89,7 @@ Transient.prototype.saveMessage = function(e) {
     this.messagesRef.push({
       name: currentUser.displayName,
       text: this.messageInput.value,
-      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png'
+      photoUrl: currentUser.photoURL || 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57'
     }).then(function() {
       // Clear message text field and SEND button state.
       Transient.resetMaterialTextfield(this.messageInput);
