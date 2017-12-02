@@ -344,6 +344,7 @@ $(document).ready(function() {
   
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
 firebase.auth().onAuthStateChanged(firebaseUser => {
+    console.log("onAuthStateChanged");
     if (firebaseUser) {
         // TODO: Show channels, (friends ?), live + scheduled channels for the 
         // registered firebase user.
@@ -361,7 +362,6 @@ var channelDict = {};
 
 /* Grab data from firebase and dynamically update the webpage based on the user. */
 function updateUI(firebaseUser) {
-    // TODO:
     var db = firebase.database();
     var currentUserID = firebase.auth().currentUser.uid;
     var user = firebase.auth().currentUser;
@@ -369,6 +369,12 @@ function updateUI(firebaseUser) {
     var userInfoRef = db.ref('users/' + currentUserID);
     var username = "tempUserName";
     
+    getActiveChannel(function(activeChannel) {
+        window.transient = new Transient(activeChannel);
+        window.transient.loadMessages(activeChannel);
+        //window.transient = new Transient('-L-Jkdt8gD0d8TbuYLDl');
+        //window.transient.loadMessages('-L-Jkdt8gD0d8TbuYLDl');
+    });
     
     userInfoRef.once('value', function(snapshot) {
        user.updateProfile({
@@ -547,28 +553,79 @@ $("#join-channel").click(function() {
     
     var hashCode = document.querySelector('#chat-hash').value;
     var channelsRef = db.ref('channels');
-    
-    console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
-    
+    var channelToJoin = db.ref('users/' + currentUserID + "/live-channels/" + hashCode);
+    var alreadyInChannel = false;
+
     $("#myModal").hide();
     
-    channelsRef.once('value', function(snapshot) {
-        
-      if (snapshot.hasChild(hashCode)) {
-        // Successfully joined channel
-        var chatName = snapshot.val()[hashCode]["channelName"];
-
-        addUserToChannel(hashCode, chatName, currentUserID, db);
-      }
-    });
+    // Javascript shouldn't be forced to execute synchronously / top-down visually, so below code is bad.
+    // Learn more at: "callbackhell.com"
+    doesChannelExistFunction(function(doesChannelExist) {
+        if (!doesChannelExist) {
+            console.log("The channel the user is trying to join doesn't exist.");
+        }
+        else {
+            getChannelNameFunction(function(channelName) {
+                if (!channelName) { 
+                    return;
+                }
+                else {
+                    isUserAlreadyInChatFunction(function(isAlreadyInChat) {
+                        if (isAlreadyInChat) { 
+                            console.log("The user is already in this channel.");
+                            return; 
+                        }
+                        else {
+                            addUserToChannel(hashCode, channelName, currentUserID, db);
+                        }
+                    }, currentUserID, hashCode);
+                }
+            }, hashCode);
+        }
+    }, hashCode);
 });
 
+var doesChannelExistFunction = function(callback, channelHash) {
+    var doesChannelExist;
+    firebase.database().ref('channels').once("value").then(function(snapshot) {
+        doesChannelExist = snapshot.hasChild(channelHash);
+        callback(doesChannelExist);
+    });
+}
+
+var getChannelNameFunction = function(callback, channelHash) {
+    var channelName;
+
+    firebase.database().ref('channels').once("value").then(function(snapshot) {
+        channelName = snapshot.val()[channelHash]["channelName"];
+        console.log("Channel name: " + channelName);
+        callback(channelName);
+    });
+}
+
+var isUserAlreadyInChatFunction = function(callback, uid, channelName) {
+    var userChannelsRef = firebase.database().ref('users/' + uid + '/live-channels');
+    var isAlreadyInChat; 
+
+    userChannelsRef.once("value").then(function(snapshot) {
+        isAlreadyInChat = snapshot.hasChild(channelName); 
+        callback(isAlreadyInChat);
+    }, function(error) {
+        console.log("The read failed: " + error.code);
+    });
+}
+   
 function addUserToChannel(channelName, chatName, uid, db) {
+    console.log("Adding user to the channel.");
     // add to channel participants list
-    db.ref('channels').child(channelName).child("participants").push(uid);
+    db.ref('channels').child(channelName).child("participants").push(uid, function(error) {
+        if (error) { console.log("Push() called unsuccessfully."); }
+    });
     
     // add the channel to the person's list
-    db.ref('users/' + uid).child('live-channels').child(channelName).set(channelName);
+    db.ref('users/' + uid).child('live-channels').child(channelName).set(channelName, function(error) {
+        if (error) { console.log("Push() called unsuccessfully."); }
+    });
 }
 
 function removeUserFromChannel(channelName, uid, db) {
@@ -579,25 +636,22 @@ function removeUserFromChannel(channelName, uid, db) {
     // TODO
 }
 
-function userIsAlreadyInChat(channelName, uid, db) {
-//    var userChannelsRef = db.ref('users/' + uid + '/live-channels');
-//    var flag = false;
-//    
-//    
-//    flag = (userChannelsRef.once("value", function(snapshot) {
-//        if (snapshot.hasChild(channelName)) {
-//            alert('already exists');
-//            flag = true;
-//            return true;
-//        }
-//        return false;
-//    }))();
-//    
-//    console.log(flag);
-}
-   
-window.onload = function() {
-    window.transient = new Transient('-L-Jkdt8gD0d8TbuYLDl');
-    window.transient.loadMessages('-L-Jkdt8gD0d8TbuYLDl');
-};
+var getActiveChannel = function(callback) {
+    console.log("Called getActiveChannel().");
+    var currentUserID = firebase.auth().currentUser.uid;
+    var db = firebase.database();
+    var userLiveChannelsRef = firebase.database().ref('users/' + currentUserID + '/live-channels');
 
+    var activeChannel; 
+    userLiveChannelsRef.limitToFirst(1).once("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            activeChannel = childSnapshot.val();    
+            console.log("Active channel: " + activeChannel);
+            callback(activeChannel);
+        }); 
+    }, function(error) {
+        console.log("Read failed.");
+        // TODO: The user hasn't joined any live channels yet. Within this block,
+        // dispaly the default empty channel.
+    });
+}
