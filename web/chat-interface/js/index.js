@@ -91,6 +91,12 @@ function uploadUserPhoto() {
         var userProfilePic = document.getElementById('user-pic');
         userProfilePic.src = downloadURL;
         
+        var userProfilePicRef = firebase.database().ref('users/' + user.uid + '/photoURL');
+        
+        userProfilePicRef.set(
+            downloadURL
+        )
+        
         user.updateProfile({
           photoURL: downloadURL
         }).then(function() {
@@ -98,8 +104,6 @@ function uploadUserPhoto() {
         }).catch(function(error) {
           // An error happened.
         });
-        
-        
         
         console.log(user.photoURL);
     });
@@ -161,6 +165,7 @@ Transient.prototype.loadMessages = function(channelHash) {
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
     this.messagesRef.limitToLast(12).on('child_changed', setMessage);
+    $('#chat div.active').stop().animate({ scrollTop: $('#chat div.active')[0].scrollHeight}, 800);
 };
 
 document.getElementById('chat-input').onkeypress = function(e){
@@ -170,6 +175,7 @@ document.getElementById('chat-input').onkeypress = function(e){
       // Enter pressed
       window.transient.saveMessage();
     }
+    $('#chat div.active').stop().animate({ scrollTop: $('#chat div.active')[0].scrollHeight}, 800);
 }
 
 
@@ -182,88 +188,72 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
     console.log('imageUri ' + imageUri);
     
     var currentUserName = this.auth.currentUser.displayName;
+    var uid = this.auth.currentUser.uid;
+    var userRef = this.database.ref('users/' + uid);
     
-  var div = document.getElementById(key);
-  // If an element for that message does not exists yet we create it.
-  if (!div) {
-    var container = document.createElement('div');
-    
-    if (name == currentUserName) {
-        container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
+    var div = document.getElementById(key);
+    // If an element for that message does not exists yet we create it.
+    if (!div) {
+        var container = document.createElement('div');
         
-        div = container.firstChild;
-        div.setAttribute('id', key);
-        div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
-        this.messageList.appendChild(div);
-        
-        var messageElement = div.querySelector('.message');
-        var timeStampElement = div.querySelector('.datestamp-alt');
-        
-        if (text) { // If the message is text.
-            messageElement.textContent = text;
-            // Replace all line breaks by <br>.
-            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-        } 
-        
-        if (date) {
-            timeStampElement.textContent = date;
+            
+        if (name == currentUserName) {
+            container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
+
+            div = container.firstChild;
+            div.setAttribute('id', key);
+            div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+            this.messageList.appendChild(div);
+
+            var messageElement = div.querySelector('.message');
+            var timeStampElement = div.querySelector('.datestamp-alt');
+
+            if (text) { // If the message is text.
+                messageElement.textContent = text;
+                // Replace all line breaks by <br>.
+                messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+            } 
+
+            if (date) {
+                timeStampElement.textContent = date;
+            }
         }
-        
-        
-    }
-    else {
-        container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
-        div = container.firstChild;
-        div.setAttribute('id', key);
-        div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
-        this.messageList.appendChild(div);
-        
-        var messageElement = div.querySelector('.message');
-        var timeStampElement = div.querySelector('.datestamp');
-        var imageElement = div.querySelector('.other-user-pic');
-        
-        if (text) { // If the message is text.
-            messageElement.textContent = text;
-            // Replace all line breaks by <br>.
-            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+        else {
+            container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
+            div = container.firstChild;
+            div.setAttribute('id', key);
+            div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+            this.messageList.appendChild(div);
+
+            var messageElement = div.querySelector('.message');
+            var timeStampElement = div.querySelector('.datestamp');
+            var imageElement = div.querySelector('.other-user-pic');
+
+            if (text) { // If the message is text.
+                messageElement.textContent = text;
+                // Replace all line breaks by <br>.
+                messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+            }
+
+            if (date) {
+                timeStampElement.textContent = date;
+            }
+
+            if (picUrl) {
+                imageElement.src = picUrl;
+            }
+            else {
+                imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
+            }
         }
-        
-        if (date) {
-            timeStampElement.textContent = date;
-        }
-        
-        if (picUrl) {
-            imageElement.src = picUrl;
-        }
-        
     }
 
-  }
-    
-//  if (picUrl) {
-//    div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')';
-//  }
-//    
-//  div.querySelector('.name').textContent = name;
-//  var messageElement = div.querySelector('.message');
-//    
   if (text) { // If the message is text.
     messageElement.textContent = text;
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
-  } //else if (imageUri) { // If the message is an image.
-//    var image = document.createElement('img');
-//    image.addEventListener('load', function() {
-//      this.messageList.scrollTop = this.messageList.scrollHeight;
-//    }.bind(this));
-//    this.setImageUrl(imageUri, image);
-//    messageElement.innerHTML = '';
-//    messageElement.appendChild(image);
-//  }
-//  // Show the card fading-in and scroll to view the new message.
-//  setTimeout(function() {div.classList.add('visible')}, 1);
-//  this.messageList.scrollTop = this.messageList.scrollHeight;
-//  this.messageInput.focus();
+  } 
+    $('#chat div.active').stop().animate({ scrollTop: $('#chat div.active')[0].scrollHeight}, 800);
 };
 
 // Checks that the Firebase SDK has been correctly setup and configured.
@@ -384,9 +374,18 @@ function updateUI(firebaseUser) {
         }).catch(function(error) {
           // An error happened.
         });
+    
+        var userImage = document.getElementById('user-pic');
+        var imageUrl = snapshot.val()['photoURL'];
+        
+        if (imageUrl) {
+            userImage.src = snapshot.val()['photoURL'];
+        }
+        else {
+            userImage.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
+        }
     });
     
-
     
     liveChannelsRef.once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
