@@ -364,9 +364,11 @@ function updateUI(firebaseUser) {
         }).catch(function(error) {
           // An error happened.
         });
+    
+        var userImage = document.getElementById('user-pic');
+        userImage.src = snapshot.val()['photoURL'];
     });
     
-
     
     liveChannelsRef.once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
