@@ -311,39 +311,37 @@ Transient.resetMaterialTextfield = function(element) {
 $(document).ready(function() {
 
       //$('.channel-button').click(function() {
-        $(document).on("click", ".channel-button", function(){
-//        console.log("channel button clicked");
+    $(document).on("click", ".channel-button", function(){
+//    console.log("channel button clicked");
           if (!$(this).hasClass('active')) {
               
               $('.channel-button.active').removeClass('active');
               $(this).addClass('active');
               
-//              var temp = $('#'+$(this).attr('data-up'));
-              var channelHash = $(this).attr('data-hash');
+//    var temp = $('#'+$(this).attr('data-up'));
+      var channelHash = $(this).attr('data-hash');
+      
+      console.log('channelHash is: ' + channelHash);
+      
+      
+      $('#cont1').empty();
+      window.transient.channelHash = channelHash;
+      window.transient.loadMessages(channelHash);
+      console.log(window.transient.channelHash);
               
-              console.log('channelHash is: ' + channelHash);
               
               
-              $('#cont1').empty();
-              window.transient.channelHash = channelHash;
-              window.transient.loadMessages(channelHash);
-              console.log(window.transient.channelHash);
-              
-              
-              
-//              hideUI('.chat-container')
-//              showUI('#'+$(this).attr('data-up'));
-//              temp.addClass('active').removeClass('hidechat');
-//              temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
-//              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
-              $("#current-channel-name").text($(".channel-button.active").text());
-          }
-      });
-        showUI('#cont1');
-});
+     // hideUI('.chat-container')
+     // showUI('#'+$(this).attr('data-up'));
+     // temp.addClass('active').removeClass('hidechat');
+     // temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
+     // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+      $("#current-channel-name").text($(".channel-button.active").text());
+      }
+      showUI('#cont1');
+  });
     
-    
-    $(document).on("click", "#invite-button", function(){
+    $(document).on("click", "#invitebtn", function(){
         $('#myModal').show();
         $('#modal-invite-link').show(); 
         $("#modal-create-channel").hide();
@@ -638,7 +636,6 @@ $("#delete-channel").click(function() {
     var currentUserID = firebase.auth().currentUser.uid;
     //var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/' + channelName);
     var channelHash = $('.channel-button.active').attr('data-hash');;
-
     $('#channel-button[data-up="' + channelName + ']').remove();
     removeUserFromChannel(channelHash, currentUserID, db);
     $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
