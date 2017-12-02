@@ -444,7 +444,8 @@ function hideUI(ele) {
 $("#new-chat").click(function() {
   $("#myModal").show();
   $("#modal-choose-action").show();
-  //$("#modal-delete-channel").hide();
+  $("#modal-delete-channel").hide();
+  $("#modal-invite-link").hide();
 });
 
 $("#delete-chat").click(function() {
@@ -543,6 +544,10 @@ $("#create-channel-button").click(function() {
     // TODO: 
     // 1. Swap the chat box to the created channel
     $("#myModal").hide();
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
 
 
     // 2. Display modal with name generated string for the channel creator to copy + share
@@ -596,6 +601,10 @@ $("#join-channel").click(function() {
     console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
     
     $("#myModal").hide();
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
     
     channelsRef.once('value', function(snapshot) {
         
