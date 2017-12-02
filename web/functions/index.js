@@ -19,3 +19,10 @@ exports.generateAnonymousName = functions.database.ref('/users/{user-hash}')
         //return adminRef.push({ anonymousName : randomName });
         return adminRef.update({anonymousName : randomName });
     });
+
+/*
+ * Helper function to capitalize the randomly generated name.
+ */
+function capitalizeFirstLetter(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1);
+} 
