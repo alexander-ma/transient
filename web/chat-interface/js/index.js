@@ -645,7 +645,12 @@ $("#delete-channel").click(function() {
     $("#modal-delete-channel").hide();
     $("#modal-join-channel").hide();
     $("#modal-invite-link").hide();
-
+    $('#cont1').empty();
+    // TODO: Fix the case when you delete a channel and the user still tries to type in the channel
+      // window.transient.channelHash = null;
+      // window.transient.loadMessages(channelHash);
+      // console.log(window.transient.channelHash);
+      $('#current-channel-name').empty();
 })
 
 
