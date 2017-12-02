@@ -250,6 +250,7 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
     // Replace all line breaks by <br>.
     messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
   } 
+    $('#chat div.active').stop().animate({ scrollTop: $('#chat div.active')[0].scrollHeight}, 800);
 };
 
 // Checks that the Firebase SDK has been correctly setup and configured.
@@ -366,7 +367,14 @@ function updateUI(firebaseUser) {
         });
     
         var userImage = document.getElementById('user-pic');
-        userImage.src = snapshot.val()['photoURL'];
+        var imageUrl = snapshot.val()['photoURL'];
+        
+        if (imageUrl) {
+            userImage.src = snapshot.val()['photoURL'];
+        }
+        else {
+            userImage.src = '/images/profile_placeholder.png';
+        }
     });
     
     
