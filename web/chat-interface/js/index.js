@@ -336,9 +336,10 @@ $(document).ready(function() {
 //              temp.addClass('active').removeClass('hidechat');
 //              temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
 //              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
-//              $("#current-channel-name").text($(".channel-button.active").text());
+              $("#current-channel-name").text($(".channel-button.active").text());
           }
       });
+
       showUI('#cont1');
 
       updateUI();
@@ -570,7 +571,7 @@ $("#create-channel-button").click(function() {
 
     // Add new channel to current user's list of live channels.
     var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
-    var newLiveChannelRef = currentUserLiveChannelsRef.push("");
+    var newLiveChannelRef = currentUserLiveChannelsRef.push("");    //????
 
     // TODO: Add new channel to "liveChannels" partition 
 
@@ -594,7 +595,7 @@ $("#create-channel-button").click(function() {
         hash: channelHash
     });
     
-    channelListRef.child("participants").push(currentUserID);
+    channelListRef.child("participants").child(currentUserID).set(currentUserID);
 
     // 3. Display the created channel underneath "Live Channels" section
     $("#live-channels-list").append(
@@ -604,22 +605,23 @@ $("#create-channel-button").click(function() {
 
 
 $("#delete-channel").click(function() {
-    /*
-    TODO:
-    Add a delete button somewhere in the HTML in order to delete a channel
-    This could be an onHover button next to the live channels that are currently available,
-    or just a general delete button that deletes the active channel that you're on
-    
-    Also add a popup window that confirms the deletion of a channel
+    console.log('deleting channel...');
 
-    */
-    console.log('in delete chat');
     var db = firebase.database();
+    var channelName = $('.channel-button.active').attr('data-up');
     var currentUserID = firebase.auth().currentUser.uid;
-    var channelName = $("#current-channel-name").text();
+    //var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/' + channelName);
+    var channelHash = $('.channel-button.active').attr('data-hash');;
+
+    $('#channel-button[data-up="' + channelName + ']').remove();
+    removeUserFromChannel(channelHash, currentUserID, db);
+    $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
 
     $("#myModal").hide();
-
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
 
 })
 
