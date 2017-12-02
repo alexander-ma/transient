@@ -406,6 +406,26 @@ function updateUI(firebaseUser) {
     
 }
 
+var getActiveChannel = function(callback) {
+    console.log("Called getActiveChannel().");
+    var currentUserID = firebase.auth().currentUser.uid;
+    var db = firebase.database();
+    var userLiveChannelsRef = firebase.database().ref('users/' + currentUserID + '/live-channels');
+
+    var activeChannel; 
+    userLiveChannelsRef.limitToFirst(1).once("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            activeChannel = childSnapshot.val();    
+            console.log("Active channel: " + activeChannel);
+            callback(activeChannel);
+        }); 
+    }, function(error) {
+        console.log("Read failed.");
+        // TODO: The user hasn't joined any live channels yet. Within this block,
+        // dispaly the default empty channel.
+    });
+}
+
 /* Displays the UI for 'ele'. */ 
 function showUI(ele) {
     console.log($(ele));
@@ -633,24 +653,4 @@ function removeUserFromChannel(channelName, uid, db) {
     
     // remove the channel from the user
     // TODO
-}
-
-var getActiveChannel = function(callback) {
-    console.log("Called getActiveChannel().");
-    var currentUserID = firebase.auth().currentUser.uid;
-    var db = firebase.database();
-    var userLiveChannelsRef = firebase.database().ref('users/' + currentUserID + '/live-channels');
-
-    var activeChannel; 
-    userLiveChannelsRef.limitToFirst(1).once("value", function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-            activeChannel = childSnapshot.val();    
-            console.log("Active channel: " + activeChannel);
-            callback(activeChannel);
-        }); 
-    }, function(error) {
-        console.log("Read failed.");
-        // TODO: The user hasn't joined any live channels yet. Within this block,
-        // dispaly the default empty channel.
-    });
 }
