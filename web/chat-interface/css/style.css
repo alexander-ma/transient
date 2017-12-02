@@ -382,6 +382,7 @@ p {
 
 .bubble-alt {
   float: right;
+  min-width: 30%;
 }
 
 .bubble-alt:after {
@@ -446,6 +447,22 @@ p {
   display: block;
 }
 
+.image-upload > input
+{
+    display: none;
+}
+
+.image-upload img
+{
+    width: 35%;
+    height: auto;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top: 5%;
+    display: block;
+    cursor: pointer;
+}
+
 .user-profile {
   float: left;
   width: 50px;
@@ -459,6 +476,12 @@ p {
   filter: grayscale(100%);
   cursor: pointer
 }
+
+.datestamp-alt{
+    white-space:nowrap;
+}
+
+
 
 .user-profile:nth-child(1) {
   background-image: url(http://vignette3.wikia.nocookie.net/fairytail/images/0/02/Mugshot_of_Erza.png/revision/latest?cb=20130509171537);

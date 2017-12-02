@@ -10,6 +10,311 @@ var config = {
 
 firebase.initializeApp(config); 
 
+'use strict';
+
+// Initializes Transient.
+function Transient(hash) {
+  this.checkSetup();
+
+  // Shortcuts to DOM Elements.
+  this.channelHash = hash;
+  this.messageList = document.getElementById('cont1');
+  this.messageInput = document.getElementById('chat-input');
+  this.mediaCapture = document.getElementById('file-input');
+  this.submitButton = document.getElementById('submit');
+  this.imageForm = document.getElementById('image-form');
+  this.userPic = document.getElementById('user-pic');
+
+//  // Saves message on form submit.
+//  this.messageForm.addEventListener('submit', this.saveMessage.bind(this));
+//
+//  // Toggle for the button.
+//  var buttonTogglingHandler = this.toggleButton.bind(this);
+//  this.messageInput.addEventListener('keyup', buttonTogglingHandler);
+//  this.messageInput.addEventListener('change', buttonTogglingHandler);
+
+//  // Events for image upload.
+//  this.submitImageButton.addEventListener('click', function(e) {
+//    e.preventDefault();
+//    this.mediaCapture.click();
+//  }.bind(this));
+  this.mediaCapture.addEventListener('change', uploadUserPhoto, false);
+
+  this.initFirebase();
+}
+
+function uploadUserPhoto() {
+    var currentUserID = firebase.auth().currentUser.uid;
+    var preview = document.getElementById('user-pic');
+    var file=document.querySelector('input[type=file]').files[0];
+    console.log(file);
+    
+    var storagePath = currentUserID + '/profilePicture/' + file.name;
+    var storageRef = firebase.storage().ref(storagePath);
+    var uploadTask = storageRef.put(file);
+    
+    
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, // or 'state_changed'
+      function(snapshot) {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case firebase.storage.TaskState.PAUSED: // or 'paused'
+            console.log('Upload is paused');
+            break;
+          case firebase.storage.TaskState.RUNNING: // or 'running'
+            console.log('Upload is running');
+            break;
+        }
+      }, function(error) {
+
+      // A full list of error codes is available at
+      // https://firebase.google.com/docs/storage/web/handle-errors
+      switch (error.code) {
+        case 'storage/unauthorized':
+          // User doesn't have permission to access the object
+          break;
+
+        case 'storage/canceled':
+          // User canceled the upload
+          break;
+
+        case 'storage/unknown':
+          // Unknown error occurred, inspect error.serverResponse
+          break;
+      }
+    }, function() {
+      // Upload completed successfully, now we can get the download URL
+        var downloadURL = uploadTask.snapshot.downloadURL;    
+        var user = firebase.auth().currentUser;
+
+        user.updateProfile({
+          photoURL: downloadURL
+        }).then(function() {
+          // Update successful.
+        }).catch(function(error) {
+          // An error happened.
+        });
+        
+        console.log(user.photoURL);
+    });
+}
+
+// Sets up shortcuts to Firebase features and initiate firebase auth.
+Transient.prototype.initFirebase = function() {
+  // Shortcuts to Firebase SDK features.
+    console.log('init firebase called');
+    this.auth = firebase.auth();
+    this.database = firebase.database();
+    this.storage = firebase.storage();
+};
+
+// Template for messages.
+Transient.MESSAGE_TEMPLATE_OTHER = 
+'<div class="bubble">' +
+    '<div class="bubble-row">' +
+      '<div class="bubble-column bubble-column-left">' +
+        '<img class="other-user-pic" src="img/img_avatar.png" alt="Avatar">' +
+      '</div>' +
+      '<div class="bubble-column bubble-column-right">' +
+        '<span class="datestamp"></span>' +
+          '<p class="message"></p>' +
+      '</div>' +
+    '</div>' +
+'</div>';
+
+Transient.MESSAGE_TEMPLATE_ME = 
+'<div class="bubble bubble-alt">' + 
+'<div class="bubble-message-self">' +
+    '<span class="datestamp-alt"></span>' +
+      '<p class="message"></p>' +
+'</div>' +
+'</div>';
+
+//    '<div class="message-container">' +
+//      '<div class="spacing"><div class="pic"></div></div>' +
+//      '<div class="message"></div>' +
+//      '<div class="name"></div>' +
+//    '</div>';
+
+
+// Loads chat messages history and listens for upcoming ones.
+Transient.prototype.loadMessages = function(channelHash) {
+    // Reference to the /messages/ database path.
+    this.messagesRef = this.database.ref('channels/' + channelHash + '/messages');
+    
+    // Make sure we remove all previous listeners.
+    this.messagesRef.off();
+    
+    console.log('loadMessages');
+    // Loads the last 12 messages and listen for new ones.
+    var setMessage = function(data) {
+        var val = data.val();
+        console.log(val);
+        this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl, val.timeStamp);
+    }.bind(this);
+    
+    this.messagesRef.limitToLast(12).on('child_added', setMessage);
+    this.messagesRef.limitToLast(12).on('child_changed', setMessage);
+};
+
+document.getElementById('chat-input').onkeypress = function(e){
+    if (!e) e = window.event;
+    var keyCode = e.keyCode || e.which;
+    if (keyCode == '13'){
+      // Enter pressed
+      window.transient.saveMessage();
+    }
+}
+
+
+// Displays a Message in the UI.
+Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri, date) {
+    console.log('key ' + key);
+    console.log('name ' + name);
+    console.log('text ' + text);
+    console.log('picUrl ' + picUrl);
+    console.log('imageUri ' + imageUri);
+    
+    var currentUserName = this.auth.currentUser.displayName;
+    
+  var div = document.getElementById(key);
+  // If an element for that message does not exists yet we create it.
+  if (!div) {
+    var container = document.createElement('div');
+    
+    if (name == currentUserName) {
+        container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
+        
+        div = container.firstChild;
+        div.setAttribute('id', key);
+        div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+        this.messageList.appendChild(div);
+        
+        var messageElement = div.querySelector('.message');
+        var timeStampElement = div.querySelector('.datestamp-alt');
+        
+        if (text) { // If the message is text.
+            messageElement.textContent = text;
+            // Replace all line breaks by <br>.
+            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+        } 
+        
+        if (date) {
+            timeStampElement.textContent = date;
+        }
+        
+        
+    }
+    else {
+        container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
+        div = container.firstChild;
+        div.setAttribute('id', key);
+        div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
+        this.messageList.appendChild(div);
+        
+        var messageElement = div.querySelector('.message');
+        var timeStampElement = div.querySelector('.datestamp');
+        var imageElement = div.querySelector('.other-user-pic');
+        
+        if (text) { // If the message is text.
+            messageElement.textContent = text;
+            // Replace all line breaks by <br>.
+            messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+        }
+        
+        if (date) {
+            timeStampElement.textContent = date;
+        }
+        
+        if (picUrl) {
+            imageElement.src = picUrl;
+        }
+        
+    }
+
+  }
+    
+//  if (picUrl) {
+//    div.querySelector('.pic').style.backgroundImage = 'url(' + picUrl + ')';
+//  }
+//    
+//  div.querySelector('.name').textContent = name;
+//  var messageElement = div.querySelector('.message');
+//    
+  if (text) { // If the message is text.
+    messageElement.textContent = text;
+    // Replace all line breaks by <br>.
+    messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+  } //else if (imageUri) { // If the message is an image.
+//    var image = document.createElement('img');
+//    image.addEventListener('load', function() {
+//      this.messageList.scrollTop = this.messageList.scrollHeight;
+//    }.bind(this));
+//    this.setImageUrl(imageUri, image);
+//    messageElement.innerHTML = '';
+//    messageElement.appendChild(image);
+//  }
+//  // Show the card fading-in and scroll to view the new message.
+//  setTimeout(function() {div.classList.add('visible')}, 1);
+//  this.messageList.scrollTop = this.messageList.scrollHeight;
+//  this.messageInput.focus();
+};
+
+// Checks that the Firebase SDK has been correctly setup and configured.
+Transient.prototype.checkSetup = function() {
+  if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
+    window.alert('You have not configured and imported the Firebase SDK. ' +
+        'Make sure you go through the codelab setup instructions and make ' +
+        'sure you are running the codelab using `firebase serve`');
+  }
+};
+
+function formatAMPM(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return strTime;
+}
+
+// Saves a new message on the Firebase DB.
+Transient.prototype.saveMessage = function(e) {
+//  e.preventDefault();
+  // Check that the user entered a message and is signed in.
+  if (this.messageInput.value) {
+    var currentUser = this.auth.currentUser;
+      
+    console.log(currentUser);
+    var dt = new Date();
+    var dateString = dt.toDateString() + ", " + formatAMPM(dt);
+    // Add a new message entry to the Firebase Database.
+    this.messagesRef.push({
+      name: currentUser.displayName,
+      text: this.messageInput.value,
+      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
+      timeStamp: dateString
+    }).then(function() {
+      // Clear message text field and SEND button state.
+      Transient.resetMaterialTextfield(this.messageInput);
+    }.bind(this)).catch(function(error) {
+      console.error('Error writing new message to Firebase Database', error);
+    });
+  }
+};
+
+// Resets the given MaterialTextField.
+Transient.resetMaterialTextfield = function(element) {
+  element.value = '';
+//  element.parentNode.MaterialTextfield.boundUpdateClassesHandler();
+};
+
+
+
 /* Ran once the DOM is ready for JavaScript execution. */
 $(document).ready(function() {
       $('.user-profile').click(function() {
@@ -46,13 +351,32 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
     }
 });
 
+
+
+var channelDict = {};
+
 /* Grab data from firebase and dynamically update the webpage based on the user. */
 function updateUI(firebaseUser) {
     // TODO:
     var db = firebase.database();
     var currentUserID = firebase.auth().currentUser.uid;
+    var user = firebase.auth().currentUser;
     var liveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+    var userInfoRef = db.ref('users/' + currentUserID);
+    var username = "tempUserName";
     
+    
+    userInfoRef.once('value', function(snapshot) {
+       user.updateProfile({
+          displayName: snapshot.val()['username']
+        }).then(function() {
+          // Update successful.
+        }).catch(function(error) {
+          // An error happened.
+        });
+    });
+    
+
     
     liveChannelsRef.once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
@@ -61,12 +385,16 @@ function updateUI(firebaseUser) {
             
             chatRef.once('value', function(snapshot) {
                 var name = snapshot.val()["channelName"];
-                    $("#live-channels-list").append(
-                        "<li> " + name + " </li>"
-                    )
+                $("#live-channels-list").append(
+                    "<li> " + name + " </li>"
+                )
+                if (!(name in channelDict)) {
+                    channelDict['name'] = new Transient(name);
+                }
             })
         });
     });
+    
 }
 
 /* Displays the UI for 'ele'. */ 
@@ -260,8 +588,10 @@ function userIsAlreadyInChat(channelName, uid, db) {
     }))();
     
     console.log(flag);
-    
-
 }
-    
+   
+window.onload = function() {
+    window.transient = new Transient('-L-Jkdt8gD0d8TbuYLDl');
+    window.transient.loadMessages('-L-Jkdt8gD0d8TbuYLDl');
+};
 
