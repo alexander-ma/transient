@@ -88,7 +88,9 @@ function uploadUserPhoto() {
       // Upload completed successfully, now we can get the download URL
         var downloadURL = uploadTask.snapshot.downloadURL;    
         var user = firebase.auth().currentUser;
-
+        var userProfilePic = document.getElementById('user-pic');
+        userProfilePic.src = downloadURL;
+        
         user.updateProfile({
           photoURL: downloadURL
         }).then(function() {
@@ -96,6 +98,8 @@ function uploadUserPhoto() {
         }).catch(function(error) {
           // An error happened.
         });
+        
+        
         
         console.log(user.photoURL);
     });
@@ -546,6 +550,8 @@ $("#join-channel").click(function() {
     
     console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
     
+    $("#myModal").hide();
+    
     channelsRef.once('value', function(snapshot) {
         
       if (snapshot.hasChild(hashCode)) {
@@ -574,20 +580,20 @@ function removeUserFromChannel(channelName, uid, db) {
 }
 
 function userIsAlreadyInChat(channelName, uid, db) {
-    var userChannelsRef = db.ref('users/' + uid + '/live-channels');
-    var flag = false;
-    
-    
-    flag = (userChannelsRef.once("value", function(snapshot) {
-        if (snapshot.hasChild(channelName)) {
-            alert('already exists');
-            flag = true;
-            return true;
-        }
-        return false;
-    }))();
-    
-    console.log(flag);
+//    var userChannelsRef = db.ref('users/' + uid + '/live-channels');
+//    var flag = false;
+//    
+//    
+//    flag = (userChannelsRef.once("value", function(snapshot) {
+//        if (snapshot.hasChild(channelName)) {
+//            alert('already exists');
+//            flag = true;
+//            return true;
+//        }
+//        return false;
+//    }))();
+//    
+//    console.log(flag);
 }
    
 window.onload = function() {
