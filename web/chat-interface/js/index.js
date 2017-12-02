@@ -10,6 +10,8 @@ var config = {
 
 firebase.initializeApp(config); 
 
+var channelDict = {}
+
 'use strict';
 
 // Initializes Transient.
@@ -181,11 +183,6 @@ document.getElementById('chat-input').onkeypress = function(e){
 
 // Displays a Message in the UI.
 Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri, date) {
-    console.log('key ' + key);
-    console.log('name ' + name);
-    console.log('text ' + text);
-    console.log('picUrl ' + picUrl);
-    console.log('imageUri ' + imageUri);
     
     var currentUserName = this.auth.currentUser.displayName;
     var uid = this.auth.currentUser.uid;
@@ -283,7 +280,7 @@ Transient.prototype.saveMessage = function(e) {
   if (this.messageInput.value) {
     var currentUser = this.auth.currentUser;
       
-    console.log(currentUser);
+//    console.log(currentUser);
     var dt = new Date();
     var dateString = dt.toDateString() + ", " + formatAMPM(dt);
     // Add a new message entry to the Firebase Database.
@@ -310,28 +307,43 @@ Transient.resetMaterialTextfield = function(element) {
 
 
 /* Ran once the DOM is ready for JavaScript execution. */
+// Modified for channel buttons rather than user profiles
 $(document).ready(function() {
-      $('.user-profile').click(function() {
+
+      //$('.channel-button').click(function() {
+        $(document).on("click", ".channel-button", function(){
+//        console.log("channel button clicked");
           if (!$(this).hasClass('active')) {
               
-              $('.user-profile.active').removeClass('active');
+              $('.channel-button.active').removeClass('active');
               $(this).addClass('active');
               
-              var temp = $('#'+$(this).attr('data-up'));
+//              var temp = $('#'+$(this).attr('data-up'));
+              var channelHash = $(this).attr('data-hash');
               
-              hideUI('.chat-container')
-              showUI('#'+$(this).attr('data-up'));
-              temp.addClass('active').removeClass('hidechat');
-              temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
-              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+              console.log('channelHash is: ' + channelHash);
+              
+              
+              $('#cont1').empty();
+              window.transient.channelHash = channelHash;
+              window.transient.loadMessages(channelHash);
+              console.log(window.transient.channelHash);
+              
+              
+              
+//              hideUI('.chat-container')
+//              showUI('#'+$(this).attr('data-up'));
+//              temp.addClass('active').removeClass('hidechat');
+//              temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
+//              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+//              $("#current-channel-name").text($(".channel-button.active").text());
           }
       });
-
       showUI('#cont1');
 
       updateUI();
 });
-  
+
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
 firebase.auth().onAuthStateChanged(firebaseUser => {
     console.log("onAuthStateChanged");
@@ -345,10 +357,6 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
         window.location = '../../index.html';
     }
 });
-
-
-
-var channelDict = {};
 
 /* Grab data from firebase and dynamically update the webpage based on the user. */
 function updateUI(firebaseUser) {
@@ -364,6 +372,11 @@ function updateUI(firebaseUser) {
         window.transient.loadMessages(activeChannel);
         //window.transient = new Transient('-L-Jkdt8gD0d8TbuYLDl');
         //window.transient.loadMessages('-L-Jkdt8gD0d8TbuYLDl');
+    });
+    
+    getActiveChannel(function(activeChannel) {
+        window.transient = new Transient(activeChannel);
+        window.transient.loadMessages(activeChannel);
     });
     
     userInfoRef.once('value', function(snapshot) {
@@ -389,21 +402,17 @@ function updateUI(firebaseUser) {
     
     liveChannelsRef.once('value', function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
-            var chatHash = childSnapshot.val();
-            var chatRef = db.ref('channels/' + chatHash);
-            
+            var channelHash = childSnapshot.val();
+            var chatRef = db.ref('channels/' + channelHash);
+            console.log( 'snapshot' + JSON.stringify(childSnapshot));
             chatRef.once('value', function(snapshot) {
-                var name = snapshot.val()["channelName"];
-                $("#live-channels-list").append(
-                    "<li> " + name + " </li>"
-                )
-                if (!(name in channelDict)) {
-                    channelDict['name'] = new Transient(name);
-                }
+                var channelName = snapshot.val()["channelName"];
+                    $("#live-channels-list").append(
+                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                    )
             })
         });
     });
-    
 }
 
 var getActiveChannel = function(callback) {
@@ -468,7 +477,16 @@ function hideUI(ele) {
 $("#new-chat").click(function() {
   $("#myModal").show();
   $("#modal-choose-action").show();
+  $("#modal-delete-channel").hide();
+  $("#modal-invite-link").hide();
 });
+
+$("#delete-chat").click(function() {
+    console.log("in delete chat modal");
+  $("#myModal").show();
+  $("#modal-choose-action").hide();
+  $("#modal-delete-channel").show();
+})
 
 /* Hides the channel action interface. */
 $(".close").click(function() {
@@ -487,7 +505,22 @@ $(document).click(function(event) {
             $("#modal-create-channel").hide();
         }
     }
+
+    if ($(event.target).is('#myModal') && !$(event.target).is('#delete-chat')) {
+        if ($('#myModal').css('display') != 'none') 
+        {
+            // Show channel action interface.
+            $('#myModal').hide();
+            $("#modal-choose-action").show();
+            $("#modal-join-channel").hide();
+            $("#modal-create-channel").hide();
+        }
+    }
 });
+
+$("#cancel").click(function() {
+    $('#myModal').hide();
+})
 
 /* Handles logout for the user. */
 $("#logoutbtn").click(function() {
@@ -545,6 +578,9 @@ $("#create-channel-button").click(function() {
     // 1. Swap the chat box to the created channel
     $("#myModal").hide();
     $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
 
 
     // 2. Display modal with name generated string for the channel creator to copy + share
@@ -562,9 +598,31 @@ $("#create-channel-button").click(function() {
 
     // 3. Display the created channel underneath "Live Channels" section
     $("#live-channels-list").append(
-        "<li> " + channelName + " </li>"
+        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
     ) 
 });
+
+
+$("#delete-channel").click(function() {
+    /*
+    TODO:
+    Add a delete button somewhere in the HTML in order to delete a channel
+    This could be an onHover button next to the live channels that are currently available,
+    or just a general delete button that deletes the active channel that you're on
+    
+    Also add a popup window that confirms the deletion of a channel
+
+    */
+    console.log('in delete chat');
+    var db = firebase.database();
+    var currentUserID = firebase.auth().currentUser.uid;
+    var channelName = $("#current-channel-name").text();
+
+    $("#myModal").hide();
+
+
+})
+
 
 $("#join-channel").click(function() {
     var db = firebase.database()
@@ -574,8 +632,26 @@ $("#join-channel").click(function() {
     var channelsRef = db.ref('channels');
     var channelToJoin = db.ref('users/' + currentUserID + "/live-channels/" + hashCode);
     var alreadyInChannel = false;
+    
+//    console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
 
+    channelsRef.once('value', function(snapshot) {
+        
+      if (snapshot.hasChild(hashCode)) {
+        // Successfully joined channel
+        var channelName = snapshot.val()[hashCode]["channelName"];
+        addUserToChannel(hashCode, channelName, currentUserID, db);
+            $("#live-channels-list").append(
+                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"
+    ) 
+      }
+  }
+    
     $("#myModal").hide();
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
     
     // Javascript shouldn't be forced to execute synchronously / top-down visually, so below code is bad.
     // Learn more at: "callbackhell.com"
@@ -652,5 +728,56 @@ function removeUserFromChannel(channelName, uid, db) {
     db.ref('channels').child(channelName).child("participants").child(uid).remove();
     
     // remove the channel from the user
-    // TODO
+    db.ref('users/' + uid).child('live-channels').child(channelName).remove();
 }
+
+var doesChannelExistFunction = function(callback, channelHash) {
+    var doesChannelExist;
+    firebase.database().ref('channels').once("value").then(function(snapshot) {
+        doesChannelExist = snapshot.hasChild(channelHash);
+        callback(doesChannelExist);
+    });
+}
+
+var getChannelNameFunction = function(callback, channelHash) {
+    var channelName;
+
+    firebase.database().ref('channels').once("value").then(function(snapshot) {
+        channelName = snapshot.val()[channelHash]["channelName"];
+        console.log("Channel name: " + channelName);
+        callback(channelName);
+    });
+}
+
+var isUserAlreadyInChatFunction = function(callback, uid, channelName) {
+    var userChannelsRef = firebase.database().ref('users/' + uid + '/live-channels');
+    var isAlreadyInChat; 
+
+    userChannelsRef.once("value").then(function(snapshot) {
+        isAlreadyInChat = snapshot.hasChild(channelName); 
+        callback(isAlreadyInChat);
+    }, function(error) {
+        console.log("The read failed: " + error.code);
+    });
+}
+
+var getActiveChannel = function(callback) {
+    console.log("Called getActiveChannel().");
+    var currentUserID = firebase.auth().currentUser.uid;
+    var db = firebase.database();
+    var userLiveChannelsRef = firebase.database().ref('users/' + currentUserID + '/live-channels');
+
+    var activeChannel; 
+    userLiveChannelsRef.limitToFirst(1).once("value", function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+            activeChannel = childSnapshot.val();    
+            console.log("Active channel: " + activeChannel);
+            callback(activeChannel);
+        }); 
+    }, function(error) {
+        console.log("Read failed.");
+        // TODO: The user hasn't joined any live channels yet. Within this block,
+        // dispaly the default empty channel.
+    });
+}
+>>>>>>> 788a6a4d794dd1c7219a6ace22b72b3692d26cf5
