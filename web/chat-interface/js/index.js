@@ -808,45 +808,38 @@ var getActiveChannel = function(callback) {
 * OUTPUT: null
 */
 function showCurrentChatUsers(channelHash){
-  var currentChatFBaseRef = firebase.database().ref("channels/" + channelHash + "/participants");
-
+  // get reference to the HTML chatUsers holder
   var chatUsers = document.getElementById("chat-users-id");
 
-  // remove currently shown users
-  removeAllChildren(chatUsers);
-
-  // get chatUsers holder
-  var chatUsers = document.getElementById("chat-users-id");
-
-  // iterate over all users of this channel and add them to right pane
+  // get firebase references
   var rootRef = firebase.database().ref();
   var chatUsersHashesRef = rootRef.child('channels/' + channelHash + '/participants');
   var userHashesRef = rootRef.child('users');
 
-  chatUsersHashesRef.once('value', function(snapshot){
+  // this function is called once when this function runs and every time there is 
+  // a change on the users of this channel
+  chatUsersHashesRef.off();
+  var onUsersChanged = function(snapshot){
+    // make sure this update is for the channel currently open
+    if(window.transient.channelHash != channelHash){
+      return;
+    }
 
-    //console.log('The hashes for the users in this channel are: ');
-    snapshot.forEach(function(child){
-      console.log(child.key);
+    // remove all current users
+    removeAllChildren(chatUsers);
+
+    // add each user to the chatUsers view
+    snapshot.forEach(function(userHash){
+      userHashesRef.child(userHash.key).once('value').then(function(snapshot){
+        var thisUserFields = snapshot.val();
+        var anonymousName = thisUserFields['anonymousName'];
+        var photoURL = thisUserFields['photoURL'];
+
+        chatUsers.appendChild(newChatUser(anonymousName, photoURL));
+      });
     }); 
-
-  });
-
-
-
-
-
-
-
-
-
-
-
-
-  var defaultPic = getProfilePic("Insert user hash here");
-  chatUsers.appendChild(newChatUser("testUser1", defaultPic));
-  chatUsers.appendChild(newChatUser("testUser2", defaultPic));
-  chatUsers.appendChild(newChatUser("testUser3", defaultPic));
+  };
+  chatUsersHashesRef.on('value', onUsersChanged);
 }
 
 /* ------------ newChatUser -------------
@@ -885,14 +878,3 @@ function removeAllChildren(node){
     node.removeChild(node.lastChild);
   }
 }
-
-/* ------------ getProfilePic -------------
-* gets profile picture for the specified user hash
-* INPUTS: userHash
-* OUTPUT: profilePic 
-*/
-function getProfilePic(userHash){
-  // return 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/LoJEpJ6LwRZv4cf3wQcVXrVRws32%2FprofilePicture%2Fpikachu_icon.png?alt=media&token=e1919e67-61ae-4594-9f3a-56cefcb36cc8';
-  return "https://pbs.twimg.com/media/DP64gUcUMAA-s5T.jpg";
-}
-

@@ -456,11 +456,19 @@ p {
   border: none;
 }
 
+.channel-name p {
+  text-align: center;
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
 .chat-users {
   background-color: #344;
   color: #fff;
   height: 90%;
   width: 100%;
+  overflow-y: scroll;
 }
 
 .chat-users span {
