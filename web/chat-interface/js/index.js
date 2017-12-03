@@ -801,7 +801,7 @@ var isUserAlreadyInChatFunction = function(callback, uid, channelName) {
 function addUserToChannel(channelName, chatName, uid, db) {
     console.log("Adding user to the channel.");
     // add to channel participants list
-    db.ref('channels').child(channelName).child("participants").push(uid, function(error) {
+    db.ref('channels').child(channelName).child("participants").child(uid).set(uid, function(error) {
         if (error) { console.log("Push() called unsuccessfully."); }
     });
     
