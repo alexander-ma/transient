@@ -519,7 +519,6 @@ p {
   background: #DFDFEF;
   margin: 0 10px;
   background-size: cover;
-
 }
 
 .channel-button {
@@ -552,24 +551,6 @@ p {
 
 .datestamp-alt{
     white-space:nowrap;
-}
-
-.date_field {position: relative; z-index:100;}
-
-.user-profile:nth-child(1) {
-  background-image: url(http://vignette3.wikia.nocookie.net/fairytail/images/0/02/Mugshot_of_Erza.png/revision/latest?cb=20130509171537);
-}
-
-.user-profile:nth-child(2) {
-  background-image: url(http://orig15.deviantart.net/8172/f/2016/079/7/2/natsu_xabused_reader_fire_within_the_heart_p1_by_minnibellsnow-d9vv2cy.jpg);
-}
-
-.user-profile:nth-child(3) {
-  background-image: url(http://vignette3.wikia.nocookie.net/fairytail/images/e/e7/Lucy_prof_2.jpg/revision/latest?cb=20111024225521);
-}
-
-.user-profile:nth-child(4) {
-  background-image: url(https://i.ytimg.com/vi/sROSCGZq1rA/hqdefault.jpg);
 }
 
 .channel-button.active {

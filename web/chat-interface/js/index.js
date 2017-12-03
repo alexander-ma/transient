@@ -367,8 +367,6 @@ $(document).ready(function() {
       window.transient.loadMessages(channelHash);
       console.log(window.transient.channelHash);
               
-              
-              
      // hideUI('.chat-container')
      // showUI('#'+$(this).attr('data-up'));
      // temp.addClass('active').removeClass('hidechat');
@@ -376,7 +374,8 @@ $(document).ready(function() {
      // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
       $("#current-channel-name").text($(".channel-button.active").text());
       }
-      showCurrentChatUsers();
+
+      showCurrentChatUsers(channelHash);
       showUI('#cont1');
   });
     
@@ -873,19 +872,23 @@ var getActiveChannel = function(callback) {
 /* ------------ showCurrentChatUsers -------------
 * Populates the right pane with the users present
 * in the currently open chat
-* INPUTS: XXXXXXXXXXXXXXXXXXXXXXX
-* OUTPUT: XXXXXXXXX
+* INPUTS: channelHash
+* OUTPUT: null
 */
-function showCurrentChatUsers(){
+function showCurrentChatUsers(channelHash){
+  var currentChatFBaseRef = firebase.database().ref("channels/" + channelHash + "/participants");
+
   var chatUsers = document.getElementById("chat-users-id");
 
   // remove currently shown users
   removeAllChildren(chatUsers);
 
   var chatUsers = document.getElementById("chat-users-id");
-  chatUsers.appendChild(newChatUser("testUser1"));
-  chatUsers.appendChild(newChatUser("testUser2"));
-  chatUsers.appendChild(newChatUser("testUser3"));
+
+  var defaultPic = getProfilePic();
+  chatUsers.appendChild(newChatUser("testUser1", defaultPic));
+  chatUsers.appendChild(newChatUser("testUser2", defaultPic));
+  chatUsers.appendChild(newChatUser("testUser3", defaultPic));
 }
 
 /* ------------ newChatUser -------------
@@ -895,12 +898,13 @@ function showCurrentChatUsers(){
 * INPUTS: username, profilePic
 * OUTPUT: new chat user
 */
-function newChatUser(userNameText){ // , profilePic){
+function newChatUser(userNameText, profilePic){
   var chatUser = document.createElement("div");
   chatUser.setAttribute('class', 'chat-user');
 
   var userProfile = document.createElement("div");
   userProfile.setAttribute('class', 'user-profile');
+  userProfile.style.backgroundImage = 'url(' + profilePic + ')';
 
   var userName = document.createElement("div");
   userName.setAttribute('class', 'user-name');
@@ -922,5 +926,14 @@ function removeAllChildren(node){
   while (node.hasChildNodes()) {
     node.removeChild(node.lastChild);
   }
+}
+
+/* ------------ getProfilePic -------------
+* gets profile picture for the specified user hash
+* INPUTS: userHash
+* OUTPUT: profilePic 
+*/
+function getProfilePic(userHash){
+  return 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/LoJEpJ6LwRZv4cf3wQcVXrVRws32%2FprofilePicture%2Fpikachu_icon.png?alt=media&token=e1919e67-61ae-4594-9f3a-56cefcb36cc8';
 }
 
