@@ -1,9 +1,10 @@
 ##### PROJECT SETTINGS #####
 JAVA := java
 JAVAC := javac
+ECHO := echo
 
-PROGRAM_NAME := TransientCronjob
-MAIN_CLASS := TransientCronjob
+PROGRAM_NAME := TransientDaemon
+MAIN_CLASS := TransientDaemon
 MAIN_PACKAGE :=
 
 SRC_DIR := ./src
@@ -13,7 +14,7 @@ LIB_DIR := ./lib
 
 EXTERNAL_LIBRARIES :=
 
-JAVA_FLAGS :=
+JAVA_FLAGS := -Xlint:deprecation
 ##### PROJECT SETTINGS #####
 
 
@@ -41,8 +42,9 @@ JAVA_FLAGS += -d $(BIN_DIR) -cp $(LIBRARIES)
 
 
 all:
-	$(JAVAC) $(JAVA_FLAGS) $(JAVA_SRCS)
-
+	@$(ECHO) Compiling $(PROGRAM_NAME)
+	@$(JAVAC) $(JAVA_FLAGS) $(JAVA_SRCS)
+	@$(ECHO) Complete.
 
 
 .PHONY: clean
