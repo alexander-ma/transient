@@ -128,7 +128,7 @@ Transient.MESSAGE_TEMPLATE_OTHER =
         '<img class="other-user-pic" src="img/img_avatar.png" alt="Avatar">' +
       '</div>' +
       '<div class="bubble-column bubble-column-right">' +
-        '<span class="datestamp"></span>' +
+        '<span class="anon-name"></span><span class="datestamp"></span>' +
           '<p class="message"></p>' +
       '</div>' +
     '</div>' +
@@ -137,8 +137,8 @@ Transient.MESSAGE_TEMPLATE_OTHER =
 Transient.MESSAGE_TEMPLATE_ME = 
 '<div class="bubble bubble-alt">' + 
 '<div class="bubble-message-self">' +
-    '<span class="datestamp-alt"></span>' +
-      '<p class="message"></p>' +
+    '<span class="anon-name-alt"></span><span class="datestamp-alt"></span>' +
+      '<p class="message-alt"></p>' +
 '</div>' +
 '</div>';
 
@@ -213,18 +213,19 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
             div.setAttribute('style', 'margin-top: 0px; opacity: 1;');
             this.messageList.appendChild(div);
 
-            var messageElement = div.querySelector('.message');
+            var messageElement = div.querySelector('.message-alt');
             var timeStampElement = div.querySelector('.datestamp-alt');
+            var anonNameElement = div.querySelector('.anon-name-alt');
 
             if (text) { // If the message is text.
                 messageElement.textContent = text;
                 // Replace all line breaks by <br>.
                 messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+                anonNameElement.innerHTML = currentUserAnonName;
             } 
 
             if (date) {
-                console.log("Current user anon name: " + currentUserAnonName);
-                timeStampElement.textContent = currentUserAnonName + ' ' + date;
+                timeStampElement.textContent = '  ' + date;
             }
             
             // Note: the current user won't have their profile picture displayed in the chat box.
@@ -240,15 +241,18 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
             var messageElement = div.querySelector('.message');
             var timeStampElement = div.querySelector('.datestamp');
             var imageElement = div.querySelector('.other-user-pic');
+            var anonNameElement = div.querySelector('.anon-name');
 
             if (text) { // If the message is text.
                 messageElement.textContent = text;
                 // Replace all line breaks by <br>.
                 messageElement.innerHTML = messageElement.innerHTML.replace(/\n/g, '<br>');
+                anonNameElement.innerHTML = messageSenderAnonName; 
             }
 
             if (date) {
-                timeStampElement.textContent = messageSenderAnonName + ' ' + date;
+                //timeStampElement.textContent = messageSenderAnonName + ' ' + date;
+                timeStampElement.textContent = '  ' + date;
             }
 
             var profPicRef = firebase.database().ref('users/' + messageSenderID + '/photoURL');
@@ -307,6 +311,7 @@ Transient.prototype.saveMessage = function(e) {
       name: currentUser.displayName,
       text: this.messageInput.value,
       //photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
+      channelHash: window.transient.channelHash,
       userID: currentUser.uid,
       timeStamp: dateString
     }).then(function() {
