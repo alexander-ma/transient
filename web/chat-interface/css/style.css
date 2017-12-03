@@ -108,7 +108,7 @@ html, body {
 }
 
 #modal-create-channel-footer-inner {
-    width: 35%;
+    width: 70%;
     height: auto;
     margin: 0 auto;
     padding: 10px;
@@ -536,9 +536,7 @@ p {
 }
 
 #new-chat, #delete-chat, #delete-channel, #join-channel, #create-channel-button {
-  display: block;
   width: 10em;
-  margin: 10px;
 }
 
 #goToCreate, #goToJoin {
