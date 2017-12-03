@@ -883,9 +883,35 @@ function showCurrentChatUsers(channelHash){
   // remove currently shown users
   removeAllChildren(chatUsers);
 
+  // get chatUsers holder
   var chatUsers = document.getElementById("chat-users-id");
 
-  var defaultPic = getProfilePic();
+  // iterate over all users of this channel and add them to right pane
+  var rootRef = firebase.database().ref();
+  var chatUsersHashesRef = rootRef.child('channels/' + channelHash + '/participants');
+  var userHashesRef = rootRef.child('users');
+
+  chatUsersHashesRef.once('value', function(snapshot){
+
+    //console.log('The hashes for the users in this channel are: ');
+    snapshot.forEach(function(child){
+      console.log(child.key);
+    }); 
+
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+  var defaultPic = getProfilePic("Insert user hash here");
   chatUsers.appendChild(newChatUser("testUser1", defaultPic));
   chatUsers.appendChild(newChatUser("testUser2", defaultPic));
   chatUsers.appendChild(newChatUser("testUser3", defaultPic));
@@ -934,6 +960,7 @@ function removeAllChildren(node){
 * OUTPUT: profilePic 
 */
 function getProfilePic(userHash){
-  return 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/LoJEpJ6LwRZv4cf3wQcVXrVRws32%2FprofilePicture%2Fpikachu_icon.png?alt=media&token=e1919e67-61ae-4594-9f3a-56cefcb36cc8';
+  // return 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/LoJEpJ6LwRZv4cf3wQcVXrVRws32%2FprofilePicture%2Fpikachu_icon.png?alt=media&token=e1919e67-61ae-4594-9f3a-56cefcb36cc8';
+  return "https://pbs.twimg.com/media/DP64gUcUMAA-s5T.jpg";
 }
 
