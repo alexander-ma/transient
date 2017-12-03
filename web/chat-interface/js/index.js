@@ -171,7 +171,6 @@ Transient.prototype.loadMessages = function(channelHash) {
     // Loads the last 12 messages and listen for new ones.
     var setMessage = function(message) {
         var msgFields = message.val();
-        console.log(msgFields);
         this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp);
     }.bind(this);
     
@@ -251,7 +250,8 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
                 timeStampElement.textContent = messageSenderAnonName + ' ' + date;
             }
 
-            var profPicRef = firebase.database().ref(messageSenderRef + '/photoURL');
+            var profPicRef = firebase.database().ref('users/' + messageSenderID + '/photoURL');
+
             // Once the new photoURL is fetched, update the imageElement.src with it.
             profPicRef.once("value", function(snapshot) {
                 console.log("snapshot.val() in photoURL fetch: " + JSON.stringify(snapshot.val()));
