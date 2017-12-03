@@ -514,6 +514,7 @@ $(document).click(function(event) {
             $("#modal-choose-action").show();
             $("#modal-join-channel").hide();
             $("#modal-create-channel").hide();
+            $("#modal-invite-link").hide();
         }
     }
 
@@ -525,6 +526,7 @@ $(document).click(function(event) {
             $("#modal-choose-action").show();
             $("#modal-join-channel").hide();
             $("#modal-create-channel").hide();
+            $("#modal-invite-link").hide();
         }
     }
 });
