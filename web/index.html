@@ -3,6 +3,7 @@
     <title>Transient Messaging System</title>
     <link href="login/styles/login.css" type="text/css" rel="stylesheet">
     <link href="login/styles/animate.css" type="text/css" rel="stylesheet">
+    <link href="login/styles/wave.css" type="text/css" rel="stylesheet">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
@@ -31,6 +32,20 @@
           <button class="transient-red" id="login">login</button>
           <p class="message">Not registered? <a href="#">Create an account!</a></p>
         </form>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="wave wave-back">
+        <div class="circle" id="back-circle"></div>
+      </div>
+
+      <div class="wave wave-middle">
+        <div class="circle" id="middle-circle"></div>
+      </div>
+
+      <div class="wave wave-front">
+        <div class="circle" id="front-circle"></div>
       </div>
     </div>
 </body>

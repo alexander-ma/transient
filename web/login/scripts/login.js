@@ -1,3 +1,12 @@
+/* Clones the circles making the wave until it fills the entire width of the page. */
+$(document).ready(function() {
+    var clone = $('.circle');
+
+    for (var i = 0; i < 18; i ++) {
+        clone.clone().insertAfter(clone);
+    }
+});
+
 $('.message a').click(function(){
    $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
 });
