@@ -22,7 +22,7 @@ firebase.auth().onAuthStateChanged(firebaseUser => {
         newUserRef.set({
             email: document.querySelector('#email').value,
             username: document.querySelector('#name').value,
-            photoUrl: 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57'
+            photoURL: 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57'
         });
 
         window.location = 'chat-interface/index.html';
