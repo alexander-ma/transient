@@ -331,40 +331,37 @@ Transient.resetMaterialTextfield = function(element) {
 $(document).ready(function() {
 
       //$('.channel-button').click(function() {
-        $(document).on("click", ".channel-button", function(){
-//        console.log("channel button clicked");
+    $(document).on("click", ".channel-button", function(){
+//    console.log("channel button clicked");
           if (!$(this).hasClass('active')) {
               
               $('.channel-button.active').removeClass('active');
               $(this).addClass('active');
               
-//              var temp = $('#'+$(this).attr('data-up'));
-              var channelHash = $(this).attr('data-hash');
+//    var temp = $('#'+$(this).attr('data-up'));
+      var channelHash = $(this).attr('data-hash');
+      
+      console.log('channelHash is: ' + channelHash);
+      
+      
+      $('#cont1').empty();
+      window.transient.channelHash = channelHash;
+      window.transient.loadMessages(channelHash);
+      console.log(window.transient.channelHash);
               
-              console.log('channelHash is: ' + channelHash);
               
               
-              $('#cont1').empty();
-              window.transient.channelHash = channelHash;
-              window.transient.loadMessages(channelHash);
-              console.log(window.transient.channelHash);
-              
-              
-              
-//              hideUI('.chat-container')
-//              showUI('#'+$(this).attr('data-up'));
-//              temp.addClass('active').removeClass('hidechat');
-//              temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
-//              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
-//              $("#current-channel-name").text($(".channel-button.active").text());
-          }
-            showUI('#cont1');
-
-//            updateUI();
-      });
+     // hideUI('.chat-container')
+     // showUI('#'+$(this).attr('data-up'));
+     // temp.addClass('active').removeClass('hidechat');
+     // temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
+     // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+      $("#current-channel-name").text($(".channel-button.active").text());
+      }
+      showUI('#cont1');
+  });
     
-    
-    $(document).on("click", "#invite-button", function(){
+    $(document).on("click", "#invitebtn", function(){
         $('#myModal').show();
         $('#modal-invite-link').show(); 
         $("#modal-create-channel").hide();
@@ -530,6 +527,7 @@ $(document).click(function(event) {
             $("#modal-choose-action").show();
             $("#modal-join-channel").hide();
             $("#modal-create-channel").hide();
+            $("#modal-invite-link").hide();
         }
     }
 
@@ -541,6 +539,7 @@ $(document).click(function(event) {
             $("#modal-choose-action").show();
             $("#modal-join-channel").hide();
             $("#modal-create-channel").hide();
+            $("#modal-invite-link").hide();
         }
     }
 });
@@ -597,7 +596,7 @@ $("#create-channel-button").click(function() {
 
     // Add new channel to current user's list of live channels.
     var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
-    var newLiveChannelRef = currentUserLiveChannelsRef.push("");
+    var newLiveChannelRef = currentUserLiveChannelsRef.push("");    //????
 
     // TODO: Add new channel to "liveChannels" partition 
 
@@ -621,7 +620,7 @@ $("#create-channel-button").click(function() {
         hash: channelHash
     });
     
-    channelListRef.child("participants").push(currentUserID);
+    channelListRef.child("participants").child(currentUserID).set(currentUserID);
 
     // 3. Display the created channel underneath "Live Channels" section
     $("#live-channels-list").append(
@@ -645,23 +644,28 @@ $("#create-channel-button").click(function() {
 
 
 $("#delete-channel").click(function() {
-    /*
-    TODO:
-    Add a delete button somewhere in the HTML in order to delete a channel
-    This could be an onHover button next to the live channels that are currently available,
-    or just a general delete button that deletes the active channel that you're on
-    
-    Also add a popup window that confirms the deletion of a channel
+    console.log('deleting channel...');
 
-    */
-    console.log('in delete chat');
     var db = firebase.database();
+    var channelName = $('.channel-button.active').attr('data-up');
     var currentUserID = firebase.auth().currentUser.uid;
-    var channelName = $("#current-channel-name").text();
+    //var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/' + channelName);
+    var channelHash = $('.channel-button.active').attr('data-hash');;
+    $('#channel-button[data-up="' + channelName + ']').remove();
+    removeUserFromChannel(channelHash, currentUserID, db);
+    $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
 
     $("#myModal").hide();
-
-
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
+    $('#cont1').empty();
+    // TODO: Fix the case when you delete a channel and the user still tries to type in the channel
+      // window.transient.channelHash = null;
+      // window.transient.loadMessages(channelHash);
+      // console.log(window.transient.channelHash);
+      $('#current-channel-name').empty();
 })
 
 
