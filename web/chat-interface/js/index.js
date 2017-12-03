@@ -128,6 +128,7 @@ Transient.MESSAGE_TEMPLATE_OTHER =
         '<img class="other-user-pic" src="img/img_avatar.png" alt="Avatar">' +
       '</div>' +
       '<div class="bubble-column bubble-column-right">' +
+        '<span class="displayName"></span>' + 
         '<span class="datestamp"></span>' +
           '<p class="message"></p>' +
       '</div>' +
@@ -136,11 +137,19 @@ Transient.MESSAGE_TEMPLATE_OTHER =
 
 Transient.MESSAGE_TEMPLATE_ME = 
 '<div class="bubble bubble-alt">' + 
-'<div class="bubble-message-self">' +
-    '<span class="datestamp-alt"></span>' +
-      '<p class="message"></p>' +
-'</div>' +
+    '<div class="bubble-message-self">' +
+        '<span class="datestamp-alt"></span>' +
+          '<p class="message"></p>' +
+    '</div>' +
 '</div>';
+
+
+//'<div class="bubble bubble-alt">' + 
+//    '<div class="bubble-message-self">' +
+//        '<span class="datestamp-alt"></span>' +
+//          '<p class="message"></p>' +
+//    '</div>' +
+//'</div>';
 
 //    '<div class="message-container">' +
 //      '<div class="spacing"><div class="pic"></div></div>' +
@@ -171,7 +180,7 @@ Transient.prototype.loadMessages = function(channelHash) {
     // Loads the last 12 messages and listen for new ones.
     var setMessage = function(message) {
         var msgFields = message.val();
-        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp);
+        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp, msgFields.channelHash);
     }.bind(this);
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
@@ -191,12 +200,18 @@ document.getElementById('chat-input').onkeypress = function(e){
 
 
 // Displays a Message in the UI.
-Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date) {
+Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date, channelHash) {
     var currentUserAnonName = this.auth.currentUser.displayName;
     var currentUserID = this.auth.currentUser.uid;
     var currentUserRef = this.database.ref('users/' + currentUserID);
 
     var messageSenderRef = this.database.ref('users/' + messageSenderID);
+    
+    console.log('key: ' + channelHash + ' currentChannelKey: ' + window.transient.channelHash);
+    
+    if (channelHash != window.transient.channelHash) {
+        return;
+    }
     
     var div = document.getElementById(key);
 
@@ -240,6 +255,7 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
             var messageElement = div.querySelector('.message');
             var timeStampElement = div.querySelector('.datestamp');
             var imageElement = div.querySelector('.other-user-pic');
+            var displayNameElement = div.querySelector('.displayName');
 
             if (text) { // If the message is text.
                 messageElement.textContent = text;
@@ -248,7 +264,8 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
             }
 
             if (date) {
-                timeStampElement.textContent = messageSenderAnonName + ' ' + date;
+                timeStampElement.textContent = date;
+                displayNameElement.textContent = messageSenderAnonName + ' ';
             }
 
             var profPicRef = firebase.database().ref('users/' + messageSenderID + '/photoURL');
@@ -308,7 +325,8 @@ Transient.prototype.saveMessage = function(e) {
       text: this.messageInput.value,
       //photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
       userID: currentUser.uid,
-      timeStamp: dateString
+      timeStamp: dateString,
+        channelHash: window.transient.channelHash
     }).then(function() {
       // Clear message text field and SEND button state.
       Transient.resetMaterialTextfield(this.messageInput);
@@ -374,6 +392,17 @@ $(document).ready(function() {
         $('#channel-invite-link').val(channelHash);
         console.log(channelHash);
     });
+    
+    for (i = 0; i <= 23; i+=1) {
+        $('.timeDropDown').append('<option>' + Math.floor(i/10).toString() + i%10 + ':00' + '</option>');
+        $('.timeDropDown').append('<option>' + Math.floor(i/10).toString() + i%10 + ':' + 30 + '</option>');
+    }
+        
+    var dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    for (i = 0; i < dayArray.length; i++) {
+        $('#daysDropDown').append('<option>' + dayArray[i] + '</option>');   
+    }
     
 });
 
@@ -584,64 +613,83 @@ $(".backToAction").click(function() {
 
 /* Creation of channel logic. */
 $("#create-channel-button").click(function() { 
-    console.log("Creating channel...");    
-
-    // TODO: Remove input box for channel name. Channel name shouldn't be
-    // responsibility of the user, as specified in the project scope.
-
-    var db = firebase.database();
-    var currentUserID = firebase.auth().currentUser.uid;
-    var channelName = document.querySelector('#channel-name').value;
+    var day = $('#daysDropDown').val();
+    var startTime = $('#timeDropDown-start').val();
+    var endTime = $('#timeDropDown-end').val();
     
-    if (!channelName) {
-        return;
+    var startCompare = startTime.split(':');
+    var endCompare = endTime.split(':');
+    
+    startCompare = parseInt(startCompare[0] + startCompare[1]);
+    endCompare = parseInt(endCompare[0] + endCompare[1]);
+    
+    console.log(day + ' ' + startTime + ' ' + endTime);
+    
+    if (startCompare< endCompare) {
+        console.log("Creating channel...");    
+
+        // TODO: Remove input box for channel name. Channel name shouldn't be
+        // responsibility of the user, as specified in the project scope.
+
+        var db = firebase.database();
+        var currentUserID = firebase.auth().currentUser.uid;
+        var channelName = document.querySelector('#channel-name').value;
+
+        if (!channelName) {
+            return;
+        }
+
+        // Add new channel to current user's list of live channels.
+        var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+        var newLiveChannelRef = currentUserLiveChannelsRef.push("");
+
+        // TODO: Add new channel to "liveChannels" partition 
+
+        // TODO: 
+        // 1. Swap the chat box to the created channel
+    //    $("#myModal").hide();
+        $("#modal-create-channel").hide();
+        $("#modal-delete-channel").hide();
+        $("#modal-join-channel").hide();
+        $("#modal-invite-link").show();
+
+        // 2. Display modal with name generated string for the channel creator to copy + share
+        var channelHash = newLiveChannelRef.key;
+        currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
+        var channelListRef = db.ref('channels/' + channelHash);
+
+        channelListRef.set({
+            channelName: channelName,
+            hash: channelHash,
+            state: 'inactive'
+        });
+        
+        channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
+
+        channelListRef.child("participants").child(currentUserID).set(currentUserID);
+
+        // 3. Display the created channel underneath "Live Channels" section
+        $("#live-channels-list").append(
+            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+        ) 
+
+        if (!window.transient) {
+            window.transient = new Transient(channelHash);
+            window.transient.loadMessages(channelHash)
+        }
+
+        $('#channel-invite-link').val(channelHash);
+
+        $('#channel-invite-link').on('click', function(){
+            var copyText = document.getElementById('#channel-invite-link');
+            copyText.select();
+            document.execCommand("Copy");
+            alert("Copied the text: " + copyText.value);
+        });
     }
-
-    // Add new channel to current user's list of live channels.
-    var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
-    var newLiveChannelRef = currentUserLiveChannelsRef.push("");    //????
-
-    // TODO: Add new channel to "liveChannels" partition 
-
-    // TODO: 
-    // 1. Swap the chat box to the created channel
-//    $("#myModal").hide();
-    $("#modal-create-channel").hide();
-    $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
-    $("#modal-invite-link").show();
-    
-    // 2. Display modal with name generated string for the channel creator to copy + share
-    var channelHash = newLiveChannelRef.key;
-    currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
-    var channelListRef = db.ref('channels/' + channelHash);
-    
-    
-    channelListRef.set({
-        channelName: channelName,
-        hash: channelHash
-    });
-    
-    channelListRef.child("participants").child(currentUserID).set(currentUserID);
-
-    // 3. Display the created channel underneath "Live Channels" section
-    $("#live-channels-list").append(
-        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
-    ) 
-    
-    if (!window.transient) {
-        window.transient = new Transient(channelHash);
-        window.transient.loadMessages(channelHash)
+    else {
+        alert('There is a time error with this request');   
     }
-    
-    $('#channel-invite-link').val(channelHash);
-    
-    $('#channel-invite-link').on('click', function(){
-        var copyText = document.getElementById('#channel-invite-link');
-        copyText.select();
-        document.execCommand("Copy");
-        alert("Copied the text: " + copyText.value);
-    });
 });
 
 
@@ -706,6 +754,10 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
+                            if (!window.transient.channelHash) {
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
+                            }
                             addUserToChannel(hashCode, channelName, currentUserID, db);
                             $("#live-channels-list").append(
                             "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 

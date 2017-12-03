@@ -98,16 +98,16 @@
                 <form>
                   <center><input type="text" name="channel-name" id="channel-name" placeholder="Channel Name"></center>
                     <br>
-                    <center>Day: <select class="daysDropDown">
+                    <center>Day: <select id="daysDropDown">
                                 </select>
                     Start Time:
-                                <select class="timeDropDown">
+                                <select class="timeDropDown" id="timeDropDown-start">
                                 </select>
 
                     End Time: <!--<select class="daysDropDown">
                               </select>-->
                     
-                              <select class="timeDropDown">
+                              <select class="timeDropDown" id="timeDropDown-end">
                               </select>
                     
                     <br>
@@ -121,7 +121,7 @@
             <div id = "modal-create-channel-footer">
                 <div id = "modal-create-channel-footer-inner">
                     <button type="button" class="button backToAction"> back </button>
-                    <button type="button" class="button rightButton" id="create-channel-button"> Create Channel </button>
+                    <button type="button" class="button rightButton" id="create-channel-button"> Create </button>
                 </div>
             </div>
           </div>
@@ -154,11 +154,11 @@
                 </form>
             </div>
               
-            <div id = "modal-join-channel-footer-inner">
-                  <center>
-                    <button type="button" class="button" id="join-channel"> Join Channel </button>
-                    <button type="button" class="button backToAction"> Back </button>
-                  </center>
+            <div id = "modal-join-channel-footer">
+              <div id = "modal-join-channel-footer-inner">
+                    <button type="button" class="button backToAction"> back </button>
+                    <button type="button" class="button rightButton" id="join-channel-button"> Join </button>
+                </div>
             </div>
           </div>
         </div>
@@ -359,20 +359,5 @@
 
 
   <script  src="js/index.js"></script>
-  <script>
-    $(document).ready(function(){
-        for (i = 0; i <= 2300; i+=100) {
-            $('.timeDropDown').append('<option>' + i + '</option>');
-            $('.timeDropDown').append('<option>' + (i + 30) + '</option>');
-        }
-        
-        var dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        
-        for (i = 0; i < dayArray.length; i++) {
-            $('.daysDropDown').append('<option>' + dayArray[i] + '</option>');   
-        }
-    })
-    
-    </script>
 </body>
 </html>

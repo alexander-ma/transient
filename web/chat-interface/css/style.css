@@ -40,7 +40,7 @@ html, body {
     margin: 0 auto;
     border: 1px solid #888;
     width: 38%;
-    height: 60%;
+    height: 45%;
 }
 
 .modal-content .button {
@@ -94,7 +94,7 @@ html, body {
 }
 
 #modal-join-channel-footer-inner {
-    width: 35%;
+    width: 70%;
     height: auto;
     margin: 0 auto;
     padding: 10px;
@@ -122,7 +122,7 @@ html, body {
 }
 
 #modal-delete-channel-footer-inner {
-    width: 35%;
+    width: 70%;
     height: auto;
     margin: 0 auto;
     padding: 10px;
@@ -173,7 +173,7 @@ html, body {
 }
 
 #modal-choose-action-left p {
-  color:blue;
+  color:#88BBD6;
   font-size: 1.4em;
 }
 
@@ -187,7 +187,7 @@ html, body {
 }
 
 #modal-choose-action-right p {
-  color:green;
+  color:#99D3DF;
   font-size: 1.4em;
 }
 
@@ -574,4 +574,9 @@ p {
 
 .channel-button.active {
   background-color: black;
+}
+
+.displayName { 
+    font-size: 1.1em;
+    font-weight: bold;
 }
