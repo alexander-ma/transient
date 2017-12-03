@@ -898,7 +898,7 @@ function showCurrentChatUsers(channelHash){
 
     // add each user to the chatUsers view
     snapshot.forEach(function(userHash){
-      userHashesRef.child(userHash.key).once('value').then(function(snapshot){
+      userHashesRef.child(userHash.val()).once('value').then(function(snapshot){
         var thisUserFields = snapshot.val();
         var anonymousName = thisUserFields['anonymousName'];
         var photoURL = thisUserFields['photoURL'];
