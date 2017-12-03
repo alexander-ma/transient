@@ -45,7 +45,7 @@
 }
 
 .wave-back {
-  top: 940px;
+  top: 950px;
   background: #406384;
   -webkit-animation: wave-back 4s ease-in-out alternate infinite;
           animation: wave-back 4s ease-in-out alternate infinite;
@@ -58,7 +58,7 @@
 }
 
 .wave-middle {
-  top: 995px;
+  top: 1000px;
   background: #5D90BF;
   -webkit-animation: wave-middle 4s ease-in-out alternate infinite;
           animation: wave-middle 4s ease-in-out alternate infinite;
