@@ -223,6 +223,7 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
             } 
 
             if (date) {
+                console.log("Current user anon name: " + currentUserAnonName);
                 timeStampElement.textContent = currentUserAnonName + ' ' + date;
             }
             

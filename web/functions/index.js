@@ -11,6 +11,7 @@ exports.generateAnonymousName = functions.database.ref('/users/{user-hash}')
         if (event.data.previous.exists() || !event.data.exists()) { return null; }
         
         var randomName = sentencer.make("{{ adjective }} {{ noun }}");
+        randomName = capitalizeFirstLetters(randomName);
         console.log("Generated user anonymous name: " + randomName);
         var adminRef = event.data.adminRef;
 
@@ -23,6 +24,11 @@ exports.generateAnonymousName = functions.database.ref('/users/{user-hash}')
 /*
  * Helper function to capitalize the randomly generated name.
  */
-function capitalizeFirstLetter(name) {
-    return name.charAt(0).toUpperCase() + name.slice(1);
+function capitalizeFirstLetters(name) {
+    name = name.split(' ')
+        .map(function(word) {
+            return (word.charAt(0).toUpperCase() + word.slice(1));
+        });
+
+    return name.join(' ');
 } 
