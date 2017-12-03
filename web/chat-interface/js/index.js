@@ -318,7 +318,6 @@ $(document).ready(function() {
               $('.channel-button.active').removeClass('active');
               $(this).addClass('active');
               
-<<<<<<< HEAD
 //    var temp = $('#'+$(this).attr('data-up'));
       var channelHash = $(this).attr('data-hash');
       
@@ -354,22 +353,6 @@ $(document).ready(function() {
         $('#channel-invite-link').val(channelHash);
         console.log(channelHash);
     });
-=======
-              var temp = $('#'+$(this).attr('data-up'));
-              console.log($(temp));
-              hideUI('.chat-container')
-              showUI('#'+$(this).attr('data-up'));
-              temp.addClass('active').removeClass('hidechat');
-              temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
-              temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
-              $("#current-channel-name").text($(".channel-button.active").text());
-              showCurrentChatUsers();
-          }
-      });
-      showUI('#default_channel');
-
-      updateUI();
->>>>>>> origin/chat-interface-right-pane
 });
 
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
@@ -816,58 +799,4 @@ var getActiveChannel = function(callback) {
         // TODO: The user hasn't joined any live channels yet. Within this block,
         // dispaly the default empty channel.
     });
-}
-
-/* ------------ showCurrentChatUsers -------------
-* Populates the right pane with the users present
-* in the currently open chat
-* INPUTS: XXXXXXXXXXXXXXXXXXXXXXX
-* OUTPUT: XXXXXXXXX
-*/
-function showCurrentChatUsers(){
-  var chatUsers = document.getElementById("chat-users-id");
-
-  // remove currently shown users
-  removeAllChildren(chatUsers);
-
-  var chatUsers = document.getElementById("chat-users-id");
-  chatUsers.appendChild(newChatUser("testUser1"));
-  chatUsers.appendChild(newChatUser("testUser2"));
-  chatUsers.appendChild(newChatUser("testUser3"));
-}
-
-/* ------------ newChatUser -------------
-* Creates a new chat user html element with 
-* specified name and
-* profile picture
-* INPUTS: username, profilePic
-* OUTPUT: new chat user
-*/
-function newChatUser(userNameText){ // , profilePic){
-  var chatUser = document.createElement("div");
-  chatUser.setAttribute('class', 'chat-user');
-
-  var userProfile = document.createElement("div");
-  userProfile.setAttribute('class', 'user-profile');
-
-  var userName = document.createElement("div");
-  userName.setAttribute('class', 'user-name');
-  var userNameHtml = document.createTextNode(userNameText);
-  userName.appendChild(userNameHtml);
-
-  chatUser.appendChild(userProfile);
-  chatUser.appendChild(userName);
-
-  return chatUser;
-}
-
-/* ------------ removeAllChildren -------------
-* Removes all children from the given javascript node
-* INPUTS: node
-* OUTPUT: null
-*/
-function removeAllChildren(node){ 
-  while (node.hasChildNodes()) {
-    node.removeChild(node.lastChild);
-  }
 }
