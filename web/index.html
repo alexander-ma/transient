@@ -2,14 +2,18 @@
 <head>
     <title>Transient Messaging System</title>
     <link href="login/styles/login.css" type="text/css" rel="stylesheet">
+    <link href="login/styles/animate.css" type="text/css" rel="stylesheet">
+    <link href="login/styles/wave.css" type="text/css" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
 </head>
 
 <body>
     <div class="login-page">
-    <h1 class="title">Transient</h1>
-      <div class="form">
-        <form class="register-form">
+    <h1 class="title animated fadeInUp">Transient</h1>
+      <div class="form animated fadeInUp delay">
+        <form class="register-form transient-white">
         <div class="register-alert" id="register-alert">
           <span id="registration-form-error"></span>
         </div>
@@ -25,9 +29,23 @@
         </div>
           <input type="text" id="existing_email" placeholder="Email Address"/>
           <input type="password" id="existing_password" placeholder="Password"/>
-          <button id="login">login</button>
+          <button class="transient-red" id="login">login</button>
           <p class="message">Not registered? <a href="#">Create an account!</a></p>
         </form>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="wave wave-back">
+        <div class="circle" id="back-circle"></div>
+      </div>
+
+      <div class="wave wave-middle">
+        <div class="circle" id="middle-circle"></div>
+      </div>
+
+      <div class="wave wave-front">
+        <div class="circle" id="front-circle"></div>
       </div>
     </div>
 </body>
