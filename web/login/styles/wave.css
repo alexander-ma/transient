@@ -13,7 +13,7 @@
   border-radius: 2px;
   box-shadow: 1px 2px 10px 0px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  background: #263A4D;
+  background: #99D3DF;
   /*background: rgb(38, 58, 77, 0.05) !important;*/
   color: #fff;
   font-family: 'Open Sans', Helvetica, sans-serif;
@@ -54,7 +54,8 @@
   background: #406384;
 }
 .wave-back .circle:nth-child(2n+2) {
-  background: #263A4D;
+  /*background: #263A4D;*/
+  background: #99D3DF;
 }
 
 .wave-middle {
