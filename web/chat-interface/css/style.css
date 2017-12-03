@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
 * {
   margin: 0;
   padding: 0;
@@ -13,6 +15,7 @@ html, body {
   height: 100%;
   margin: 0px;
   overflow-y: hidden;
+  font-family: 'Roboto', sans-serif;
 }
 
 /*Modal Content*/
@@ -37,7 +40,7 @@ html, body {
     margin: 0 auto;
     border: 1px solid #888;
     width: 38%;
-    height: 60%;
+    height: 45%;
 }
 
 .modal-content .button {
@@ -87,11 +90,11 @@ html, body {
 #modal-join-channel-footer {
     position: absolute;
     bottom: 0;
-    width: 100%;    
+    width: 100%;
 }
 
 #modal-join-channel-footer-inner {
-    width: 35%;
+    width: 70%;
     height: auto;
     margin: 0 auto;
     padding: 10px;
@@ -105,7 +108,7 @@ html, body {
 }
 
 #modal-create-channel-footer-inner {
-    width: 35%;
+    width: 70%;
     height: auto;
     margin: 0 auto;
     padding: 10px;
@@ -119,7 +122,7 @@ html, body {
 }
 
 #modal-delete-channel-footer-inner {
-    width: 35%;
+    width: 70%;
     height: auto;
     margin: 0 auto;
     padding: 10px;
@@ -170,7 +173,7 @@ html, body {
 }
 
 #modal-choose-action-left p {
-  color:blue;
+  color:#88BBD6;
   font-size: 1.4em;
 }
 
@@ -184,7 +187,7 @@ html, body {
 }
 
 #modal-choose-action-right p {
-  color:green;
+  color:#99D3DF;
   font-size: 1.4em;
 }
 
@@ -205,7 +208,7 @@ html, body {
 
 body {
   background: #DFDFEF;
-  font-family: 'Helvetica Neue';
+  font-family: 'Roboto', sans-serif;
   font-size: 10px;
   color: #414141;
   font-size: 1.5em;
@@ -371,6 +374,7 @@ p {
   font-size: 1em;
   margin-top: 30px;
   opacity: 0;
+  padding: 5px 5px 5px 5px;
 }
 
 .bubble img { 
@@ -456,11 +460,19 @@ p {
   border: none;
 }
 
+.channel-name p {
+  text-align: center;
+  text-decoration: underline;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
 .chat-users {
   background-color: #344;
   color: #fff;
   height: 90%;
   width: 100%;
+  overflow-y: scroll;
 }
 
 .chat-users span {
@@ -531,8 +543,18 @@ p {
   width: 10em;
 }
 
-#new-chat, #delete-chat{
+#new-chat, #delete-chat, #delete-channel, #join-channel, #create-channel-button {
   width: 10em;
+}
+
+#goToCreate, #goToJoin {
+  width: 5em;
+  margin: 10px;
+}
+
+.backToAction, #cancel{
+  width: 5em;
+
   margin: 10px;
 }
 
@@ -542,4 +564,9 @@ p {
 
 .channel-button.active {
   background-color: black;
+}
+
+.displayName { 
+    font-size: 1.1em;
+    font-weight: bold;
 }

@@ -128,6 +128,7 @@ Transient.MESSAGE_TEMPLATE_OTHER =
         '<img class="other-user-pic" src="img/img_avatar.png" alt="Avatar">' +
       '</div>' +
       '<div class="bubble-column bubble-column-right">' +
+        '<span class="displayName"></span>' + 
         '<span class="datestamp"></span>' +
           '<p class="message"></p>' +
       '</div>' +
@@ -136,11 +137,19 @@ Transient.MESSAGE_TEMPLATE_OTHER =
 
 Transient.MESSAGE_TEMPLATE_ME = 
 '<div class="bubble bubble-alt">' + 
-'<div class="bubble-message-self">' +
-    '<span class="datestamp-alt"></span>' +
-      '<p class="message"></p>' +
-'</div>' +
+    '<div class="bubble-message-self">' +
+        '<span class="datestamp-alt"></span>' +
+          '<p class="message"></p>' +
+    '</div>' +
 '</div>';
+
+
+//'<div class="bubble bubble-alt">' + 
+//    '<div class="bubble-message-self">' +
+//        '<span class="datestamp-alt"></span>' +
+//          '<p class="message"></p>' +
+//    '</div>' +
+//'</div>';
 
 //    '<div class="message-container">' +
 //      '<div class="spacing"><div class="pic"></div></div>' +
@@ -148,6 +157,16 @@ Transient.MESSAGE_TEMPLATE_ME =
 //      '<div class="name"></div>' +
 //    '</div>';
 
+
+var getAnonymousNameFunction = function(currentUserID, callback) {
+    var anonymousName;
+    var ref = firebase.database().ref('users/' + currentUserID + '/anonymousName');
+
+    ref.once("value", function(snapshot) {
+        anonymousName = snapshot.val();
+        callback(anonymousName);
+    });
+}
 
 // Loads chat messages history and listens for upcoming ones.
 Transient.prototype.loadMessages = function(channelHash) {
@@ -159,10 +178,9 @@ Transient.prototype.loadMessages = function(channelHash) {
     
     console.log('loadMessages');
     // Loads the last 12 messages and listen for new ones.
-    var setMessage = function(data) {
-        var val = data.val();
-        console.log(val);
-        this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl, val.timeStamp);
+    var setMessage = function(message) {
+        var msgFields = message.val();
+        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp, msgFields.channelHash);
     }.bind(this);
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
@@ -182,19 +200,27 @@ document.getElementById('chat-input').onkeypress = function(e){
 
 
 // Displays a Message in the UI.
-Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri, date) {
+Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date, channelHash) {
+    var currentUserAnonName = this.auth.currentUser.displayName;
+    var currentUserID = this.auth.currentUser.uid;
+    var currentUserRef = this.database.ref('users/' + currentUserID);
+
+    var messageSenderRef = this.database.ref('users/' + messageSenderID);
     
-    var currentUserName = this.auth.currentUser.displayName;
-    var uid = this.auth.currentUser.uid;
-    var userRef = this.database.ref('users/' + uid);
+    console.log('key: ' + channelHash + ' currentChannelKey: ' + window.transient.channelHash);
+    
+    if (channelHash != window.transient.channelHash) {
+        return;
+    }
     
     var div = document.getElementById(key);
+
     // If an element for that message does not exists yet we create it.
     if (!div) {
         var container = document.createElement('div');
-        
-            
-        if (name == currentUserName) {
+       
+        if (currentUserAnonName === messageSenderAnonName) {
+            // You sent the message.
             container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
 
             div = container.firstChild;
@@ -212,10 +238,14 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
             } 
 
             if (date) {
-                timeStampElement.textContent = date;
+                console.log("Current user anon name: " + currentUserAnonName);
+                timeStampElement.textContent = currentUserAnonName + ' ' + date;
             }
+            
+            // Note: the current user won't have their profile picture displayed in the chat box.
         }
         else {
+            // Someone else sent the message.
             container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
             div = container.firstChild;
             div.setAttribute('id', key);
@@ -225,6 +255,7 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
             var messageElement = div.querySelector('.message');
             var timeStampElement = div.querySelector('.datestamp');
             var imageElement = div.querySelector('.other-user-pic');
+            var displayNameElement = div.querySelector('.displayName');
 
             if (text) { // If the message is text.
                 messageElement.textContent = text;
@@ -234,14 +265,19 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
 
             if (date) {
                 timeStampElement.textContent = date;
+                displayNameElement.textContent = messageSenderAnonName + ' ';
             }
 
-            if (picUrl) {
-                imageElement.src = picUrl;
-            }
-            else {
-                imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
-            }
+            var profPicRef = firebase.database().ref('users/' + messageSenderID + '/photoURL');
+
+            // Once the new photoURL is fetched, update the imageElement.src with it.
+            profPicRef.once("value", function(snapshot) {
+                console.log("snapshot.val() in photoURL fetch: " + JSON.stringify(snapshot.val()));
+                imageElement.src = snapshot.val();
+            });
+            //else {
+                //imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
+            //}
         }
     }
 
@@ -279,16 +315,18 @@ Transient.prototype.saveMessage = function(e) {
   // Check that the user entered a message and is signed in.
   if (this.messageInput.value) {
     var currentUser = this.auth.currentUser;
-      
-//    console.log(currentUser);
+
     var dt = new Date();
     var dateString = dt.toDateString() + ", " + formatAMPM(dt);
     // Add a new message entry to the Firebase Database.
+
     this.messagesRef.push({
       name: currentUser.displayName,
       text: this.messageInput.value,
-      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
-      timeStamp: dateString
+      //photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
+      userID: currentUser.uid,
+      timeStamp: dateString,
+        channelHash: window.transient.channelHash
     }).then(function() {
       // Clear message text field and SEND button state.
       Transient.resetMaterialTextfield(this.messageInput);
@@ -353,6 +391,18 @@ $(document).ready(function() {
         $('#channel-invite-link').val(channelHash);
         console.log(channelHash);
     });
+    
+    for (i = 0; i <= 23; i+=1) {
+        $('.timeDropDown').append('<option>' + Math.floor(i/10).toString() + i%10 + ':00' + '</option>');
+        $('.timeDropDown').append('<option>' + Math.floor(i/10).toString() + i%10 + ':' + 30 + '</option>');
+    }
+        
+    var dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    for (i = 0; i < dayArray.length; i++) {
+        $('#daysDropDown').append('<option>' + dayArray[i] + '</option>');   
+    }
+    
 });
 
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
@@ -381,18 +431,11 @@ function updateUI(firebaseUser) {
     getActiveChannel(function(activeChannel) {
         window.transient = new Transient(activeChannel);
         window.transient.loadMessages(activeChannel);
-        //window.transient = new Transient('-L-Jkdt8gD0d8TbuYLDl');
-        //window.transient.loadMessages('-L-Jkdt8gD0d8TbuYLDl');
-    });
-    
-    getActiveChannel(function(activeChannel) {
-        window.transient = new Transient(activeChannel);
-        window.transient.loadMessages(activeChannel);
     });
     
     userInfoRef.once('value', function(snapshot) {
        user.updateProfile({
-          displayName: snapshot.val()['username']
+          displayName: snapshot.val()['anonymousName']
         }).then(function() {
           // Update successful.
         }).catch(function(error) {
@@ -514,6 +557,7 @@ $(document).click(function(event) {
             $("#modal-choose-action").show();
             $("#modal-join-channel").hide();
             $("#modal-create-channel").hide();
+            $("#modal-invite-link").hide();
         }
     }
 
@@ -525,6 +569,7 @@ $(document).click(function(event) {
             $("#modal-choose-action").show();
             $("#modal-join-channel").hide();
             $("#modal-create-channel").hide();
+            $("#modal-invite-link").hide();
         }
     }
 });
@@ -553,6 +598,7 @@ $("#goToCreate").click(function() {
 
     $("#modal-choose-action").hide();
     $("#modal-create-channel").show();
+    $('#datetimepicker').show();
 });
 
 /* Displays the channel action interface. */ 
@@ -566,65 +612,83 @@ $(".backToAction").click(function() {
 
 /* Creation of channel logic. */
 $("#create-channel-button").click(function() { 
-    console.log("Creating channel...");    
-
-    // TODO: Remove input box for channel name. Channel name shouldn't be
-    // responsibility of the user, as specified in the project scope.
-
-    var db = firebase.database();
-    var currentUserID = firebase.auth().currentUser.uid;
-    var channelName = document.querySelector('#channel-name').value;
+    var day = $('#daysDropDown').val();
+    var startTime = $('#timeDropDown-start').val();
+    var endTime = $('#timeDropDown-end').val();
     
-    if (!channelName) {
-        return;
+    var startCompare = startTime.split(':');
+    var endCompare = endTime.split(':');
+    
+    startCompare = parseInt(startCompare[0] + startCompare[1]);
+    endCompare = parseInt(endCompare[0] + endCompare[1]);
+    
+    console.log(day + ' ' + startTime + ' ' + endTime);
+    
+    if (startCompare< endCompare) {
+        console.log("Creating channel...");    
+
+        // TODO: Remove input box for channel name. Channel name shouldn't be
+        // responsibility of the user, as specified in the project scope.
+
+        var db = firebase.database();
+        var currentUserID = firebase.auth().currentUser.uid;
+        var channelName = document.querySelector('#channel-name').value;
+
+        if (!channelName) {
+            return;
+        }
+
+        // Add new channel to current user's list of live channels.
+        var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+        var newLiveChannelRef = currentUserLiveChannelsRef.push("");
+
+        // TODO: Add new channel to "liveChannels" partition 
+
+        // TODO: 
+        // 1. Swap the chat box to the created channel
+    //    $("#myModal").hide();
+        $("#modal-create-channel").hide();
+        $("#modal-delete-channel").hide();
+        $("#modal-join-channel").hide();
+        $("#modal-invite-link").show();
+
+        // 2. Display modal with name generated string for the channel creator to copy + share
+        var channelHash = newLiveChannelRef.key;
+        currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
+        var channelListRef = db.ref('channels/' + channelHash);
+
+        channelListRef.set({
+            channelName: channelName,
+            hash: channelHash,
+            state: 'inactive'
+        });
+        
+        channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
+
+        channelListRef.child("participants").child(currentUserID).set(currentUserID);
+
+        // 3. Display the created channel underneath "Live Channels" section
+        $("#live-channels-list").append(
+            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+        ) 
+
+        if (!window.transient) {
+            window.transient = new Transient(channelHash);
+            window.transient.loadMessages(channelHash)
+        }
+
+        $('#channel-invite-link').val(channelHash);
+
+        $('#channel-invite-link').on('click', function(){
+            var copyText = document.getElementById('#channel-invite-link');
+            copyText.select();
+            document.execCommand("Copy");
+            alert("Copied the text: " + copyText.value);
+        });
     }
-
-    // Add new channel to current user's list of live channels.
-    var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
-    var newLiveChannelRef = currentUserLiveChannelsRef.push("");    //????
-
-    // TODO: Add new channel to "liveChannels" partition 
-
-    // TODO: 
-    // 1. Swap the chat box to the created channel
-//    $("#myModal").hide();
-    $("#modal-create-channel").hide();
-    $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
-    $("#modal-invite-link").show();
-
-
-    // 2. Display modal with name generated string for the channel creator to copy + share
-    var channelHash = newLiveChannelRef.key;
-    currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
-    var channelListRef = db.ref('channels/' + channelHash);
-    
-    
-    channelListRef.set({
-        channelName: channelName,
-        hash: channelHash
-    });
-    
-    channelListRef.child("participants").child(currentUserID).set(currentUserID);
-
-    // 3. Display the created channel underneath "Live Channels" section
-    $("#live-channels-list").append(
-        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
-    ) 
-    
-    if (!window.transient) {
-        window.transient = new Transient(channelHash);
-        window.transient.loadMessages(channelHash)
+    else {
+        alert('There is a time error with this request');   
     }
-    
-    $('#channel-invite-link').val(channelHash);
-    
-    $('#channel-invite-link').on('click', function(){
-        var copyText = document.getElementById('#channel-invite-link');
-        copyText.select();
-        document.execCommand("Copy");
-        alert("Copied the text: " + copyText.value);
-    });
 });
 
 
@@ -689,6 +753,10 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
+                            if (!window.transient.channelHash) {
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
+                            }
                             addUserToChannel(hashCode, channelName, currentUserID, db);
                             $("#live-channels-list").append(
                             "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
@@ -808,45 +876,38 @@ var getActiveChannel = function(callback) {
 * OUTPUT: null
 */
 function showCurrentChatUsers(channelHash){
-  var currentChatFBaseRef = firebase.database().ref("channels/" + channelHash + "/participants");
-
+  // get reference to the HTML chatUsers holder
   var chatUsers = document.getElementById("chat-users-id");
 
-  // remove currently shown users
-  removeAllChildren(chatUsers);
-
-  // get chatUsers holder
-  var chatUsers = document.getElementById("chat-users-id");
-
-  // iterate over all users of this channel and add them to right pane
+  // get firebase references
   var rootRef = firebase.database().ref();
   var chatUsersHashesRef = rootRef.child('channels/' + channelHash + '/participants');
   var userHashesRef = rootRef.child('users');
 
-  chatUsersHashesRef.once('value', function(snapshot){
+  // this function is called once when this function runs and every time there is 
+  // a change on the users of this channel
+  chatUsersHashesRef.off();
+  var onUsersChanged = function(snapshot){
+    // make sure this update is for the channel currently open
+    if(window.transient.channelHash != channelHash){
+      return;
+    }
 
-    //console.log('The hashes for the users in this channel are: ');
-    snapshot.forEach(function(child){
-      console.log(child.key);
+    // remove all current users
+    removeAllChildren(chatUsers);
+
+    // add each user to the chatUsers view
+    snapshot.forEach(function(userHash){
+      userHashesRef.child(userHash.key).once('value').then(function(snapshot){
+        var thisUserFields = snapshot.val();
+        var anonymousName = thisUserFields['anonymousName'];
+        var photoURL = thisUserFields['photoURL'];
+
+        chatUsers.appendChild(newChatUser(anonymousName, photoURL));
+      });
     }); 
-
-  });
-
-
-
-
-
-
-
-
-
-
-
-
-  var defaultPic = getProfilePic("Insert user hash here");
-  chatUsers.appendChild(newChatUser("testUser1", defaultPic));
-  chatUsers.appendChild(newChatUser("testUser2", defaultPic));
-  chatUsers.appendChild(newChatUser("testUser3", defaultPic));
+  };
+  chatUsersHashesRef.on('value', onUsersChanged);
 }
 
 /* ------------ newChatUser -------------
@@ -885,14 +946,3 @@ function removeAllChildren(node){
     node.removeChild(node.lastChild);
   }
 }
-
-/* ------------ getProfilePic -------------
-* gets profile picture for the specified user hash
-* INPUTS: userHash
-* OUTPUT: profilePic 
-*/
-function getProfilePic(userHash){
-  // return 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/LoJEpJ6LwRZv4cf3wQcVXrVRws32%2FprofilePicture%2Fpikachu_icon.png?alt=media&token=e1919e67-61ae-4594-9f3a-56cefcb36cc8';
-  return "https://pbs.twimg.com/media/DP64gUcUMAA-s5T.jpg";
-}
-
