@@ -9,6 +9,7 @@
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
   <link rel="stylesheet" href="css/style.css"> 
+<link rel="stylesheet" href="css/jquery.datetimepicker.css">
 </head>
 
 <body>
@@ -96,6 +97,23 @@
 
                 <form>
                   <center><input type="text" name="channel-name" id="channel-name" placeholder="Channel Name"></center>
+                    <br>
+                    <center>Day: <select class="daysDropDown">
+                                </select>
+                    Start Time:
+                                <select class="timeDropDown">
+                                </select>
+
+                    End Time: <!--<select class="daysDropDown">
+                              </select>-->
+                    
+                              <select class="timeDropDown">
+                              </select>
+                    
+                    <br>
+                    Repeats Weekly: <input type="checkbox">
+                    </center>
+          
                     
                 </form>
             </div>
@@ -341,5 +359,20 @@
 
 
   <script  src="js/index.js"></script>
+  <script>
+    $(document).ready(function(){
+        for (i = 0; i <= 2300; i+=100) {
+            $('.timeDropDown').append('<option>' + i + '</option>');
+            $('.timeDropDown').append('<option>' + (i + 30) + '</option>');
+        }
+        
+        var dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        
+        for (i = 0; i < dayArray.length; i++) {
+            $('.daysDropDown').append('<option>' + dayArray[i] + '</option>');   
+        }
+    })
+    
+    </script>
 </body>
 </html>

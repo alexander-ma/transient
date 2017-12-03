@@ -553,7 +553,7 @@ p {
     white-space:nowrap;
 }
 
-
+.date_field {position: relative; z-index:100;}
 
 .user-profile:nth-child(1) {
   background-image: url(http://vignette3.wikia.nocookie.net/fairytail/images/0/02/Mugshot_of_Erza.png/revision/latest?cb=20130509171537);

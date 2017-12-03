@@ -354,6 +354,7 @@ $(document).ready(function() {
         $('#channel-invite-link').val(channelHash);
         console.log(channelHash);
     });
+    
 });
 
 /* Triggers when the auth state change for instance when the user signs-in or signs-out. */
@@ -556,6 +557,7 @@ $("#goToCreate").click(function() {
 
     $("#modal-choose-action").hide();
     $("#modal-create-channel").show();
+    $('#datetimepicker').show();
 });
 
 /* Displays the channel action interface. */ 
@@ -595,8 +597,7 @@ $("#create-channel-button").click(function() {
     $("#modal-delete-channel").hide();
     $("#modal-join-channel").hide();
     $("#modal-invite-link").show();
-
-
+    
     // 2. Display modal with name generated string for the channel creator to copy + share
     var channelHash = newLiveChannelRef.key;
     currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
