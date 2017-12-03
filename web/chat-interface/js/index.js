@@ -149,6 +149,16 @@ Transient.MESSAGE_TEMPLATE_ME =
 //    '</div>';
 
 
+var getAnonymousNameFunction = function(currentUserID, callback) {
+    var anonymousName;
+    var ref = firebase.database().ref('users/' + currentUserID + '/anonymousName');
+
+    ref.once("value", function(snapshot) {
+        anonymousName = snapshot.val();
+        callback(anonymousName);
+    });
+}
+
 // Loads chat messages history and listens for upcoming ones.
 Transient.prototype.loadMessages = function(channelHash) {
     // Reference to the /messages/ database path.
@@ -159,10 +169,9 @@ Transient.prototype.loadMessages = function(channelHash) {
     
     console.log('loadMessages');
     // Loads the last 12 messages and listen for new ones.
-    var setMessage = function(data) {
-        var val = data.val();
-        console.log(val);
-        this.displayMessage(data.key, val.name, val.text, val.photoUrl, val.imageUrl, val.timeStamp);
+    var setMessage = function(message) {
+        var msgFields = message.val();
+        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp);
     }.bind(this);
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
@@ -182,19 +191,21 @@ document.getElementById('chat-input').onkeypress = function(e){
 
 
 // Displays a Message in the UI.
-Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri, date) {
-    
-    var currentUserName = this.auth.currentUser.displayName;
-    var uid = this.auth.currentUser.uid;
-    var userRef = this.database.ref('users/' + uid);
+Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date) {
+    var currentUserAnonName = this.auth.currentUser.displayName;
+    var currentUserID = this.auth.currentUser.uid;
+    var currentUserRef = this.database.ref('users/' + currentUserID);
+
+    var messageSenderRef = this.database.ref('users/' + messageSenderID);
     
     var div = document.getElementById(key);
+
     // If an element for that message does not exists yet we create it.
     if (!div) {
         var container = document.createElement('div');
-        
-            
-        if (name == currentUserName) {
+       
+        if (currentUserAnonName === messageSenderAnonName) {
+            // You sent the message.
             container.innerHTML = Transient.MESSAGE_TEMPLATE_ME;
 
             div = container.firstChild;
@@ -212,10 +223,14 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
             } 
 
             if (date) {
-                timeStampElement.textContent = date;
+                console.log("Current user anon name: " + currentUserAnonName);
+                timeStampElement.textContent = currentUserAnonName + ' ' + date;
             }
+            
+            // Note: the current user won't have their profile picture displayed in the chat box.
         }
         else {
+            // Someone else sent the message.
             container.innerHTML = Transient.MESSAGE_TEMPLATE_OTHER;
             div = container.firstChild;
             div.setAttribute('id', key);
@@ -233,15 +248,19 @@ Transient.prototype.displayMessage = function(key, name, text, picUrl, imageUri,
             }
 
             if (date) {
-                timeStampElement.textContent = date;
+                timeStampElement.textContent = messageSenderAnonName + ' ' + date;
             }
 
-            if (picUrl) {
-                imageElement.src = picUrl;
-            }
-            else {
-                imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
-            }
+            var profPicRef = firebase.database().ref('users/' + messageSenderID + '/photoURL');
+
+            // Once the new photoURL is fetched, update the imageElement.src with it.
+            profPicRef.once("value", function(snapshot) {
+                console.log("snapshot.val() in photoURL fetch: " + JSON.stringify(snapshot.val()));
+                imageElement.src = snapshot.val();
+            });
+            //else {
+                //imageElement.src = 'https://firebasestorage.googleapis.com/v0/b/transient-318de.appspot.com/o/img_avatar.png?alt=media&token=3b3c7b4d-8503-49d2-99db-ddf578c0fa57';
+            //}
         }
     }
 
@@ -279,15 +298,16 @@ Transient.prototype.saveMessage = function(e) {
   // Check that the user entered a message and is signed in.
   if (this.messageInput.value) {
     var currentUser = this.auth.currentUser;
-      
-//    console.log(currentUser);
+
     var dt = new Date();
     var dateString = dt.toDateString() + ", " + formatAMPM(dt);
     // Add a new message entry to the Firebase Database.
+
     this.messagesRef.push({
       name: currentUser.displayName,
       text: this.messageInput.value,
-      photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
+      //photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
+      userID: currentUser.uid,
       timeStamp: dateString
     }).then(function() {
       // Clear message text field and SEND button state.
@@ -383,18 +403,11 @@ function updateUI(firebaseUser) {
     getActiveChannel(function(activeChannel) {
         window.transient = new Transient(activeChannel);
         window.transient.loadMessages(activeChannel);
-        //window.transient = new Transient('-L-Jkdt8gD0d8TbuYLDl');
-        //window.transient.loadMessages('-L-Jkdt8gD0d8TbuYLDl');
-    });
-    
-    getActiveChannel(function(activeChannel) {
-        window.transient = new Transient(activeChannel);
-        window.transient.loadMessages(activeChannel);
     });
     
     userInfoRef.once('value', function(snapshot) {
        user.updateProfile({
-          displayName: snapshot.val()['username']
+          displayName: snapshot.val()['anonymousName']
         }).then(function() {
           // Update successful.
         }).catch(function(error) {
