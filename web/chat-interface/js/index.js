@@ -338,6 +338,7 @@ $(document).ready(function() {
      // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
       $("#current-channel-name").text($(".channel-button.active").text());
       }
+      showCurrentChatUsers();
       showUI('#cont1');
   });
     
@@ -802,3 +803,58 @@ var getActiveChannel = function(callback) {
         // dispaly the default empty channel.
     });
 }
+
+/* ------------ showCurrentChatUsers -------------
+* Populates the right pane with the users present
+* in the currently open chat
+* INPUTS: XXXXXXXXXXXXXXXXXXXXXXX
+* OUTPUT: XXXXXXXXX
+*/
+function showCurrentChatUsers(){
+  var chatUsers = document.getElementById("chat-users-id");
+
+  // remove currently shown users
+  removeAllChildren(chatUsers);
+
+  var chatUsers = document.getElementById("chat-users-id");
+  chatUsers.appendChild(newChatUser("testUser1"));
+  chatUsers.appendChild(newChatUser("testUser2"));
+  chatUsers.appendChild(newChatUser("testUser3"));
+}
+
+/* ------------ newChatUser -------------
+* Creates a new chat user html element with 
+* specified name and
+* profile picture
+* INPUTS: username, profilePic
+* OUTPUT: new chat user
+*/
+function newChatUser(userNameText){ // , profilePic){
+  var chatUser = document.createElement("div");
+  chatUser.setAttribute('class', 'chat-user');
+
+  var userProfile = document.createElement("div");
+  userProfile.setAttribute('class', 'user-profile');
+
+  var userName = document.createElement("div");
+  userName.setAttribute('class', 'user-name');
+  var userNameHtml = document.createTextNode(userNameText);
+  userName.appendChild(userNameHtml);
+
+  chatUser.appendChild(userProfile);
+  chatUser.appendChild(userName);
+
+  return chatUser;
+}
+
+/* ------------ removeAllChildren -------------
+* Removes all children from the given javascript node
+* INPUTS: node
+* OUTPUT: null
+*/
+function removeAllChildren(node){ 
+  while (node.hasChildNodes()) {
+    node.removeChild(node.lastChild);
+  }
+}
+
