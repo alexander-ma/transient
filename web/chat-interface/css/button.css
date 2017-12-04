@@ -2,6 +2,15 @@
     background-color: #406384 !important;
 }
 
+#new-chat {
+    margin-top: 2.0em !important; 
+    margin-bottom: 1.0em !important;
+}
+
+#logoutbtn {
+    margin-top: 4.25em !important;
+}
+
 #cancel-btn {
     width: 110px;
 }
