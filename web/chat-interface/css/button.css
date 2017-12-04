@@ -2,6 +2,10 @@
     background-color: #406384 !important;
 }
 
+button:focus {
+    outline: 0;
+}
+
 /* Fade */
 .hvr-fade {
   display: inline-block;
