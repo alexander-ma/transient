@@ -10,7 +10,10 @@
   <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
   <link rel="stylesheet" href="css/style.css"> 
   <link rel="stylesheet" href="css/button.css">
-<link rel="stylesheet" href="css/jquery.datetimepicker.css">
+  <link rel="stylesheet" href="css/jquery.datetimepicker.css">
+  <link rel="stylesheet" href="jquery-ui/jquery-ui.min.css"> 
+  <!--<link rel="stylesheet" href="jquery-ui/jquery-ui.structure.min.css"> -->
+  <link rel="stylesheet" href="jquery-ui/jquery-ui.theme.min.css"> 
 </head>
 
 <body>
@@ -62,7 +65,7 @@
           <div id = "modal-choose-action">
 
             <div id = "modal-choose-banner">
-              <p> Some random text </p>
+              <p>You're chatty huh?</p>
             </div>
 
             <div class = "modal-row" id = "modal-choose-action-left">
@@ -82,8 +85,8 @@
             <center><p>Are you sure you want to delete this channel?</p></center>
                 <div id = "modal-delete-channel-footer-inner">
                   <center>
-                  <button type="button" class="button hvr-icon-forward" id="delete-channel"> Delete Channel </button>
                   <button type="button" class="button hvr-icon-back" id="cancel-btn"> Cancel </button>
+                  <button type="button" class="button hvr-icon-forward" id="delete-channel"> Delete Channel </button>
                 </center>
                 </div>
           </div>
@@ -99,22 +102,24 @@
                 <form>
                   <center><input type="text" name="channel-name" id="channel-name" placeholder="Channel Name"></center>
                     <br>
-                    <center>Day: <select class="daysDropDown">
+                    <center>Day: <select id="daysDropDown">
                                 </select>
                     Start Time:
-                                <select class="timeDropDown">
+                                <select class="timeDropDown" id="timeDropDown-start">
                                 </select>
 
                     End Time: <!--<select class="daysDropDown">
                               </select>-->
                     
-                              <select class="timeDropDown">
+                              <select class="timeDropDown" id="timeDropDown-end">
                               </select>
                     
                     <br>
                     Repeats Weekly: <input type="checkbox">
+                    End Date: <input type="type" id="datepicker">
                     </center>
           
+
                     
                 </form>
             </div>
@@ -157,8 +162,8 @@
               
             <div id = "modal-join-channel-footer-inner">
                   <center>
-                    <button type="button" class="button hvr-icon-forward" id="join-channel"> Join Channel </button>
                     <button type="button" class="button backToAction hvr-icon-back"> Back </button>
+                    <button type="button" class="button hvr-icon-forward" id="join-channel"> Join Channel </button>
                   </center>
             </div>
           </div>
@@ -329,6 +334,7 @@
         </div>
       <div id="chat-users-id" class="chat-users">
         <!--****************chat users**********************-->
+<!--
         <div class="chat-user">
           <div class="user-profile"></div>
           <div class="user-name">Erza</div>
@@ -348,6 +354,7 @@
           <div class="user-profile"></div>
           <div class="user-name">Goku?</div>
         </div>
+-->
       <!--**************************************************-->
       </div>
 
@@ -357,22 +364,16 @@
     </div>
 
   </div>
+    
+
 
 
   <script  src="js/index.js"></script>
-  <script>
-    $(document).ready(function(){
-        for (i = 0; i <= 2300; i+=100) {
-            $('.timeDropDown').append('<option>' + i + '</option>');
-            $('.timeDropDown').append('<option>' + (i + 30) + '</option>');
-        }
-        
-        var dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        
-        for (i = 0; i < dayArray.length; i++) {
-            $('.daysDropDown').append('<option>' + dayArray[i] + '</option>');   
-        }
-    })
+  <script src="jquery-ui/jquery-ui.js"></script>
+    
+    
+    <script>
+    $('#datepicker').datepicker();
     
     </script>
 </body>

@@ -128,7 +128,8 @@ Transient.MESSAGE_TEMPLATE_OTHER =
         '<img class="other-user-pic" src="img/img_avatar.png" alt="Avatar">' +
       '</div>' +
       '<div class="bubble-column bubble-column-right">' +
-        '<span class="anon-name"></span><span class="datestamp"></span>' +
+        '<span class="anon-name"></span>' + 
+        '<span class="datestamp"></span>' +
           '<p class="message"></p>' +
       '</div>' +
     '</div>' +
@@ -141,6 +142,14 @@ Transient.MESSAGE_TEMPLATE_ME =
       '<p class="message-alt"></p>' +
 '</div>' +
 '</div>';
+
+
+//'<div class="bubble bubble-alt">' + 
+//    '<div class="bubble-message-self">' +
+//        '<span class="datestamp-alt"></span>' +
+//          '<p class="message"></p>' +
+//    '</div>' +
+//'</div>';
 
 //    '<div class="message-container">' +
 //      '<div class="spacing"><div class="pic"></div></div>' +
@@ -171,7 +180,7 @@ Transient.prototype.loadMessages = function(channelHash) {
     // Loads the last 12 messages and listen for new ones.
     var setMessage = function(message) {
         var msgFields = message.val();
-        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp);
+        this.displayMessage(message.key, msgFields.userID, msgFields.name, msgFields.text, msgFields.imageUrl, msgFields.timeStamp, msgFields.channelHash);
     }.bind(this);
     
     this.messagesRef.limitToLast(12).on('child_added', setMessage);
@@ -191,12 +200,18 @@ document.getElementById('chat-input').onkeypress = function(e){
 
 
 // Displays a Message in the UI.
-Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date) {
+Transient.prototype.displayMessage = function(key, messageSenderID, messageSenderAnonName, text, imageUri, date, channelHash) {
     var currentUserAnonName = this.auth.currentUser.displayName;
     var currentUserID = this.auth.currentUser.uid;
     var currentUserRef = this.database.ref('users/' + currentUserID);
 
     var messageSenderRef = this.database.ref('users/' + messageSenderID);
+    
+    console.log('key: ' + channelHash + ' currentChannelKey: ' + window.transient.channelHash);
+    
+    if (channelHash != window.transient.channelHash) {
+        return;
+    }
     
     var div = document.getElementById(key);
 
@@ -251,7 +266,6 @@ Transient.prototype.displayMessage = function(key, messageSenderID, messageSende
             }
 
             if (date) {
-                //timeStampElement.textContent = messageSenderAnonName + ' ' + date;
                 timeStampElement.textContent = '  ' + date;
             }
 
@@ -313,7 +327,8 @@ Transient.prototype.saveMessage = function(e) {
       //photoUrl: currentUser.photoURL || '/images/profile_placeholder.png',
       channelHash: window.transient.channelHash,
       userID: currentUser.uid,
-      timeStamp: dateString
+      timeStamp: dateString,
+        channelHash: window.transient.channelHash
     }).then(function() {
       // Clear message text field and SEND button state.
       Transient.resetMaterialTextfield(this.messageInput);
@@ -354,8 +369,6 @@ $(document).ready(function() {
       window.transient.loadMessages(channelHash);
       console.log(window.transient.channelHash);
               
-              
-              
      // hideUI('.chat-container')
      // showUI('#'+$(this).attr('data-up'));
      // temp.addClass('active').removeClass('hidechat');
@@ -363,7 +376,8 @@ $(document).ready(function() {
      // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
       $("#current-channel-name").text($(".channel-button.active").text());
       }
-      showCurrentChatUsers();
+
+      showCurrentChatUsers(channelHash);
       showUI('#cont1');
   });
     
@@ -379,6 +393,17 @@ $(document).ready(function() {
         $('#channel-invite-link').val(channelHash);
         console.log(channelHash);
     });
+    
+    for (i = 0; i <= 23; i+=1) {
+        $('.timeDropDown').append('<option>' + Math.floor(i/10).toString() + i%10 + ':00' + '</option>');
+        $('.timeDropDown').append('<option>' + Math.floor(i/10).toString() + i%10 + ':' + 30 + '</option>');
+    }
+        
+    var dayArray = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    for (i = 0; i < dayArray.length; i++) {
+        $('#daysDropDown').append('<option>' + dayArray[i] + '</option>');   
+    }
     
 });
 
@@ -408,6 +433,10 @@ function updateUI(firebaseUser) {
     getActiveChannel(function(activeChannel) {
         window.transient = new Transient(activeChannel);
         window.transient.loadMessages(activeChannel);
+        console.log('onload get active: ' + window.transient.channelHash);
+        showCurrentChatUsers(activeChannel);
+        $("#current-channel-name").text($(".channel-button.active").text());
+        showUI('#cont1');
     });
     
     userInfoRef.once('value', function(snapshot) {
@@ -432,17 +461,27 @@ function updateUI(firebaseUser) {
     
     
     liveChannelsRef.once('value', function(snapshot) {
+        var first = true;
         snapshot.forEach(function(childSnapshot) {
             var channelHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + channelHash);
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
             chatRef.once('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
+                if (first) {
+                    $("#live-channels-list").append(
+                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                    )
+                    first = false;
+                }
+                else {
                     $("#live-channels-list").append(
                         "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
                     )
+                }
+
             })
-        });
+        }); 
     });
 }
 
@@ -516,6 +555,9 @@ $("#delete-chat").click(function() {
     console.log("in delete chat modal");
   $("#myModal").show();
   $("#modal-choose-action").hide();
+  $("#modal-create-channel").hide();
+  $("#modal-join-channel").hide();
+  $("#modal-invite-link").hide();
   $("#modal-delete-channel").show();
 })
 
@@ -589,69 +631,95 @@ $(".backToAction").click(function() {
 
 /* Creation of channel logic. */
 $("#create-channel-button").click(function() { 
-    console.log("Creating channel...");    
-
-    // TODO: Remove input box for channel name. Channel name shouldn't be
-    // responsibility of the user, as specified in the project scope.
-
-    var db = firebase.database();
-    var currentUserID = firebase.auth().currentUser.uid;
-    var channelName = document.querySelector('#channel-name').value;
+    var day = $('#daysDropDown').val();
+    var startTime = $('#timeDropDown-start').val();
+    var endTime = $('#timeDropDown-end').val();
     
-    if (!channelName) {
-        return;
+    var startCompare = startTime.split(':');
+    var endCompare = endTime.split(':');
+    
+    startCompare = parseInt(startCompare[0] + startCompare[1]);
+    endCompare = parseInt(endCompare[0] + endCompare[1]);
+    
+    console.log(day + ' ' + startTime + ' ' + endTime);
+    
+    if (startCompare< endCompare) {
+        console.log("Creating channel...");    
+
+        // TODO: Remove input box for channel name. Channel name shouldn't be
+        // responsibility of the user, as specified in the project scope.
+
+        var db = firebase.database();
+        var currentUserID = firebase.auth().currentUser.uid;
+        var channelName = document.querySelector('#channel-name').value;
+
+        if (!channelName) {
+            return;
+        }
+
+        // Add new channel to current user's list of live channels.
+        var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
+        var newLiveChannelRef = currentUserLiveChannelsRef.push("");
+
+        // TODO: Add new channel to "liveChannels" partition 
+
+        // TODO: 
+        // 1. Swap the chat box to the created channel
+    //    $("#myModal").hide();
+        $("#modal-create-channel").hide();
+        $("#modal-delete-channel").hide();
+        $("#modal-join-channel").hide();
+        $("#modal-invite-link").show();
+
+        // 2. Display modal with name generated string for the channel creator to copy + share
+        var channelHash = newLiveChannelRef.key;
+        currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
+        var channelListRef = db.ref('channels/' + channelHash);
+        var endDateTime = $('#datepicker').val();
+
+        channelListRef.set({
+            channelName: channelName,
+            hash: channelHash,
+            state: 'inactive',
+            deadDate: endDateTime
+        });
+        
+        channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
+
+        channelListRef.child("participants").child(currentUserID).set(currentUserID);
+
+        // 3. Display the created channel underneath "Live Channels" section
+        $("#live-channels-list").append(
+            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+        ) 
+
+        if (!window.transient) {
+            window.transient = new Transient(channelHash);
+            window.transient.loadMessages(channelHash)
+        }
+
+        $('#channel-invite-link').val(channelHash);
+
+        $('#channel-invite-link').on('click', function(){
+            var copyText = document.getElementById('#channel-invite-link');
+            copyText.select();
+            document.execCommand("Copy");
+            alert("Copied the text: " + copyText.value);
+        });
     }
-
-    // Add new channel to current user's list of live channels.
-    var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels');
-    var newLiveChannelRef = currentUserLiveChannelsRef.push("");    //????
-
-    // TODO: Add new channel to "liveChannels" partition 
-
-    // TODO: 
-    // 1. Swap the chat box to the created channel
-//    $("#myModal").hide();
-    $("#modal-create-channel").hide();
-    $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
-    $("#modal-invite-link").show();
-    
-    // 2. Display modal with name generated string for the channel creator to copy + share
-    var channelHash = newLiveChannelRef.key;
-    currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
-    var channelListRef = db.ref('channels/' + channelHash);
-    
-    
-    channelListRef.set({
-        channelName: channelName,
-        hash: channelHash
-    });
-    
-    channelListRef.child("participants").child(currentUserID).set(currentUserID);
-
-    // 3. Display the created channel underneath "Live Channels" section
-    $("#live-channels-list").append(
-        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
-    ) 
-    
-    if (!window.transient) {
-        window.transient = new Transient(channelHash);
-        window.transient.loadMessages(channelHash)
+    else {
+        alert('There is a time error with this request');   
     }
-    
-    $('#channel-invite-link').val(channelHash);
-    
-    $('#channel-invite-link').on('click', function(){
-        var copyText = document.getElementById('#channel-invite-link');
-        copyText.select();
-        document.execCommand("Copy");
-        alert("Copied the text: " + copyText.value);
-    });
 });
 
 
 $("#delete-channel").click(function() {
     console.log('deleting channel...');
+    $("#myModal").hide();
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
 
     var db = firebase.database();
     var channelName = $('.channel-button.active').attr('data-up');
@@ -662,11 +730,7 @@ $("#delete-channel").click(function() {
     removeUserFromChannel(channelHash, currentUserID, db);
     $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
 
-    $("#myModal").hide();
-    $("#modal-create-channel").hide();
-    $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
-    $("#modal-invite-link").hide();
+
     $('#cont1').empty();
     // TODO: Fix the case when you delete a channel and the user still tries to type in the channel
       // window.transient.channelHash = null;
@@ -711,9 +775,32 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
-                            addUserToChannel(hashCode, channelName, currentUserID, db);
-                            $("#live-channels-list").append(
-                            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                            if (window.transient === undefined || window.transient.channelHash === undefined) {
+                                console.log("in undefined mode");
+                                window.transient = new Transient(hashCode);
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
+                                addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $("#live-channels-list").append(
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                showCurrentChatUsers(hashCode);
+                                $("#current-channel-name").text($(".channel-button.active").text());
+                                showUI('#cont1');
+                            }
+                            else if (!window.transient.channelHash) {
+                                console.log("jdkfdjf");
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
+                                addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $("#live-channels-list").append(
+                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                            }
+                            else {
+                                addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $("#live-channels-list").append(
+                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                            }
+
                         }
                     }, currentUserID, hashCode);
                 }
@@ -755,7 +842,7 @@ var isUserAlreadyInChatFunction = function(callback, uid, channelName) {
 function addUserToChannel(channelName, chatName, uid, db) {
     console.log("Adding user to the channel.");
     // add to channel participants list
-    db.ref('channels').child(channelName).child("participants").push(uid, function(error) {
+    db.ref('channels').child(channelName).child("participants").child(uid).set(uid, function(error) {
         if (error) { console.log("Push() called unsuccessfully."); }
     });
     
@@ -826,19 +913,42 @@ var getActiveChannel = function(callback) {
 /* ------------ showCurrentChatUsers -------------
 * Populates the right pane with the users present
 * in the currently open chat
-* INPUTS: XXXXXXXXXXXXXXXXXXXXXXX
-* OUTPUT: XXXXXXXXX
+* INPUTS: channelHash
+* OUTPUT: null
 */
-function showCurrentChatUsers(){
+function showCurrentChatUsers(channelHash){
+  // get reference to the HTML chatUsers holder
   var chatUsers = document.getElementById("chat-users-id");
 
-  // remove currently shown users
-  removeAllChildren(chatUsers);
+  // get firebase references
+  var rootRef = firebase.database().ref();
+  var chatUsersHashesRef = rootRef.child('channels/' + channelHash + '/participants');
+  var userHashesRef = rootRef.child('users');
 
-  var chatUsers = document.getElementById("chat-users-id");
-  chatUsers.appendChild(newChatUser("testUser1"));
-  chatUsers.appendChild(newChatUser("testUser2"));
-  chatUsers.appendChild(newChatUser("testUser3"));
+  // this function is called once when this function runs and every time there is 
+  // a change on the users of this channel
+  chatUsersHashesRef.off();
+  var onUsersChanged = function(snapshot){
+    // make sure this update is for the channel currently open
+    if(window.transient.channelHash != channelHash){
+      return;
+    }
+
+    // remove all current users
+    removeAllChildren(chatUsers);
+
+    // add each user to the chatUsers view
+    snapshot.forEach(function(userHash){
+      userHashesRef.child(userHash.val()).once('value').then(function(snapshot){
+        var thisUserFields = snapshot.val();
+        var anonymousName = thisUserFields['anonymousName'];
+        var photoURL = thisUserFields['photoURL'];
+
+        chatUsers.appendChild(newChatUser(anonymousName, photoURL));
+      });
+    }); 
+  };
+  chatUsersHashesRef.on('value', onUsersChanged);
 }
 
 /* ------------ newChatUser -------------
@@ -848,12 +958,13 @@ function showCurrentChatUsers(){
 * INPUTS: username, profilePic
 * OUTPUT: new chat user
 */
-function newChatUser(userNameText){ // , profilePic){
+function newChatUser(userNameText, profilePic){
   var chatUser = document.createElement("div");
   chatUser.setAttribute('class', 'chat-user');
 
   var userProfile = document.createElement("div");
   userProfile.setAttribute('class', 'user-profile');
+  userProfile.style.backgroundImage = 'url(' + profilePic + ')';
 
   var userName = document.createElement("div");
   userName.setAttribute('class', 'user-name');
@@ -876,4 +987,3 @@ function removeAllChildren(node){
     node.removeChild(node.lastChild);
   }
 }
-
