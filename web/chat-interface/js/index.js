@@ -431,6 +431,10 @@ function updateUI(firebaseUser) {
     getActiveChannel(function(activeChannel) {
         window.transient = new Transient(activeChannel);
         window.transient.loadMessages(activeChannel);
+        console.log('onload get active: ' + window.transient.channelHash);
+        showCurrentChatUsers(activeChannel);
+        $("#current-channel-name").text($(".channel-button.active").text());
+        showUI('#cont1');
     });
     
     userInfoRef.once('value', function(snapshot) {
@@ -455,17 +459,27 @@ function updateUI(firebaseUser) {
     
     
     liveChannelsRef.once('value', function(snapshot) {
+        var first = true;
         snapshot.forEach(function(childSnapshot) {
             var channelHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + channelHash);
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
             chatRef.once('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
+                if (first) {
+                    $("#live-channels-list").append(
+                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                    )
+                    first = false;
+                }
+                else {
                     $("#live-channels-list").append(
                         "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
                     )
+                }
+
             })
-        });
+        }); 
     });
 }
 
@@ -753,13 +767,25 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
-                            if (!window.transient.channelHash) {
+                            if (window.transient === undefined || window.transient.channelHash === undefined) {
+                                window.transient = new Transient(hashCode);
                                 window.transient.channelHash = hashCode;
                                 window.transient.loadMessages(hashCode);
+                                addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $("#live-channels-list").append(
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                showCurrentChatUsers(hashCode);
+                                $("#current-channel-name").text($(".channel-button.active").text());
+                                showUI('#cont1');
                             }
-                            addUserToChannel(hashCode, channelName, currentUserID, db);
-                            $("#live-channels-list").append(
-                            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                            else if (!window.transient.channelHash) {
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
+                                addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $("#live-channels-list").append(
+                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                            }
+
                         }
                     }, currentUserID, hashCode);
                 }
