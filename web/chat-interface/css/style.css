@@ -569,6 +569,7 @@ p {
 }
 
 #new-chat, #delete-chat, #delete-channel, #join-channel, #create-channel-button {
+  background-color: #406384;
   width: 10em;
 }
 
