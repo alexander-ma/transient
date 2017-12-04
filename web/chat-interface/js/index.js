@@ -553,6 +553,9 @@ $("#delete-chat").click(function() {
     console.log("in delete chat modal");
   $("#myModal").show();
   $("#modal-choose-action").hide();
+  $("#modal-create-channel").hide();
+  $("#modal-join-channel").hide();
+  $("#modal-invite-link").hide();
   $("#modal-delete-channel").show();
 })
 
@@ -670,11 +673,13 @@ $("#create-channel-button").click(function() {
         var channelHash = newLiveChannelRef.key;
         currentUserLiveChannelsRef.child(channelHash).set(channelHash);  
         var channelListRef = db.ref('channels/' + channelHash);
+        var endDateTime = $('#datepicker').val();
 
         channelListRef.set({
             channelName: channelName,
             hash: channelHash,
-            state: 'inactive'
+            state: 'inactive',
+            deadDate: endDateTime
         });
         
         channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
@@ -708,6 +713,11 @@ $("#create-channel-button").click(function() {
 
 $("#delete-channel").click(function() {
     console.log('deleting channel...');
+    $("#myModal").hide();
+    $("#modal-create-channel").hide();
+    $("#modal-delete-channel").hide();
+    $("#modal-join-channel").hide();
+    $("#modal-invite-link").hide();
 
     var db = firebase.database();
     var channelName = $('.channel-button.active').attr('data-up');
@@ -718,11 +728,7 @@ $("#delete-channel").click(function() {
     removeUserFromChannel(channelHash, currentUserID, db);
     $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
 
-    $("#myModal").hide();
-    $("#modal-create-channel").hide();
-    $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
-    $("#modal-invite-link").hide();
+
     $('#cont1').empty();
     // TODO: Fix the case when you delete a channel and the user still tries to type in the channel
       // window.transient.channelHash = null;

@@ -9,7 +9,10 @@
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
   <script src="https://www.gstatic.com/firebasejs/4.6.2/firebase.js"></script>
   <link rel="stylesheet" href="css/style.css"> 
-<link rel="stylesheet" href="css/jquery.datetimepicker.css">
+  <link rel="stylesheet" href="jquery-ui/jquery-ui.min.css"> 
+  <link rel="stylesheet" href="jquery-ui/jquery-ui.structure.min.css"> 
+  <link rel="stylesheet" href="jquery-ui/jquery-ui.theme.min.css"> 
+    
 </head>
 
 <body>
@@ -112,8 +115,10 @@
                     
                     <br>
                     Repeats Weekly: <input type="checkbox">
+                    End Date: <input type="type" id="datepicker">
                     </center>
           
+
                     
                 </form>
             </div>
@@ -358,8 +363,17 @@
     </div>
 
   </div>
+    
+
 
 
   <script  src="js/index.js"></script>
+  <script src="jquery-ui/jquery-ui.js"></script>
+    
+    
+    <script>
+    $('#datepicker').datepicker();
+    
+    </script>
 </body>
 </html>
