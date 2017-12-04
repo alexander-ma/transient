@@ -551,7 +551,7 @@ $(document).click(function(event) {
     }
 });
 
-$("#cancel").click(function() {
+$("#cancel-btn").click(function() {
     $('#myModal').hide();
 })
 
