@@ -18,7 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 public class Channel {
 
   private static final DateTimeFormatter DATABASE_DATE_FORMAT =
-    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
   private static final String CHANNEL_STATE_DB_KEY =
     "state";
   private static final String TIME_MIDNIGHT =
@@ -56,7 +56,7 @@ public class Channel {
     DataSnapshot deathDateData = data.child("deathDate");
     String deathDateStr = (String) deathDateData.getValue();
 
-    if (deathDateStr == null) {
+    if (deathDateStr == null || deathDateStr.isEmpty()) {
       deathDate = LocalDateTime.MAX;
       return;
     }
@@ -105,8 +105,10 @@ public class Channel {
     return ChannelState.INACTIVE;
   }
 
-  private void evalTimers() {
+  private synchronized void evalTimers() {
     LocalDateTime timerLDT = LocalDateTime.now();
+
+    this.stateSnapshot = this.state;
 
     if (stateSnapshot == ChannelState.ACTIVE) {
       timerLDT = LocalDateTime.MIN;
@@ -145,8 +147,9 @@ public class Channel {
     } else if (stateSnapshot == ChannelState.DEAD) {
       throw new IllegalArgumentException("Illegal modification of already dead channel.");
     }
+    timerLDT = timerLDT.withSecond(0);
 
-
+    
     ZonedDateTime timerZDT = timerLDT.atZone(LOCAL_TIME_ZONE);
     Date timerDate = Date.from(timerZDT.toInstant());
     TimerTask task = null;
@@ -179,7 +182,7 @@ public class Channel {
     }
   }
 
-  private void reevalTimers() {
+  private synchronized void reevalTimers() {
     timer.cancel();
     timer.purge();
 
@@ -199,7 +202,6 @@ public class Channel {
     setActiveTimes();
 
     this.state = determineState();
-    this.stateSnapshot = this.state;
   }
 
   public synchronized void setChannelData(DataSnapshot snapshot) throws IllegalArgumentException {
@@ -220,7 +222,7 @@ public class Channel {
     logStateChange();
   }
 
-  public void setState(ChannelState state) {
+  public synchronized void setState(ChannelState state) {
     this.state = state;
 
     setStateFirebase(state);
