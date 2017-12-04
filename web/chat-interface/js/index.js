@@ -768,6 +768,7 @@ $("#join-channel").click(function() {
                         }
                         else {
                             if (window.transient === undefined || window.transient.channelHash === undefined) {
+                                console.log("in undefined mode");
                                 window.transient = new Transient(hashCode);
                                 window.transient.channelHash = hashCode;
                                 window.transient.loadMessages(hashCode);
@@ -779,8 +780,14 @@ $("#join-channel").click(function() {
                                 showUI('#cont1');
                             }
                             else if (!window.transient.channelHash) {
+                                console.log("jdkfdjf");
                                 window.transient.channelHash = hashCode;
                                 window.transient.loadMessages(hashCode);
+                                addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $("#live-channels-list").append(
+                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                            }
+                            else {
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
                                 $("#live-channels-list").append(
                                 "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
