@@ -306,7 +306,8 @@ body {
 } 
 
 .leftside-bar {
-  width: 22%;
+  /*width: 22%;*/
+    width: 15%;
   /*background-color: #344;*/
   /*background-color: #263A4D;*/
   /*background-color: #7EB3E6;*/
@@ -331,7 +332,8 @@ body {
   /*background: #CDCDCD;*/
   /*background: #406384;*/
   /*background: #99D3DF;*/
-  width:60%;
+  /*width:60%;*/
+  width: 70%;
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   position: relative;
@@ -517,6 +519,7 @@ p {
 .chat-user {
   padding: 10px;
   width: 100%;
+  padding-bottom: 1.5em;
 }
 
   background-color: #406384;
@@ -525,7 +528,7 @@ p {
 }
 
 .rightside-bar {
-  width: 18%;
+  width: 15%;
   /*background-color: #263A4D;*/
   background-color: #406384;
   /*background-color: #7EB3E6;*/
@@ -599,7 +602,7 @@ p {
 }
 
 .channel-button.active {
-  background-color: black;
+  /*background-color: black;*/
 }
 
 .anon-name {
@@ -621,17 +624,6 @@ p {
   color: rgba(0, 0, 0, 0.9);
 } 
 
-#test-channel-time {
-    border-radius: 5px;
-}
-
-.test-channel-time p {
-  text-align: center;
-  text-decoration: underline;
-  font-weight: bold;
-  font-size: 1.5em;
-}
-
 .outline-textfield-valid {
   border: 2px solid #00cc00;
   border-radius:7px;
@@ -652,4 +644,8 @@ p {
 .outline-textfield-invalid:focus {
     outline: none;
 }
+=======
+}
+
+>>>>>>> a77632d6bf7626ab5794a1096fb94cbc467f9929
 

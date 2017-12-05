@@ -46,10 +46,11 @@ function Transient(hash) {
 }
 
 function uploadUserPhoto() {
+    console.log("in uploadUser" + file);
     var currentUserID = firebase.auth().currentUser.uid;
     var preview = document.getElementById('user-pic');
     var file=document.querySelector('input[type=file]').files[0];
-    console.log(file);
+
     
     var storagePath = currentUserID + '/profilePicture/' + file.name;
     var storageRef = firebase.storage().ref(storagePath);
@@ -76,6 +77,7 @@ function uploadUserPhoto() {
       switch (error.code) {
         case 'storage/unauthorized':
           // User doesn't have permission to access the object
+              
           break;
 
         case 'storage/canceled':
@@ -353,28 +355,37 @@ $(document).ready(function() {
       //$('.channel-button').click(function() {
     $(document).on("click", ".channel-button", function(){
 //    console.log("channel button clicked");
-          if (!$(this).hasClass('active')) {
-              
-              $('.channel-button.active').removeClass('active');
-              $(this).addClass('active');
-              
-//    var temp = $('#'+$(this).attr('data-up'));
-      var channelHash = $(this).attr('data-hash');
-      
-      console.log('channelHash is: ' + channelHash);
-      
-      
-      $('#cont1').empty();
-      window.transient.channelHash = channelHash;
-      window.transient.loadMessages(channelHash);
-      console.log(window.transient.channelHash);
-              
-     // hideUI('.chat-container')
-     // showUI('#'+$(this).attr('data-up'));
-     // temp.addClass('active').removeClass('hidechat');
-     // temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
-     // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
-      $("#current-channel-name").text($(".channel-button.active").text());
+      if (!$(this).hasClass('active')) {
+          // Click on non-active channel.
+          var elementWithIcon = document.getElementsByClassName("fa-circle")[0];
+          elementWithIcon.classList.remove("fa-circle");
+
+          $('.channel-button.active').removeClass('active');
+
+          $(this).addClass('active');
+          //$(this).next().addClass('fa-circle');
+          $('.channel-button.active i').addClass('fa-circle');
+
+    //    var temp = $('#'+$(this).attr('data-up'));
+          var channelHash = $(this).attr('data-hash');
+          
+          console.log('channelHash is: ' + channelHash);
+          
+          
+          $('#cont1').empty();
+          window.transient.channelHash = channelHash;
+          window.transient.loadMessages(channelHash);
+          console.log(window.transient.channelHash);
+                  
+         // hideUI('.chat-container')
+         // showUI('#'+$(this).attr('data-up'));
+         // temp.addClass('active').removeClass('hidechat');
+         // temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
+         // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+          $("#current-channel-name").text($(".channel-button.active").text());
+          //var activeChannelDiv = document.getElementByClassName("active");
+          //activeChannelDiv.appendChild('<i class="fa fa-comments" style="color:white;" aria-hidden="true"></i>');
+          //activeChannelDiv.innerHTML = '<i class="fa fa-comments" aria-hidden="true"></i>';
       }
 
       showCurrentChatUsers(channelHash);
@@ -470,13 +481,14 @@ function updateUI(firebaseUser) {
                 var channelName = snapshot.val()["channelName"];
                 if (first) {
                     $("#live-channels-list").append(
-                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                     first = false;
+                    $("#current-channel-name").text($(".channel-button.active").text());
                 }
                 else {
                     $("#live-channels-list").append(
-                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                 }
 
@@ -745,16 +757,20 @@ $("#create-channel-button").click(function() {
         channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
 
         channelListRef.child("participants").child(currentUserID).set(currentUserID);
-
+        $('.channel-button.active i').removeClass('fa-circle');
+        $('.channel-button.active').removeClass('active');
         // 3. Display the created channel underneath "Live Channels" section
         $("#live-channels-list").append(
-            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
-        ) 
+            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"); 
+        $('#cont1').empty();
 
-        if (!window.transient) {
-            window.transient = new Transient(channelHash);
-            window.transient.loadMessages(channelHash)
-        }
+        window.transient = new Transient(channelHash);
+        window.transient.loadMessages(channelHash);
+        
+        showCurrentChatUsers(channelHash);
+        $("#current-channel-name").text($(".channel-button.active").text());
+        
+        showUI('#cont1');
 
         $('#channel-invite-link').val(channelHash);
 
@@ -790,11 +806,37 @@ $("#delete-channel").click(function() {
 
 
     $('#cont1').empty();
+    $('#current-channel-name').empty();
+    
+    // change to top channel if it exists
+    var channelList = $('#live-channels-list').children();
+    
+    if (channelList.length > 0) {
+        console.log("update field");
+        var hash = $(channelList[0]).attr('data-hash');
+        $(channelList[0]).addClass('active');
+        $('.channel-button.active i').addClass('fa-circle');
+        window.transient.channelHash = hash;
+        window.transient.loadMessages(hash);
+        showCurrentChatUsers(hash);
+        $("#current-channel-name").text($(".channel-button.active").text());
+        showUI('#cont1');
+
+    } 
+    else {
+        // you are only in one channel and you leave
+        window.transient.channelHash="";
+    }
+    
+    
+    
+//    $($('#live-channels-list').children()[0]).attr('data-hash')
+    
     // TODO: Fix the case when you delete a channel and the user still tries to type in the channel
       // window.transient.channelHash = null;
       // window.transient.loadMessages(channelHash);
       // console.log(window.transient.channelHash);
-      $('#current-channel-name').empty();
+      
 })
 
 
@@ -809,10 +851,9 @@ $("#join-channel").click(function() {
     
 //    console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
 
-    $("#myModal").hide();
+
     $("#modal-create-channel").hide();
     $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
     $("#modal-invite-link").hide();
     
     // Javascript shouldn't be forced to execute synchronously / top-down visually, so below code is bad.
@@ -820,10 +861,16 @@ $("#join-channel").click(function() {
     doesChannelExistFunction(function(doesChannelExist) {
         if (!doesChannelExist) {
             console.log("The channel the user is trying to join doesn't exist.");
+            
+            if ($('#chat-hash').val().length > 0 ){
+               $('#chat-hash').css({'border-color': '#ff5050'});
+            }
         }
         else {
+            
             getChannelNameFunction(function(channelName) {
                 if (!channelName) { 
+                    
                     return;
                 }
                 else {
@@ -850,16 +897,27 @@ $("#join-channel").click(function() {
                                 window.transient.channelHash = hashCode;
                                 window.transient.loadMessages(hashCode);
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $('.channel-button.active i').removeClass('fa-circle');
+                                $('.channel-button.active').removeClass('active');
                                 $("#live-channels-list").append(
-                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                $('.channel-button.active').removeClass('active');
                             }
                             else {
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
-                                $("#live-channels-list").append(
-                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
-                            }
+                                $('.channel-button.active').removeClass('active');
+                                var elementWithIcon = document.getElementsByClassName("fa-circle")[0];
+                                elementWithIcon.classList.remove("fa-circle");
 
+                                $("#live-channels-list").append(
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"); 
+
+                            }
                         }
+                        $("#myModal").hide();
+                        $("#modal-join-channel").hide();
                     }, currentUserID, hashCode);
                 }
             }, hashCode);
@@ -1078,3 +1136,5 @@ function removeAllChildren(node){
     node.removeChild(node.lastChild);
   }
 }
+
+
