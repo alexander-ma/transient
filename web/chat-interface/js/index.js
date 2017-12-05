@@ -477,10 +477,11 @@ function updateUI(firebaseUser) {
             var channelHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + channelHash);
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
-            chatRef.once('value', function(snapshot) {
+            chatRef.on('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
                 var activeState = snapshot.val()["state"];
                 
+                $('#' + channelName).remove();
                 if (activeState == "active") {
                     if (first) {
                         $("#live-channels-list").append(
