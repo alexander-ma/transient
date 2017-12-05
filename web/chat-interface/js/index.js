@@ -688,16 +688,21 @@ $("#create-channel-button").click(function() {
         channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
 
         channelListRef.child("participants").child(currentUserID).set(currentUserID);
+        $('.channel-button.active').removeClass('active');
 
         // 3. Display the created channel underneath "Live Channels" section
         $("#live-channels-list").append(
-            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
         ) 
+        $('#cont1').empty();
 
-        if (!window.transient) {
-            window.transient = new Transient(channelHash);
-            window.transient.loadMessages(channelHash)
-        }
+        window.transient = new Transient(channelHash);
+        window.transient.loadMessages(channelHash);
+        
+        showCurrentChatUsers(channelHash);
+        $("#current-channel-name").text($(".channel-button.active").text());
+        
+        showUI('#cont1');
 
         $('#channel-invite-link').val(channelHash);
 
@@ -733,11 +738,35 @@ $("#delete-channel").click(function() {
 
 
     $('#cont1').empty();
+    $('#current-channel-name').empty();
+    
+    // change to top channel if it exists
+    var channelList = $('#live-channels-list').children();
+    
+    if (channelList.length > 0) {
+        console.log("update field");
+        var hash = $(channelList[0]).attr('data-hash');
+        $(channelList[0]).addClass('active');
+        window.transient.channelHash = hash;
+        window.transient.loadMessages(hash);
+        showCurrentChatUsers(hash);
+        $("#current-channel-name").text($(".channel-button.active").text());
+        showUI('#cont1');
+    } 
+    else {
+        // you are only in one channel and you leave
+        window.transient.channelHash="";
+    }
+    
+    
+    
+//    $($('#live-channels-list').children()[0]).attr('data-hash')
+    
     // TODO: Fix the case when you delete a channel and the user still tries to type in the channel
       // window.transient.channelHash = null;
       // window.transient.loadMessages(channelHash);
       // console.log(window.transient.channelHash);
-      $('#current-channel-name').empty();
+      
 })
 
 
@@ -798,15 +827,20 @@ $("#join-channel").click(function() {
                                 window.transient.channelHash = hashCode;
                                 window.transient.loadMessages(hashCode);
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $('.channel-button.active').removeClass('active');
                                 $("#live-channels-list").append(
-                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                $('.channel-button.active').removeClass('active');
                             }
                             else {
+                                window.transient.channelHash = hashCode;
+                                window.transient.loadMessages(hashCode);
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $('.channel-button.active').removeClass('active');
                                 $("#live-channels-list").append(
-                                "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
-                            }
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
 
+                            }
                         }
                         $("#myModal").hide();
                         $("#modal-join-channel").hide();
