@@ -1,2 +1,3 @@
 web/firebase-debug.log
 web/functions/node_modules/*
+node_modules/*
