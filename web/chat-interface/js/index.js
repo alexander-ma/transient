@@ -473,6 +473,7 @@ function updateUI(firebaseUser) {
                         "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
                     )
                     first = false;
+                    $("#current-channel-name").text($(".channel-button.active").text());
                 }
                 else {
                     $("#live-channels-list").append(
