@@ -10,11 +10,14 @@ public class TimeRange {
 
   private static final int START_RANGE = 0,
                            END_RANGE = 1;
+  private static final int SECONDS_PER_HOUR = 3600,
+                           SECONDS_PER_MINUTE = 60,
+                           MINUTES_PER_HOUR = 60;
 
   private DayOfWeek weekday;
-  /* Held in minutes since midnight */
-  private long start,
-               end;
+  /* Held in seconds since midnight */
+  private int start,
+              end;
 
   public TimeRange(String startWeekday, String timeRange) throws IllegalArgumentException {
     parseWeekday(startWeekday);
@@ -39,21 +42,56 @@ public class TimeRange {
     Time endTime = new Time(endTimeStr);
 
 
-    start = startTime.getHour() * 60 + startTime.getMinute();
-    end = endTime.getHour() * 60 + endTime.getMinute();
+    start = (startTime.getHour() * 60 + startTime.getMinute()) * 60;
+    end = (endTime.getHour() * 60 + endTime.getMinute()) * 60;
 
     if (start >= end) {
       throw new IllegalArgumentException();
     }
   }
 
+  /* Returns what minute it is with a given value of seconds past midnight */
+  private int getMinute(int secsPastMidnight) {
+    return (secsPastMidnight/SECONDS_PER_MINUTE) % MINUTES_PER_HOUR;
+  }
+
+  /* Returns what minute it is with a given value of seconds past midnight */
+  private int getHour(int secsPastMidnight) {
+    return secsPastMidnight / SECONDS_PER_HOUR;
+  }
+
+  /* Returns a LocalDateTime object correspoding to the next day weekday at the specified
+     number of seconds past midnight
+
+     Note: seconds are truncated and set to 0. This is due to Transient's minute resolution
+           active/inactive timers
+   */
+  private LocalDateTime getNextWeekdayAtTime(DayOfWeek weekday, int secsPastMidnight) {
+    return LocalDateTime.now().with(TemporalAdjusters.next(weekday))
+                              .withHour(getHour(start))
+                              .withMinute(getMinute(start))
+                              .withSecond(0);
+  }
+
+  /* Returns a LocalDateTime object correspoding to today at the given number of seconds past 
+     midnight
+   */
+  private LocalDateTime getTodayAtTime(int secs) {
+    return LocalDateTime.now().with(TemporalAdjusters.next(weekday))
+                              .withHour(getHour(secs))
+                              .withMinute(getMinute(secs))
+                              .withSecond(0);
+  }
+
   public Boolean isInRange() {
     LocalDateTime now = LocalDateTime.now();
 
     DayOfWeek day = now.getDayOfWeek();
-    long minSinceMidnight = now.getHour()*60 + now.getMinute();
+    int secsPastMidnight = (now.getHour() * 60 + now.getMinute()) * 60 + now.getSecond();
 
-    if (minSinceMidnight >= start && minSinceMidnight <= end) {
+    if (day.equals(weekday) &&
+        secsPastMidnight >= start &&
+        secsPastMidnight <= end) {
       return true;
     }
 
@@ -62,44 +100,37 @@ public class TimeRange {
 
   public LocalDateTime getNextStartDate() {
     LocalDateTime now = LocalDateTime.now();
-    long minSinceMidnight = now.getHour()*60 + now.getMinute();
+    int secsPastMidnight = (now.getHour() * 60 + now.getMinute()) * 60 + now.getSecond();
 
-    if (now.getDayOfWeek().equals(weekday)) {
-
-      if (minSinceMidnight >= start) {
-        return now.with(TemporalAdjusters.next(weekday))
-                  .withHour((int) start/60)
-                  .withMinute((int) start%60);
-      } else {
-        return now.withHour((int) start/60)
-                  .withMinute((int) start%60);
-      }
-    } else {
-      return now.with(TemporalAdjusters.next(weekday))
-                .withHour((int) start/60)
-                .withMinute((int) start%60);
+    if (!now.getDayOfWeek().equals(weekday)) {
+        return getNextWeekdayAtTime(weekday, start);
     }
+
+    if (secsPastMidnight >= start) {
+        return getNextWeekdayAtTime(weekday, start);
+    }
+
+    return getTodayAtTime(start);
   }
 
   public LocalDateTime getNextEndDate() {
     LocalDateTime now = LocalDateTime.now();
-    long minSinceMidnight = now.getHour() * 60 + now.getMinute();
+    int secsPastMidnight = (now.getHour() * 60 + now.getMinute()) * 60 + now.getSecond();
 
-    if (now.getDayOfWeek().equals(weekday)) {
-
-      if (minSinceMidnight >= end) {
-        return now.with(TemporalAdjusters.next(weekday))
-                  .withHour((int) end/60)
-                  .withMinute((int) end%60);
-      } else {
-        return now.withHour((int) end/60)
-                  .withMinute((int) end%60);
-      }
-    } else {
-      return now.with(TemporalAdjusters.next(weekday))
-                .withHour((int) end/60)
-                .withMinute((int) end%60);
+    if (!now.getDayOfWeek().equals(weekday)) {
+        return getNextWeekdayAtTime(weekday, end);
     }
+
+    if (secsPastMidnight >= end) {
+        return getNextWeekdayAtTime(weekday, end);
+    }
+
+    return getTodayAtTime(start);
+  }
+
+  @Override
+  public String toString() {
+    return "(Start: " + start + ", End: " + end + ")";
   }
 
   private class Time {
