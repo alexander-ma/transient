@@ -479,19 +479,27 @@ function updateUI(firebaseUser) {
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
             chatRef.once('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
-                if (first) {
-                    $("#live-channels-list").append(
-                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
-                    )
-                    first = false;
-                    $("#current-channel-name").text($(".channel-button.active").text());
+                var activeState = snapshot.val()["state"];
+                
+                if (activeState == "active") {
+                    if (first) {
+                        $("#live-channels-list").append(
+                            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                        )
+                        first = false;
+                        $("#current-channel-name").text($(".channel-button.active").text());
+                    }
+                    else {
+                        $("#live-channels-list").append(
+                            "<div class='channel-button live' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                        )
+                    }
                 }
                 else {
-                    $("#live-channels-list").append(
-                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                    $("#scheduled-channels-list").append(
+                        "<div class='channel-button dead' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                 }
-
             })
         }); 
     });
@@ -641,12 +649,70 @@ $(".backToAction").click(function() {
     $("#modal-choose-action").show();
 });
 
+function timeValidity(timeInput) {
+  if (timeInput.length == 0) {
+    return "default";
+  }
+
+  if (timeInput.length > 5) {
+    return "invalid";
+  }
+
+  var splitInput = timeInput.split(":");
+  var hour;
+  var min;
+
+  if (splitInput.length == 0) {
+    return "invalid";
+  }
+
+  hour = parseInt(splitInput[0]);
+
+  if (splitInput[0].length > 2 || splitInput[0].includes(".")) {
+    return "invalid";
+  }
+
+  if (isNaN(hour) || hour < 0 || hour > 23) {
+    return "invalid";
+  }
+
+  if (splitInput.length > 1) {
+    if (splitInput[1].length > 2 || splitInput[1].includes(".")) {
+      return "invalid";
+    }
+
+    if (splitInput[1].length == 0) {
+      return "valid";
+    }
+
+    min = parseInt(splitInput[1]);
+
+    if (isNaN(min) || min < 0 || min > 59) {
+      return "invalid";
+    }
+  }
+
+  return "valid"
+}
+
 /* Creation of channel logic. */
 $("#create-channel-button").click(function() { 
     var day = $('#daysDropDown').val();
-    var startTime = $('#timeDropDown-start').val();
-    var endTime = $('#timeDropDown-end').val();
+    var startTime = $('#channel-start-range-input').val();
+    var endTime = $('#channel-end-range-input').val();
+
+    var startTimeValidity = timeValidity(startTime);
+    var endTimeValidity = timeValidity(endTime);
+    if (startTimeValidity === "invalid" || endTimeValidity === "default") {
+        alert("Channel start time input is invalid: " + startTime);
+        return;
+    }
     
+    if (endTimeValidity === "invalid" || endTimeValidity === "default") {
+        alert("Channel end time input is invalid: " + endTime);
+        return;
+    }
+
     var startCompare = startTime.split(':');
     var endCompare = endTime.split(':');
     
@@ -655,7 +721,7 @@ $("#create-channel-button").click(function() {
     
     console.log(day + ' ' + startTime + ' ' + endTime);
     
-    if (startCompare< endCompare) {
+    if (startCompare < endCompare) {
         console.log("Creating channel...");    
 
         // TODO: Remove input box for channel name. Channel name shouldn't be
@@ -741,10 +807,18 @@ $("#delete-channel").click(function() {
     var channelName = $('.channel-button.active').attr('data-up');
     var currentUserID = firebase.auth().currentUser.uid;
     //var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/' + channelName);
+    
     var channelHash = $('.channel-button.active').attr('data-hash');;
     $('#channel-button[data-up="' + channelName + ']').remove();
     removeUserFromChannel(channelHash, currentUserID, db);
-    $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
+    
+    if ($('.channel-button.active').hasClass('live')) {
+        $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();        
+    }
+    else {
+        $("#scheduled-channels-list").find("[data-hash='" + channelHash + "']").remove();   
+    }
+
 
 
     $('#cont1').empty();
@@ -822,6 +896,7 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
+                            $('#cont1').empty();
                             if (window.transient === undefined || window.transient.channelHash === undefined) {
                                 console.log("in undefined mode");
                                 window.transient = new Transient(hashCode);
@@ -866,6 +941,39 @@ $("#join-channel").click(function() {
         }
     }, hashCode);
 });
+
+function setTextFieldValid(textfield) {
+  textfield.addClass("outline-textfield-valid")
+           .removeClass("outline-textfield-invalid")
+           .removeClass("outline-textfield-default");
+}
+
+function setTextFieldDefault(textfield) {
+  textfield.addClass("outline-textfield-default")
+           .removeClass("outline-textfield-valid")
+           .removeClass("outline-textfield-invalid");
+}
+
+function setTextFieldInvalid(textfield) {
+  textfield.addClass("outline-textfield-invalid")
+           .removeClass("outline-textfield-valid")
+           .removeClass("outline-textfield-default");
+}
+
+var textFieldValidToggle = function() {
+  var timeInput = $(this).val();
+
+  if (timeValidity(timeInput) === "valid") {
+    setTextFieldValid($(this));
+  } else if (timeValidity(timeInput) === "invalid") {
+    setTextFieldInvalid($(this));
+  } else {
+    setTextFieldDefault($(this));
+  }
+}
+
+$("#channel-start-range-input").on('keyup', textFieldValidToggle);
+$("#channel-end-range-input").on('keyup', textFieldValidToggle);
 
 var doesChannelExistFunction = function(callback, channelHash) {
     var doesChannelExist;
