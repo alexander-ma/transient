@@ -58,6 +58,7 @@ html, body {
 
 #chat-hash {
     border-radius: 5px;
+    text-align: center;
 }
 
 #channel-invite-link {
@@ -195,6 +196,11 @@ html, body {
 
 .modal-choose-banner {
   height: 30%;
+}
+
+h1 {
+  color: #406384;
+  font-weight: bold;
 }
 
 .modal-row {
@@ -499,6 +505,10 @@ p {
   font-size: 1.5em;
 }
 
+.channel-name {
+  text-align: center !important;
+}
+
 .chat-users {
   /*background-color: #263A4D;*/
   backface-color: #7EB3E6;
@@ -577,7 +587,7 @@ p {
 }
 
 #invitebtn {
-  width: 10em;
+    width: 10em;
 }
 
 #new-chat, #delete-chat, #delete-channel, #join-channel, #create-channel-button {
@@ -588,6 +598,7 @@ p {
 #goToCreate, #goToJoin {
   width: 5em;
   margin: 10px;
+  font-weight: bold;
 }
 
 .backToAction, #cancel{
@@ -626,6 +637,9 @@ p {
 .outline-textfield-valid {
   border: 2px solid #00cc00;
   border-radius:7px;
+}
+#sample-channel-hash {
+  font-weight: bold;
 }
 
 .outline-textfield-valid:focus {

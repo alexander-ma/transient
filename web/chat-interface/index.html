@@ -70,13 +70,13 @@
             </div>
 
             <div class = "modal-row" id = "modal-choose-action-left">
-              <p> Create </p>
+              <p id="create-text"> Create </p>
 
               <button type="button" class="button hvr-icon-forward" id="goToCreate"> Create </button>
             </div>
 
             <div class = "modal-row" id = "modal-choose-action-right">
-              <p> Join </p>
+              <p id="join-text"> Join </p>
               <button type="button" class="button hvr-icon-forward" id="goToJoin"> Join </button>
             </div>
           </div>
@@ -100,8 +100,7 @@
             <center><h1> CREATE YOUR CHANNEL </h1></center>
             <!-- TODO: create a div here to partition the page -->
             <div id = "modal-create-channel-body">
-                <center><p> By creating a channel you will have access to free text chat amongst people you invite </p></center>
-
+                <center><p> Create a channel and invite friends for super secret discussions...</p></center>
                 <form>
                   <center><input type="text" name="channel-name" id="channel-name" placeholder="Channel Name"></center>
                     <br>
@@ -155,9 +154,9 @@
             <center><h1> JOIN A CHANNEL</h1></center>
             <!-- TODO: create a div here to partition the page -->
             <div id = "modal-join-channel-body">
-                <center><p> Enter a invite link below to join an existing transcient channel <p></center>
-                <center><p> An Example of a link looks like this: </p></center>
-                <center><p> -L-Zk50E41DSZ1kUCYKD </p></center>
+                <center><p> Enter an invite link below to join your friend's channel.<p></center>
+                <center><p> A link shoud look similar to this mumbo jumbo...</p></center>
+                <center><p id="sample-channel-hash"> -L-Zk50E41DSZ1kUCYKD </p></center>
                 <form>
                   <center><input type="text" name="chat-hash" id="chat-hash" placeholder="Invite Link"></center>
                 </form>
