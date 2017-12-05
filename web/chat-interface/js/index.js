@@ -46,10 +46,11 @@ function Transient(hash) {
 }
 
 function uploadUserPhoto() {
+    console.log("in uploadUser" + file);
     var currentUserID = firebase.auth().currentUser.uid;
     var preview = document.getElementById('user-pic');
     var file=document.querySelector('input[type=file]').files[0];
-    console.log(file);
+
     
     var storagePath = currentUserID + '/profilePicture/' + file.name;
     var storageRef = firebase.storage().ref(storagePath);
@@ -76,6 +77,7 @@ function uploadUserPhoto() {
       switch (error.code) {
         case 'storage/unauthorized':
           // User doesn't have permission to access the object
+              
           break;
 
         case 'storage/canceled':
