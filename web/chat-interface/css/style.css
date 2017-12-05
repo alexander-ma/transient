@@ -386,7 +386,7 @@ p {
   /*color: rgba(255, 255, 255, 0.9);*/
   color: rgba(0, 0, 0, 0.9);
   word-wrap: break-word;
-  font-size: 1em;
+  font-size: 0.8em;
   margin-top: 30px;
   opacity: 0;
   padding: 5px 10px 5px 10px;
