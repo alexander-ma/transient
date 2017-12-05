@@ -353,28 +353,37 @@ $(document).ready(function() {
       //$('.channel-button').click(function() {
     $(document).on("click", ".channel-button", function(){
 //    console.log("channel button clicked");
-          if (!$(this).hasClass('active')) {
-              
-              $('.channel-button.active').removeClass('active');
-              $(this).addClass('active');
-              
-//    var temp = $('#'+$(this).attr('data-up'));
-      var channelHash = $(this).attr('data-hash');
-      
-      console.log('channelHash is: ' + channelHash);
-      
-      
-      $('#cont1').empty();
-      window.transient.channelHash = channelHash;
-      window.transient.loadMessages(channelHash);
-      console.log(window.transient.channelHash);
-              
-     // hideUI('.chat-container')
-     // showUI('#'+$(this).attr('data-up'));
-     // temp.addClass('active').removeClass('hidechat');
-     // temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
-     // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
-      $("#current-channel-name").text($(".channel-button.active").text());
+      if (!$(this).hasClass('active')) {
+          // Click on non-active channel.
+          var elementWithIcon = document.getElementsByClassName("fa-circle")[0];
+          elementWithIcon.classList.remove("fa-circle");
+
+          $('.channel-button.active').removeClass('active');
+
+          $(this).addClass('active');
+          //$(this).next().addClass('fa-circle');
+          $('.channel-button.active i').addClass('fa-circle');
+
+    //    var temp = $('#'+$(this).attr('data-up'));
+          var channelHash = $(this).attr('data-hash');
+          
+          console.log('channelHash is: ' + channelHash);
+          
+          
+          $('#cont1').empty();
+          window.transient.channelHash = channelHash;
+          window.transient.loadMessages(channelHash);
+          console.log(window.transient.channelHash);
+                  
+         // hideUI('.chat-container')
+         // showUI('#'+$(this).attr('data-up'));
+         // temp.addClass('active').removeClass('hidechat');
+         // temp.prevAll('.chat-container').addClass('hidechat').removeClass('active');
+         // temp.nextAll('.chat-container').removeClass('active').removeClass('hidechat');
+          $("#current-channel-name").text($(".channel-button.active").text());
+          //var activeChannelDiv = document.getElementByClassName("active");
+          //activeChannelDiv.appendChild('<i class="fa fa-comments" style="color:white;" aria-hidden="true"></i>');
+          //activeChannelDiv.innerHTML = '<i class="fa fa-comments" aria-hidden="true"></i>';
       }
 
       showCurrentChatUsers(channelHash);
@@ -470,14 +479,14 @@ function updateUI(firebaseUser) {
                 var channelName = snapshot.val()["channelName"];
                 if (first) {
                     $("#live-channels-list").append(
-                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                     first = false;
                     $("#current-channel-name").text($(".channel-button.active").text());
                 }
                 else {
                     $("#live-channels-list").append(
-                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
+                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                 }
 
@@ -1029,3 +1038,5 @@ function removeAllChildren(node){
     node.removeChild(node.lastChild);
   }
 }
+
+

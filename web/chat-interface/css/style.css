@@ -304,7 +304,8 @@ body {
 } 
 
 .leftside-bar {
-  width: 22%;
+  /*width: 22%;*/
+    width: 15%;
   /*background-color: #344;*/
   /*background-color: #263A4D;*/
   /*background-color: #7EB3E6;*/
@@ -329,7 +330,8 @@ body {
   /*background: #CDCDCD;*/
   /*background: #406384;*/
   /*background: #99D3DF;*/
-  width:60%;
+  /*width:60%;*/
+  width: 70%;
   box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   position: relative;
@@ -524,7 +526,7 @@ p {
 }
 
 .rightside-bar {
-  width: 18%;
+  width: 15%;
   /*background-color: #263A4D;*/
   background-color: #406384;
   /*background-color: #7EB3E6;*/
@@ -598,7 +600,7 @@ p {
 }
 
 .channel-button.active {
-  background-color: black;
+  /*background-color: black;*/
 }
 
 .anon-name {
