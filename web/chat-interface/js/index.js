@@ -697,12 +697,11 @@ $("#create-channel-button").click(function() {
         channelListRef.child('activeTimes').child(day).set(startTime+'-'+endTime);
 
         channelListRef.child("participants").child(currentUserID).set(currentUserID);
+        $('.channel-button.active i').removeClass('fa-circle');
         $('.channel-button.active').removeClass('active');
-
         // 3. Display the created channel underneath "Live Channels" section
         $("#live-channels-list").append(
-            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + channelName + " </div>"
-        ) 
+            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"); 
         $('#cont1').empty();
 
         window.transient = new Transient(channelHash);
@@ -756,11 +755,13 @@ $("#delete-channel").click(function() {
         console.log("update field");
         var hash = $(channelList[0]).attr('data-hash');
         $(channelList[0]).addClass('active');
+        $('.channel-button.active i').addClass('fa-circle');
         window.transient.channelHash = hash;
         window.transient.loadMessages(hash);
         showCurrentChatUsers(hash);
         $("#current-channel-name").text($(".channel-button.active").text());
         showUI('#cont1');
+
     } 
     else {
         // you are only in one channel and you leave
@@ -836,6 +837,7 @@ $("#join-channel").click(function() {
                                 window.transient.channelHash = hashCode;
                                 window.transient.loadMessages(hashCode);
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
+                                $('.channel-button.active i').removeClass('fa-circle');
                                 $('.channel-button.active').removeClass('active');
                                 $("#live-channels-list").append(
                                 "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
@@ -846,8 +848,11 @@ $("#join-channel").click(function() {
                                 window.transient.loadMessages(hashCode);
                                 addUserToChannel(hashCode, channelName, currentUserID, db);
                                 $('.channel-button.active').removeClass('active');
+                                var elementWithIcon = document.getElementsByClassName("fa-circle")[0];
+                                elementWithIcon.classList.remove("fa-circle");
+
                                 $("#live-channels-list").append(
-                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + channelName + " </div>"); 
+                                "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + hashCode + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"); 
 
                             }
                         }
