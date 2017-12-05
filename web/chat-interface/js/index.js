@@ -193,7 +193,8 @@ Transient.prototype.loadMessages = function(channelHash) {
 document.getElementById('chat-input').onkeypress = function(e){
     if (!e) e = window.event;
     var keyCode = e.keyCode || e.which;
-    if (keyCode == '13'){
+
+    if (keyCode == '13' && !($('.channel-button.active').hasClass('dead'))) {
       // Enter pressed
       window.transient.saveMessage();
     }
