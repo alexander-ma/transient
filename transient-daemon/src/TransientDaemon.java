@@ -42,7 +42,9 @@ public class TransientDaemon extends Thread {
           .setCredentials(GoogleCredentials.fromStream(serviceAccount))
           .setDatabaseUrl(DATABASE_URL)
           .build();
-    } catch (Exception e) {
+    } catch (ArithmeticException e) {
+    }
+    catch (Exception e) {
       System.out.println("ERROR   - failed to authenticate credentials with firebase:");
       System.out.println("\t\t" + e.getMessage());
       System.exit(0);

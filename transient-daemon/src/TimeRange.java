@@ -77,8 +77,7 @@ public class TimeRange {
      midnight
    */
   private LocalDateTime getTodayAtTime(int secs) {
-    return LocalDateTime.now().with(TemporalAdjusters.next(weekday))
-                              .withHour(getHour(secs))
+    return LocalDateTime.now().withHour(getHour(secs))
                               .withMinute(getMinute(secs))
                               .withSecond(0);
   }
@@ -125,7 +124,7 @@ public class TimeRange {
         return getNextWeekdayAtTime(weekday, end);
     }
 
-    return getTodayAtTime(start);
+    return getTodayAtTime(end);
   }
 
   @Override

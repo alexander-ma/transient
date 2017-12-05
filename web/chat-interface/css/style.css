@@ -202,6 +202,10 @@ html, body {
   height: 70%;
 }
 
+.create-new-chat-icon {
+    width: 50%;
+}
+
 .modal-row:after {
   content: "";
   display: table;

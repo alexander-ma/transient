@@ -48,7 +48,7 @@ public class Channel {
     this.channelRef = snapshot.getRef();
 
     evalChannelData();
-    setStateFirebase(state);
+    setStateFirebase(this.state);
     evalTimers();
   }
 
@@ -96,6 +96,10 @@ public class Channel {
       return ChannelState.DEAD;
     }
 
+    if (activeTimes.isEmpty()) {
+      return ChannelState.ACTIVE;
+    }
+
     for (TimeRange range : activeTimes) {
       if (range.isInRange()) {
         return ChannelState.ACTIVE;
@@ -125,9 +129,10 @@ public class Channel {
         }
       }
       
-
+      // In the case that there are no active ranges assume always active
+      // Set to max to death date calculation is still valid
       if (timerLDT.isEqual(LocalDateTime.MIN)) {
-        throw new IllegalArgumentException("Illegal active range in database");
+        timerLDT = LocalDateTime.MAX;
       }
     } else if (stateSnapshot == ChannelState.INACTIVE) {
       timerLDT = LocalDateTime.MAX;
@@ -209,6 +214,7 @@ public class Channel {
     this.channelRef = snapshot.getRef();
 
     evalChannelData();
+    setStateFirebase(this.state);
     reevalTimers();
   }
 
