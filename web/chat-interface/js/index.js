@@ -752,10 +752,9 @@ $("#join-channel").click(function() {
     
 //    console.log(userIsAlreadyInChat(hashCode, currentUserID, db));
 
-    $("#myModal").hide();
+
     $("#modal-create-channel").hide();
     $("#modal-delete-channel").hide();
-    $("#modal-join-channel").hide();
     $("#modal-invite-link").hide();
     
     // Javascript shouldn't be forced to execute synchronously / top-down visually, so below code is bad.
@@ -763,10 +762,16 @@ $("#join-channel").click(function() {
     doesChannelExistFunction(function(doesChannelExist) {
         if (!doesChannelExist) {
             console.log("The channel the user is trying to join doesn't exist.");
+            
+            if ($('#chat-hash').val().length > 0 ){
+               $('#chat-hash').css({'border-color': '#ff5050'});
+            }
         }
         else {
+            
             getChannelNameFunction(function(channelName) {
                 if (!channelName) { 
+                    
                     return;
                 }
                 else {
@@ -803,6 +808,8 @@ $("#join-channel").click(function() {
                             }
 
                         }
+                        $("#myModal").hide();
+                        $("#modal-join-channel").hide();
                     }, currentUserID, hashCode);
                 }
             }, hashCode);
