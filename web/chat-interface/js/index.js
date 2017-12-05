@@ -477,11 +477,11 @@ function updateUI(firebaseUser) {
             var channelHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + channelHash);
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
-            chatRef.on('value', function(snapshot) {
+            
+            chatRef.once('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
                 var activeState = snapshot.val()["state"];
-                
-                $('#' + channelName).remove();
+//                $('#' + channelName).remove();
                 if (activeState == "active") {
                     if (first) {
                         $("#live-channels-list").append(
@@ -502,6 +502,32 @@ function updateUI(firebaseUser) {
                     )
                 }
             })
+            
+            
+//            chatRef.child('state').on('value', function(snapshot) {
+//                var channelName = snapshot.val()["channelName"];
+//                var activeState = snapshot.val()["state"];
+//                $('#' + channelName).remove();
+//                if (activeState == "active") {
+//                    if (first) {
+//                        $("#live-channels-list").append(
+//                            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+//                        )
+//                        first = false;
+//                        $("#current-channel-name").text($(".channel-button.active").text());
+//                    }
+//                    else {
+//                        $("#live-channels-list").append(
+//                            "<div class='channel-button live' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+//                        )
+//                    }
+//                }
+//                else {
+//                    $("#scheduled-channels-list").append(
+//                        "<div class='channel-button dead' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+//                    )
+//                }
+//            })
         }); 
     });
 }
