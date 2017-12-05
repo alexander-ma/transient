@@ -479,19 +479,27 @@ function updateUI(firebaseUser) {
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
             chatRef.once('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
-                if (first) {
-                    $("#live-channels-list").append(
-                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
-                    )
-                    first = false;
-                    $("#current-channel-name").text($(".channel-button.active").text());
+                var activeState = snapshot.val()["state"];
+                
+                if (activeState == "active") {
+                    if (first) {
+                        $("#live-channels-list").append(
+                            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                        )
+                        first = false;
+                        $("#current-channel-name").text($(".channel-button.active").text());
+                    }
+                    else {
+                        $("#live-channels-list").append(
+                            "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                        )
+                    }
                 }
                 else {
-                    $("#live-channels-list").append(
+                    $("#scheduled-channels-list").append(
                         "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                 }
-
             })
         }); 
     });
@@ -822,6 +830,7 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
+                            $('#cont1').empty();
                             if (window.transient === undefined || window.transient.channelHash === undefined) {
                                 console.log("in undefined mode");
                                 window.transient = new Transient(hashCode);
