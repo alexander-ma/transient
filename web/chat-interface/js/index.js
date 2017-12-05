@@ -477,22 +477,57 @@ function updateUI(firebaseUser) {
             var channelHash = childSnapshot.val();
             var chatRef = db.ref('channels/' + channelHash);
             console.log( 'snapshot' + JSON.stringify(childSnapshot));
+            
             chatRef.once('value', function(snapshot) {
                 var channelName = snapshot.val()["channelName"];
-                if (first) {
-                    $("#live-channels-list").append(
-                        "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
-                    )
-                    first = false;
-                    $("#current-channel-name").text($(".channel-button.active").text());
+                var activeState = snapshot.val()["state"];
+//                $('#' + channelName).remove();
+                if (activeState == "active") {
+                    if (first) {
+                        $("#live-channels-list").append(
+                            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                        )
+                        first = false;
+                        $("#current-channel-name").text($(".channel-button.active").text());
+                    }
+                    else {
+                        $("#live-channels-list").append(
+                            "<div class='channel-button live' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                        )
+                    }
                 }
                 else {
-                    $("#live-channels-list").append(
-                        "<div class='channel-button' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+                    $("#scheduled-channels-list").append(
+                        "<div class='channel-button dead' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
                     )
                 }
-
             })
+            
+            
+//            chatRef.child('state').on('value', function(snapshot) {
+//                var channelName = snapshot.val()["channelName"];
+//                var activeState = snapshot.val()["state"];
+//                $('#' + channelName).remove();
+//                if (activeState == "active") {
+//                    if (first) {
+//                        $("#live-channels-list").append(
+//                            "<div class='channel-button active' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa fa-circle\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+//                        )
+//                        first = false;
+//                        $("#current-channel-name").text($(".channel-button.active").text());
+//                    }
+//                    else {
+//                        $("#live-channels-list").append(
+//                            "<div class='channel-button live' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+//                        )
+//                    }
+//                }
+//                else {
+//                    $("#scheduled-channels-list").append(
+//                        "<div class='channel-button dead' data-up='" + channelName.replace(/ /g,"-") + "'" + " id='" + channelName + "'" + " data-hash='" + channelHash + "'> " + "<i class=\"fa\" aria-hidden=\"true\" style=\"font-size: 0.7em; padding-right: 0.8em;\"></i>" + channelName + " </div>"
+//                    )
+//                }
+//            })
         }); 
     });
 }
@@ -799,10 +834,18 @@ $("#delete-channel").click(function() {
     var channelName = $('.channel-button.active').attr('data-up');
     var currentUserID = firebase.auth().currentUser.uid;
     //var currentUserLiveChannelsRef = db.ref('users/' + currentUserID + '/live-channels/' + channelName);
+    
     var channelHash = $('.channel-button.active').attr('data-hash');;
     $('#channel-button[data-up="' + channelName + ']').remove();
     removeUserFromChannel(channelHash, currentUserID, db);
-    $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();
+    
+    if ($('.channel-button.active').hasClass('live')) {
+        $("#live-channels-list").find("[data-hash='" + channelHash + "']").remove();        
+    }
+    else {
+        $("#scheduled-channels-list").find("[data-hash='" + channelHash + "']").remove();   
+    }
+
 
 
     $('#cont1').empty();
@@ -880,6 +923,7 @@ $("#join-channel").click(function() {
                             return; 
                         }
                         else {
+                            $('#cont1').empty();
                             if (window.transient === undefined || window.transient.channelHash === undefined) {
                                 console.log("in undefined mode");
                                 window.transient = new Transient(hashCode);
